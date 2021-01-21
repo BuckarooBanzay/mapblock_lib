@@ -3,11 +3,13 @@
 
 Mapblock-granular world operations and utilities
 
+<img src="./screenshot.png"/>
+
 ## Chatcommands
 
-* **/mapblock_show**
-* **/mapblock_save [name]**
-* **/mapblock_load [name]**
+* **/mapblock_show** marks the current mapblock with a grid
+* **/mapblock_save [name]** saves the current mapblock in `<world_path>/mapblocks/<name>`
+* **/mapblock_load [name]** loads a previously saved mapblock
 
 ## Api
 
