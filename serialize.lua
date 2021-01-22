@@ -66,9 +66,12 @@ local function serialize_part(block_pos, node_mapping)
 			end
 		end
 
-		data.metadata = data.metadata or {}
-		data.metadata.meta = data.metadata.meta or {}
-		data.metadata.meta[minetest.pos_to_string(relative_pos)] = meta
+		-- re-check if metadata actually exists (may happen with minetest.find_nodes_with_meta)
+		if meta.fields or meta.inventory then
+			data.metadata = data.metadata or {}
+			data.metadata.meta = data.metadata.meta or {}
+			data.metadata.meta[minetest.pos_to_string(relative_pos)] = meta
+		end
 	end
 
 	return data
