@@ -1,6 +1,20 @@
 local air_content_id = minetest.get_content_id("air")
 local ignore_content_id = minetest.get_content_id("ignore")
 
+-- checks if a table is empty
+local function is_empty(tbl)
+	if not tbl then
+		return true
+	end
+
+	for k in pairs(tbl) do
+		if k then
+			return false
+		end
+	end
+	return true
+end
+
 -- serialize the mapblock at the given node-position
 local function serialize_part(block_pos, node_mapping)
 	local pos1, pos2 = mapblock_lib.get_mapblock_bounds_from_mapblock(block_pos)
@@ -67,7 +81,8 @@ local function serialize_part(block_pos, node_mapping)
 		end
 
 		-- re-check if metadata actually exists (may happen with minetest.find_nodes_with_meta)
-		if meta.fields or meta.inventory then
+		if not is_empty(meta.fields) or not is_empty(meta.inventory) then
+			print(dump(relative_pos), dump(meta))
 			data.metadata = data.metadata or {}
 			data.metadata.meta = data.metadata.meta or {}
 			data.metadata.meta[minetest.pos_to_string(relative_pos)] = meta
