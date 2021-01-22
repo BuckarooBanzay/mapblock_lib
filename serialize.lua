@@ -82,7 +82,6 @@ local function serialize_part(block_pos, node_mapping)
 
 		-- re-check if metadata actually exists (may happen with minetest.find_nodes_with_meta)
 		if not is_empty(meta.fields) or not is_empty(meta.inventory) then
-			print(dump(relative_pos), dump(meta))
 			data.metadata = data.metadata or {}
 			data.metadata.meta = data.metadata.meta or {}
 			data.metadata.meta[minetest.pos_to_string(relative_pos)] = meta
