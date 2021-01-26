@@ -27,8 +27,10 @@ options = {
 		rotate = {
 			angle = 90,
 			axis = "y",
-			-- disables param2 orientation
-			disable_orientation = false
+			-- disables param2 orientation for the given nodes
+			disable_orientation = {
+				["default:sandstonebrick"] = true
+			}
 		},
 		-- replace certain nodes with others
 		replace = {

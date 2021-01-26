@@ -1,6 +1,6 @@
 local node_id_to_name_cache = {}
 
-function mapblock_lib.orient(angle, mapblock)
+function mapblock_lib.orient(angle, mapblock, disable_orientation)
 	-- https://github.com/Uberi/Minetest-WorldEdit/blob/master/worldedit/manipulations.lua#L555
 	local min = { x=0, y=0, z=0 }
 	local max = { x=15, y=15, z=15 }
@@ -43,19 +43,22 @@ function mapblock_lib.orient(angle, mapblock)
 					node_id_to_name_cache[node_id] = node_name
 				end
 
-				local def = registered_nodes[node_name]
-				if def then
-					local paramtype2 = def.paramtype2
-					if paramtype2 == "wallmounted" or paramtype2 == "colorwallmounted" then
-						local orient = param2 % 8
-						param2 = param2 - orient + wallmounted_substitution[orient + 1]
-						mapblock.param2[index] = param2
+				if not disable_orientation[node_name] then
+					-- rotate only the non-disabled nodes
+					local def = registered_nodes[node_name]
+					if def then
+						local paramtype2 = def.paramtype2
+						if paramtype2 == "wallmounted" or paramtype2 == "colorwallmounted" then
+							local orient = param2 % 8
+							param2 = param2 - orient + wallmounted_substitution[orient + 1]
+							mapblock.param2[index] = param2
 
-					elseif paramtype2 == "facedir" or paramtype2 == "colorfacedir" then
-						local orient = param2 % 32
-						param2 = param2 - orient + facedir_substitution[orient + 1]
-						mapblock.param2[index] = param2
+						elseif paramtype2 == "facedir" or paramtype2 == "colorfacedir" then
+							local orient = param2 % 32
+							param2 = param2 - orient + facedir_substitution[orient + 1]
+							mapblock.param2[index] = param2
 
+						end
 					end
 				end
 				pos.z = pos.z + 1
