@@ -10,6 +10,7 @@ Mapblock-granular world operations and utilities
 * **/mapblock_show** marks the current mapblock with a grid
 * **/mapblock_save [name]** saves the current mapblock in `<world_path>/mapblocks/<name>`
 * **/mapblock_load [name]** loads a previously saved mapblock
+* **/mapblock_rotate_y [90,180,270]** rotates the current mapblock around the y axis
 
 ## Api
 

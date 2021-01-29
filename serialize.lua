@@ -16,7 +16,7 @@ local function is_empty(tbl)
 end
 
 -- serialize the mapblock at the given node-position
-local function serialize_part(block_pos, node_mapping)
+function mapblock_lib.serialize_part(block_pos, node_mapping)
 	local pos1, pos2 = mapblock_lib.get_mapblock_bounds_from_mapblock(block_pos)
 
 	local manip = minetest.get_voxel_manip()
@@ -94,7 +94,7 @@ end
 
 function mapblock_lib.serialize(block_pos, filename)
 	local node_mapping = {}
-	local data = serialize_part(block_pos, node_mapping)
+	local data = mapblock_lib.serialize_part(block_pos, node_mapping)
 
 	mapblock_lib.write_mapblock(data, filename .. ".bin")
 

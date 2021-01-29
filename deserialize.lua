@@ -32,7 +32,7 @@ local function localize_nodeids(node_mapping, node_ids)
 	end
 end
 
-local function deserialize_part(min, max, data, metadata, options)
+function mapblock_lib.deserialize_part(min, max, data, metadata, options)
 	local manip = minetest.get_voxel_manip()
 	local e1, e2 = manip:read_from_map(min, max)
 	local area = VoxelArea:new({MinEdge=e1, MaxEdge=e2})
@@ -139,7 +139,7 @@ function mapblock_lib.deserialize(mapblock_pos, filename, options)
 	end
 
 	-- write to map
-	deserialize_part(min, max, mapblock, manifest.metadata, options)
+	mapblock_lib.deserialize_part(min, max, mapblock, manifest.metadata, options)
 
 	return true
 end
