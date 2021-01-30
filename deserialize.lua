@@ -103,6 +103,13 @@ function mapblock_lib.deserialize(mapblock_pos, filename, options)
 		end
 	end
 
+	if options.transform.set_param2 then
+		-- add nodeids/param2 to cache-key
+		for k, param2 in pairs(options.transform.set_param2) do
+			cache_key = cache_key .. "/" .. get_nodeid(k) .. "=" .. param2
+		end
+	end
+
 	-- true if the mapblock and metadata are read from cache
 	-- they are already transformed
 	local is_cached = false
