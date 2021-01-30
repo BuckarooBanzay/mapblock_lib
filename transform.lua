@@ -17,6 +17,10 @@ function mapblock_lib.transform(transform, mapblock, metadata)
 		mapblock_lib.replace(transform.replace, mapblock)
 	end
 
+	if transform.set_param2 then
+		mapblock_lib.set_param2(transform.set_param2, mapblock)
+	end
+
 	if transform.rotate then
 		local axis = transform.rotate.axis
 		local angle = transform.rotate.angle

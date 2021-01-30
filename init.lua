@@ -15,6 +15,7 @@ dofile(MP .. "/manifest.lua")
 dofile(MP .. "/mapblock.lua")
 
 dofile(MP .. "/transform.lua")
+dofile(MP .. "/transform_set_param2.lua")
 dofile(MP .. "/transform_replace.lua")
 dofile(MP .. "/transform_flip.lua")
 dofile(MP .. "/transform_orient.lua")

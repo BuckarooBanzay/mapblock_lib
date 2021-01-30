@@ -36,6 +36,10 @@ options = {
 		-- replace certain nodes with others
 		replace = {
 			["default:dirt"] = "default:mese"
+		},
+		-- bulk set param2 for certain nodes, useful for mass-coloring
+		set_param2 = {
+			["unifiedbricks:brickblock"] = 15
 		}
 	}
 	-- placement mode "replace": replace the whole mapblock, "add": replace only air nodes
