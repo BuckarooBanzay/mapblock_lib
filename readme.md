@@ -1,6 +1,9 @@
 
 # mapblock_lib
 
+[![ContentDB](https://content.minetest.net/packages/BuckarooBanzay/mapblock_lib/shields/downloads/)](https://content.minetest.net/packages/BuckarooBanzay/mapblock_lib/)
+![](https://github.com/BuckarooBanzay/mapblock_lib/workflows/luacheck/badge.svg)
+
 Mapblock-granular world operations, transformations and utilities
 
 <img src="./screenshot.png"/>
