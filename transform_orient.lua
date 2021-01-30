@@ -1,27 +1,29 @@
 local node_id_to_name_cache = {}
 
+local wallmounted = {
+	[90]  = {0, 1, 5, 4, 2, 3, 0, 0},
+	[180] = {0, 1, 3, 2, 5, 4, 0, 0},
+	[270] = {0, 1, 4, 5, 3, 2, 0, 0}
+}
+local facedir = {
+	[90]  = { 1,  2,  3,  0, 13, 14, 15, 12, 17, 18, 19, 16,
+	9, 10, 11,  8,  5,  6,  7,  4, 23, 20, 21, 22},
+	[180] = { 2,  3,  0,  1, 10, 11,  8,  9,  6,  7,  4,  5,
+	18, 19, 16, 17, 14, 15, 12, 13, 22, 23, 20, 21},
+	[270] = { 3,  0,  1,  2, 19, 16, 17, 18, 15, 12, 13, 14,
+	7,  4,  5,  6, 11,  8,  9, 10, 21, 22, 23, 20}
+}
+
+local min = { x=0, y=0, z=0 }
+local max = { x=15, y=15, z=15 }
+
+local registered_nodes = minetest.registered_nodes
+
 function mapblock_lib.orient(angle, mapblock, disable_orientation)
 	-- https://github.com/Uberi/Minetest-WorldEdit/blob/master/worldedit/manipulations.lua#L555
-	local min = { x=0, y=0, z=0 }
-	local max = { x=15, y=15, z=15 }
 
 	local area = VoxelArea:new({MinEdge=min, MaxEdge=max})
 
-	local registered_nodes = minetest.registered_nodes
-
-	local wallmounted = {
-		[90]  = {0, 1, 5, 4, 2, 3, 0, 0},
-		[180] = {0, 1, 3, 2, 5, 4, 0, 0},
-		[270] = {0, 1, 4, 5, 3, 2, 0, 0}
-	}
-	local facedir = {
-		[90]  = { 1,  2,  3,  0, 13, 14, 15, 12, 17, 18, 19, 16,
-		9, 10, 11,  8,  5,  6,  7,  4, 23, 20, 21, 22},
-		[180] = { 2,  3,  0,  1, 10, 11,  8,  9,  6,  7,  4,  5,
-		18, 19, 16, 17, 14, 15, 12, 13, 22, 23, 20, 21},
-		[270] = { 3,  0,  1,  2, 19, 16, 17, 18, 15, 12, 13, 14,
-		7,  4,  5,  6, 11,  8,  9, 10, 21, 22, 23, 20}
-	}
 
 	local wallmounted_substitution = wallmounted[angle]
 	local facedir_substitution = facedir[angle]
