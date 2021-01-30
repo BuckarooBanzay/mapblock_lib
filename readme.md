@@ -80,3 +80,8 @@ mapblock_lib.sort_pos(pos1, pos2)
 mapblock_lib.display_mapblock_at_pos(pos, text, timeout)
 mapblock_lib.display_mapblock(mapblock, text, timeout)
 ```
+
+# License
+
+* Code: MIT
+* Textures: CC-BY-SA 3.0
