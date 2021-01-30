@@ -23,7 +23,7 @@ Use-cases:
 
 Demo:
 
-* City mapgen: https://github.com/BuckarooBanzay/citygen
+* [City mapgen](https://github.com/BuckarooBanzay/citygen)
 
 ## Chatcommands
 
