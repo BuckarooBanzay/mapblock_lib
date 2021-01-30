@@ -1,5 +1,7 @@
 globals = {
-	"mapblock_lib"
+	"mapblock_lib",
+	-- optional deps
+	"worldedit"
 }
 
 read_globals = {

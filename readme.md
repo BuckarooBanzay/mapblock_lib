@@ -20,6 +20,7 @@ Demo:
 * **/mapblock_save [name]** saves the current mapblock in `<world_path>/mapblocks/<name>`
 * **/mapblock_load [name]** loads a previously saved mapblock
 * **/mapblock_rotate_y [90,180,270]** rotates the current mapblock around the y axis
+* **/mapblock_mark** (only available if the `worldedit` mod is present) marks the current mapblock with worledit
 
 ## Api
 

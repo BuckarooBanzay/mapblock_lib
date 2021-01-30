@@ -114,3 +114,28 @@ minetest.register_chatcommand("mapblock_rotate_y", {
 		return true, "mapblock rotated by " .. angle .. " degrees"
 	end
 })
+
+if minetest.get_modpath("worldedit") then
+	minetest.register_chatcommand("mapblock_mark", {
+		privs = { mapblock_lib = true },
+		description = "selects the current mapblock with the worldedit markers",
+		func = function(name)
+			local player = minetest.get_player_by_name(name)
+			if not player then
+				return false, "player not found"
+			end
+
+			local pos = player:get_pos()
+
+			local mapblock_pos = mapblock_lib.get_mapblock(pos)
+			local min, max = mapblock_lib.get_mapblock_bounds_from_mapblock(mapblock_pos)
+
+			worldedit.pos1[name] = min
+			worldedit.mark_pos1(name)
+			worldedit.pos2[name] = max
+			worldedit.mark_pos2(name)
+
+			return true, "selected mapblock " .. minetest.pos_to_string(mapblock_pos)
+		end
+	})
+end
