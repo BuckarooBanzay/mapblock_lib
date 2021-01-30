@@ -1,9 +1,18 @@
 
 # mapblock_lib
 
-Mapblock-granular world operations and utilities
+Mapblock-granular world operations, transformations and utilities
 
 <img src="./screenshot.png"/>
+
+Use-cases:
+
+* Custom mapgens with pre-built schematics
+* Building-mods
+
+Demo:
+
+* City mapgen: https://github.com/BuckarooBanzay/citygen
 
 ## Chatcommands
 
@@ -22,7 +31,7 @@ mapblock_lib.deserialize(mapblock_pos, filename, options)
 options = {
 	-- caches the on-disk file, useful for repetitive mapgen events
 	use_cache = false,
-	-- various transformation to apply to the loaded mapblock
+	-- various transformations to apply to the loaded mapblock
 	transform = {
 		-- rotate the mapblock around the given axis with the angle (90, 180, 270)
 		rotate = {
