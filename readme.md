@@ -5,6 +5,14 @@ Mapblock-granular world operations, transformations and utilities
 
 <img src="./screenshot.png"/>
 
+Features:
+
+* Load/Save mapblocks from/to disk
+* Serializes param1/param2/nodetimers and metadata
+* Transforms mapblock data on the fly (rotation, orientation, replacements)
+* Supports caching of the loaded mapblocks for fast in-world placement (mapgen)
+* Adds a per-mapblock data-storage (`get_mapblock_data` / `set_mapblock_data`) with caching
+
 Use-cases:
 
 * Custom mapgens with pre-built schematics
