@@ -1,0 +1,27 @@
+{
+	"title": "Mapblock lib",
+	"type": "MOD",
+	"name": "mapblock_lib",
+	"tags": ["library"],
+	"license": "MIT",
+	"media_license": "CC BY-SA 3.0",
+	"long_description": "
+	Mapblock-granular world operations, transformations and utilities
+
+	Features:
+
+	* Load/Save mapblocks from/to disk
+	* Serializes param1/param2/nodetimers and metadata
+	* Transforms mapblock data on the fly (rotation, orientation, replacements)
+	* Supports caching of the loaded mapblocks for fast in-world placement (mapgen)
+	* Adds a per-mapblock data-storage (`get_mapblock_data` / `set_mapblock_data`) with caching
+
+	Use-cases:
+
+	* Custom mapgens with pre-built schematics
+	* Building-mods
+	",
+	"repo": "https://github.com/BuckarooBanzay/mapblock_lib",
+	"website": "https://github.com/BuckarooBanzay/mapblock_lib",
+	"issue_tracker": "https://github.com/BuckarooBanzay/mapblock_lib/issues"
+}
