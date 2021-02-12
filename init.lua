@@ -25,4 +25,5 @@ dofile(MP .. "/serialize.lua")
 dofile(MP .. "/deserialize.lua")
 
 dofile(MP .. "/display.lua")
-dofile(MP .. "/chatcommands.lua")
+dofile(MP .. "/chatcommands/single.lua")
+dofile(MP .. "/chatcommands/multi.lua")
