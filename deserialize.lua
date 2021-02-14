@@ -32,9 +32,9 @@ local function localize_nodeids(node_mapping, node_ids)
 	end
 end
 
-function mapblock_lib.deserialize_part(min, max, data, metadata, options)
+function mapblock_lib.deserialize_part(pos1, pos2, data, metadata, options)
 	local manip = minetest.get_voxel_manip()
-	local e1, e2 = manip:read_from_map(min, max)
+	local e1, e2 = manip:read_from_map(pos1, pos2)
 	local area = VoxelArea:new({MinEdge=e1, MaxEdge=e2})
 
 	local node_data = manip:get_data()
@@ -51,9 +51,9 @@ function mapblock_lib.deserialize_part(min, max, data, metadata, options)
 	else
 		-- overwrite with air check one by one
 		local j = 1
-		for z=min.z,max.z do
-			for y=min.y,max.y do
-				for x=min.x,max.x do
+		for z=pos1.z,pos2.z do
+			for y=pos1.y,pos2.y do
+				for x=pos1.x,pos2.x do
 					local i = area:index(x,y,z)
 					if node_data[i] == air_content_id then
 						node_data[i] = data.node_ids[j]
@@ -75,7 +75,7 @@ function mapblock_lib.deserialize_part(min, max, data, metadata, options)
 	if metadata and metadata.meta then
 		for pos_str, md in pairs(metadata.meta) do
 			local relative_pos = minetest.string_to_pos(pos_str)
-			local absolute_pos = vector.add(min, relative_pos)
+			local absolute_pos = vector.add(pos1, relative_pos)
 			minetest.get_meta(absolute_pos):from_table(md)
 		end
 	end

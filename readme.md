@@ -42,6 +42,10 @@ Demo:
 
 ## Api
 
+### High.level
+
+Stable, high-level api
+
 ```lua
 -- main api
 mapblock_lib.serialize(mapblock_pos, filename)
@@ -78,7 +82,13 @@ options = {
 mapblock_lib.get_mapblock_data(mapblock_pos)
 mapblock_lib.set_mapblock_data(mapblock_pos, data)
 mapblock_lib.merge_mapblock_data(mapblock_pos, data)
+```
 
+### Utilities
+
+Basic utilities
+
+```lua
 -- utils
 mapblock_lib.get_mapblock(pos)
 mapblock_lib.get_mapblock_bounds_from_mapblock(block_pos)
@@ -89,6 +99,15 @@ mapblock_lib.sort_pos(pos1, pos2)
 -- display
 mapblock_lib.display_mapblock_at_pos(pos, text, timeout)
 mapblock_lib.display_mapblock(mapblock, text, timeout)
+```
+
+### Low level
+
+Use at your own risk
+
+```lua
+mapblock_lib.serialize_part(pos1, pos2, node_mapping)
+mapblock_lib.deserialize_part(pos1, pos2, data, metadata, options)
 ```
 
 # License
