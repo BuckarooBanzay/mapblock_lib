@@ -3,16 +3,7 @@ local ignore_content_id = minetest.get_content_id("ignore")
 
 -- checks if a table is empty
 local function is_empty(tbl)
-	if not tbl then
-		return true
-	end
-
-	for k in pairs(tbl) do
-		if k then
-			return false
-		end
-	end
-	return true
+	return not tbl or not next(tbl)
 end
 
 -- serialize the mapblock at the given node-position
