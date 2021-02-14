@@ -142,7 +142,8 @@ function mapblock_lib.deserialize(mapblock_pos, filename, options)
 
 	-- apply transformation only on uncached data
 	if not is_cached then
-		mapblock_lib.transform(options.transform, mapblock, manifest.metadata)
+		local size = {x=15, y=15, z=15}
+		mapblock_lib.transform(options.transform, size, mapblock, manifest.metadata)
 	end
 
 	-- write to map

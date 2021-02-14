@@ -14,13 +14,11 @@ local facedir = {
 	7,  4,  5,  6, 11,  8,  9, 10, 21, 22, 23, 20}
 }
 
-local min = { x=0, y=0, z=0 }
-local max = { x=15, y=15, z=15 }
-
 local registered_nodes = minetest.registered_nodes
 
-function mapblock_lib.orient(angle, mapblock, disable_orientation)
+function mapblock_lib.orient(angle, max, mapblock, disable_orientation)
 	-- https://github.com/Uberi/Minetest-WorldEdit/blob/master/worldedit/manipulations.lua#L555
+	local min = { x=0, y=0, z=0 }
 
 	local area = VoxelArea:new({MinEdge=min, MaxEdge=max})
 

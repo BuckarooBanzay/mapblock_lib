@@ -108,7 +108,8 @@ minetest.register_chatcommand("mapblock_rotate_y", {
 			}
 		}
 
-		mapblock_lib.transform(transform, data, data.metadata)
+		local size = {x=15, y=15, z=15}
+		mapblock_lib.transform(transform, size, data, data.metadata)
 		mapblock_lib.deserialize_part(min, max, data, data.metadata, {})
 
 		return true, "mapblock rotated by " .. angle .. " degrees"

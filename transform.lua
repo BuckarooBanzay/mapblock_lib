@@ -11,8 +11,7 @@ local function get_axis_others(axis)
 end
 
 
-function mapblock_lib.transform(transform, mapblock, metadata)
-
+function mapblock_lib.transform(transform, max, mapblock, metadata)
 	if transform.replace then
 		mapblock_lib.replace(transform.replace, mapblock)
 	end
@@ -29,22 +28,22 @@ function mapblock_lib.transform(transform, mapblock, metadata)
 		local other1, other2 = get_axis_others(axis)
 
 		if angle == 90 then
-			mapblock_lib.flip(other1, mapblock, metadata)
-			mapblock_lib.transpose(other1, other2, mapblock, metadata)
+			mapblock_lib.flip(other1, max, mapblock, metadata)
+			mapblock_lib.transpose(other1, other2, max, mapblock, metadata)
 			if axis == "y" then
-				mapblock_lib.orient(90, mapblock, disable_orientation)
+				mapblock_lib.orient(90, max, mapblock, disable_orientation)
 			end
 		elseif angle == 180 then
-			mapblock_lib.flip(other1, mapblock, metadata)
-			mapblock_lib.flip(other2, mapblock, metadata)
+			mapblock_lib.flip(other1, max, mapblock, metadata)
+			mapblock_lib.flip(other2, max, mapblock, metadata)
 			if axis == "y" then
-				mapblock_lib.orient(180, mapblock, disable_orientation)
+				mapblock_lib.orient(180, max, mapblock, disable_orientation)
 			end
 		elseif angle == 270 then
-			mapblock_lib.flip(other2, mapblock, metadata)
-			mapblock_lib.transpose(other1, other2, mapblock, metadata)
+			mapblock_lib.flip(other2, max, mapblock, metadata)
+			mapblock_lib.transpose(other1, other2, max, mapblock, metadata)
 			if axis == "y" then
-				mapblock_lib.orient(270, mapblock, disable_orientation)
+				mapblock_lib.orient(270, max, mapblock, disable_orientation)
 			end
 		end
 	end

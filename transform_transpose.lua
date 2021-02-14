@@ -1,6 +1,5 @@
-local function transpose_data(data, indexFn, axis1, axis2)
+local function transpose_data(data, max, indexFn, axis1, axis2)
 	-- https://github.com/Uberi/Minetest-WorldEdit/blob/master/worldedit/manipulations.lua#L422
-	local max = { x=15, y=15, z=15 }
 	local pos = {x=0, y=0, z=0}
 
 	while pos.x <= max.x do
@@ -28,19 +27,18 @@ local function transpose_data(data, indexFn, axis1, axis2)
 	end
 end
 
-function mapblock_lib.transpose(axis1, axis2, mapblock, metadata)
+function mapblock_lib.transpose(axis1, axis2, max, mapblock, metadata)
 	local min = { x=0, y=0, z=0 }
-	local max = { x=15, y=15, z=15 }
 	local area = VoxelArea:new({MinEdge=min, MaxEdge=max})
 
 	local vmanipIndex = function(pos) return area:indexp(pos) end
 	local metaIndex = function(pos) return minetest.pos_to_string(pos) end
 
-	transpose_data(mapblock.node_ids, vmanipIndex, axis1, axis2)
-	transpose_data(mapblock.param1, vmanipIndex, axis1, axis2)
-	transpose_data(mapblock.param2, vmanipIndex, axis1, axis2)
+	transpose_data(mapblock.node_ids, max, vmanipIndex, axis1, axis2)
+	transpose_data(mapblock.param1, max, vmanipIndex, axis1, axis2)
+	transpose_data(mapblock.param2, max, vmanipIndex, axis1, axis2)
 
 	if metadata and metadata.meta then
-		transpose_data(metadata.meta, metaIndex, axis1, axis2)
+		transpose_data(metadata.meta, max, metaIndex, axis1, axis2)
 	end
 end

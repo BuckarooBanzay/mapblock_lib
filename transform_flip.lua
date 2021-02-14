@@ -1,7 +1,6 @@
-local function flip_data(data, indexFn, axis)
-	local max = { x=15, y=15, z=15 }
-
+local function flip_data(data, size, indexFn, axis)
 	local pos = {x=0, y=0, z=0}
+	local max = { x=size.x, y=size.y, z=size.z }
 	local start = max[axis]
 	max[axis] = math.floor(max[axis] / 2)
 
@@ -25,19 +24,18 @@ local function flip_data(data, indexFn, axis)
 	end
 end
 
-function mapblock_lib.flip(axis, mapblock, metadata)
+function mapblock_lib.flip(axis, max, mapblock, metadata)
 	local min = { x=0, y=0, z=0 }
-	local max = { x=15, y=15, z=15 }
 	local area = VoxelArea:new({MinEdge=min, MaxEdge=max})
 
 	local vmanipIndex = function(pos) return area:indexp(pos) end
 	local metaIndex = function(pos) return minetest.pos_to_string(pos) end
 
-	flip_data(mapblock.node_ids, vmanipIndex, axis)
-	flip_data(mapblock.param1, vmanipIndex, axis)
-	flip_data(mapblock.param2, vmanipIndex, axis)
+	flip_data(mapblock.node_ids, max, vmanipIndex, axis)
+	flip_data(mapblock.param1, max, vmanipIndex, axis)
+	flip_data(mapblock.param2, max, vmanipIndex, axis)
 
 	if metadata and metadata.meta then
-		flip_data(metadata.meta, metaIndex, axis)
+		flip_data(metadata.meta, max, metaIndex, axis)
 	end
 end
