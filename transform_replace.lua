@@ -3,6 +3,7 @@ function mapblock_lib.replace(replacement_map, mapblock)
 	local replacement_id_map = {}
 
 	for key, value in pairs(replacement_map) do
+		-- TODO: check minetest.registered_items first
 		local key_id = minetest.get_content_id(key)
 		local value_id = minetest.get_content_id(value)
 

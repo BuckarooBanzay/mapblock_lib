@@ -19,6 +19,7 @@ end
 
 -- serialize the mapblock at the given node-position
 function mapblock_lib.serialize_part(pos1, pos2, node_mapping)
+	node_mapping = node_mapping or {}
 	local manip = minetest.get_voxel_manip()
 	local e1, e2 = manip:read_from_map(pos1, pos2)
 	local area = VoxelArea:new({MinEdge=e1, MaxEdge=e2})

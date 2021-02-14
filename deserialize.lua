@@ -41,9 +41,12 @@ function mapblock_lib.deserialize_part(pos1, pos2, data, metadata, options)
 	local param1 = manip:get_light_data()
 	local param2 = manip:get_param2_data()
 
+	-- check if we have the same region (mapblock-aligned)
+	local same_region = vector.equals(e1, pos1) and vector.equals(e2, pos2)
+
 	-- overwrite flag
 	local replace = options.mode ~= "add"
-	if replace then
+	if replace and same_region then
 		-- replace node data 1:1
 		node_data = data.node_ids
 		param1 = data.param1
