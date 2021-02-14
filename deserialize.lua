@@ -79,6 +79,16 @@ function mapblock_lib.deserialize_part(pos1, pos2, data, metadata, options)
 			minetest.get_meta(absolute_pos):from_table(md)
 		end
 	end
+
+	-- deserialize node timers
+	if data.metadata and data.metadata.timers then
+		for pos_str, timer_data in pairs(data.metadata.timers) do
+			local relative_pos = minetest.string_to_pos(pos_str)
+			local absolute_pos = vector.add(pos1, relative_pos)
+			minetest.get_node_timer(absolute_pos):set(timer_data.timeout, timer_data.elapsed)
+		end
+	end
+
 end
 
 local mapblock_cache = {}

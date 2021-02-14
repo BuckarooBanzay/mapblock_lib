@@ -1,6 +1,17 @@
 local air_content_id = minetest.get_content_id("air")
 local ignore_content_id = minetest.get_content_id("ignore")
 
+-- collect node ids with on_timer attributes
+local node_ids_with_timer = {}
+minetest.register_on_mods_loaded(function()
+	for _,node in pairs(minetest.registered_nodes) do
+		if node.on_timer then
+			local nodeid = minetest.get_content_id(node.name)
+			node_ids_with_timer[nodeid] = true
+		end
+	end
+end)
+
 -- checks if a table is empty
 local function is_empty(tbl)
 	return not tbl or not next(tbl)
@@ -26,6 +37,8 @@ function mapblock_lib.serialize_part(pos1, pos2, node_mapping)
 		metadata = nil
 	}
 
+	local timers = {}
+
 	-- loop over all blocks and fill cid,param1 and param2
 	for z=pos1.z,pos2.z do
 		for y=pos1.y,pos2.y do
@@ -36,6 +49,19 @@ function mapblock_lib.serialize_part(pos1, pos2, node_mapping)
 				if node_id == ignore_content_id then
 					-- replace ignore blocks with air
 					node_id = air_content_id
+				end
+
+				if node_ids_with_timer[node_id] then
+					-- node has a node-timer
+					local pos = {x=x, y=y, z=z}
+					local timer = minetest.get_node_timer(pos)
+					local relative_pos = vector.subtract(pos, pos1)
+					if timer:is_started() then
+						timers[minetest.pos_to_string(relative_pos)] = {
+							timeout = timer:get_timeout(),
+							elapsed = math.floor(timer:get_elapsed()) -- truncate decimals
+						}
+					end
 				end
 
 				table.insert(data.node_ids, node_id)
@@ -74,6 +100,11 @@ function mapblock_lib.serialize_part(pos1, pos2, node_mapping)
 			data.metadata = data.metadata or {}
 			data.metadata.meta = data.metadata.meta or {}
 			data.metadata.meta[minetest.pos_to_string(relative_pos)] = meta
+		end
+
+		if not is_empty(timers) then
+			data.metadata = data.metadata or {}
+			data.metadata.timers = timers
 		end
 	end
 
