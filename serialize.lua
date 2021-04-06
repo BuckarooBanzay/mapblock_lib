@@ -128,3 +128,27 @@ function mapblock_lib.serialize(block_pos, filename)
 
 	mapblock_lib.write_manifest(manifest, filename .. ".manifest.json")
 end
+
+function mapblock_lib.serialize_multi(pos1, pos2, prefix)
+	local iterator = mapblock_lib.pos_iterator(pos1, pos2)
+	local mapblock_pos
+	local count = 0
+
+	return true, function()
+		mapblock_pos = iterator()
+		if mapblock_pos then
+			local rel_pos = vector.subtract(mapblock_pos, pos1)
+			local filename = mapblock_lib.format_multi_mapblock(prefix, rel_pos)
+			mapblock_lib.serialize(mapblock_pos, filename)
+			count = count + 1
+			return true
+		else
+			local manifest = {
+				range = vector.subtract(pos2, pos1)
+			}
+			mapblock_lib.write_manifest(manifest, prefix .. ".manifest")
+
+			return nil, count
+		end
+	end
+end

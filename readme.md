@@ -49,7 +49,10 @@ Stable, high-level api
 ```lua
 -- main api
 mapblock_lib.serialize(mapblock_pos, filename)
+mapblock_lib.serialize_multi(pos1, pos2, prefix)
+
 mapblock_lib.deserialize(mapblock_pos, filename, options)
+mapblock_lib.deserialize_multi(pos1, prefix)
 
 options = {
 	-- caches the on-disk file, useful for repetitive mapgen events
@@ -95,6 +98,7 @@ mapblock_lib.get_mapblock_bounds_from_mapblock(block_pos)
 mapblock_lib.get_mapblock_bounds(pos)
 mapblock_lib.get_mapblock_center(pos)
 mapblock_lib.sort_pos(pos1, pos2)
+mapblock_lib.pos_iterator(pos1, pos2)
 
 -- display
 mapblock_lib.display_mapblock_at_pos(pos, text, timeout)

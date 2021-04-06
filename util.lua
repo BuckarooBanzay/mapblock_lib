@@ -33,3 +33,37 @@ function mapblock_lib.sort_pos(pos1, pos2)
 	end
 	return pos1, pos2
 end
+
+-- returns an iterator function for the mapblock coordinate range
+function mapblock_lib.pos_iterator(pos1, pos2)
+	local pos
+	return function()
+		if not pos then
+			-- init, copy values
+			pos = { x=pos1.x, y=pos1.y, z=pos1.z }
+		else
+			-- shift x
+			pos.x = pos.x + 1
+			if pos.x > pos2.x then
+				-- shift z
+				pos.x = pos1.x
+				pos.z = pos.z + 1
+				if pos.z > pos2.z then
+					--shift y
+					pos.z = pos1.z
+					pos.y = pos.y + 1
+					if pos.y > pos2.y then
+						-- done
+						pos = nil
+					end
+				end
+			end
+		end
+
+		return pos
+	end
+end
+
+function mapblock_lib.format_multi_mapblock(prefix, pos)
+	return prefix .. "_" .. minetest.pos_to_string(pos)
+end

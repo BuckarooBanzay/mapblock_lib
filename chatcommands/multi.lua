@@ -68,27 +68,24 @@ minetest.register_chatcommand("mapblocks_save", {
 		end
 
 		pos1, pos2 = mapblock_lib.sort_pos(pos1, pos2)
-		local count = 0
 		local prefix = mapblock_lib.schema_path .. "/" .. params
 
-		for x=pos1.x,pos2.x do
-			for y=pos1.y,pos2.y do
-				for z=pos1.z,pos2.z do
-					local mapblock_pos = {x=x,y=y,z=z}
-					local rel_pos = vector.subtract(mapblock_pos, pos1)
-					local filename = prefix .. "_" .. minetest.pos_to_string(rel_pos)
-					mapblock_lib.serialize(mapblock_pos, filename)
-					count = count + 1
-				end
-			end
+		local success, result = mapblock_lib.serialize_multi(pos1, pos2, prefix)
+		if not success then
+			return false, result
 		end
 
-		local manifest = {
-			range = vector.subtract(pos2, pos1)
-		}
-		mapblock_lib.write_manifest(manifest, prefix .. ".manifest")
+		local iterator = result
+		local msg
+		repeat
+			result, msg = iterator()
+		until result ~= true
 
-		return true, count .. " mapblocks saved as " .. prefix
+		if result == nil then
+			return true, msg .. " mapblocks saved as " .. prefix
+		else
+			return false, msg
+		end
 	end
 })
 
@@ -107,32 +104,23 @@ minetest.register_chatcommand("mapblocks_load", {
 			return false, "specify a name for the schema"
 		end
 
-		local count = 0
 		local prefix = mapblock_lib.schema_path .. "/" .. params
 
-		local manifest = mapblock_lib.read_manifest(prefix .. ".manifest")
-		if not manifest then
-			return false, "no manifest found!"
+		local success, result = mapblock_lib.deserialize_multi(pos1, prefix)
+		if not success then
+			return false, result
 		end
 
-		local pos2 = vector.add(pos1, manifest.range)
+		local iterator = result
+		local msg
+		repeat
+			result, msg = iterator()
+		until result ~= true
 
-		for x=pos1.x,pos2.x do
-			for y=pos1.y,pos2.y do
-				for z=pos1.z,pos2.z do
-					local mapblock_pos = {x=x,y=y,z=z}
-					local rel_pos = vector.subtract(mapblock_pos, pos1)
-					local filename = prefix .. "_" .. minetest.pos_to_string(rel_pos)
-
-					local _, err = mapblock_lib.deserialize(mapblock_pos, filename, {})
-					if err then
-						return false, "couldn't load mapblock from " .. filename
-					end
-					count = count + 1
-				end
-			end
+		if result == nil then
+			return true, msg .. " mapblocks loaded from " .. prefix
+		else
+			return false, msg
 		end
-
-		return true, count .. " mapblocks loaded from " .. prefix
 	end
 })

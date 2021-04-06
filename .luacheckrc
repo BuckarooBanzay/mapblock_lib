@@ -17,5 +17,8 @@ read_globals = {
 
 	-- testing
 	"mineunit",
-	"sourcefile"
+	"sourcefile",
+	"describe",
+	"it",
+	"assert"
 }

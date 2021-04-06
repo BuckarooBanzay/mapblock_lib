@@ -164,3 +164,32 @@ function mapblock_lib.deserialize(mapblock_pos, filename, options)
 
 	return true
 end
+
+function mapblock_lib.deserialize_multi(pos1, prefix)
+	local manifest = mapblock_lib.read_manifest(prefix .. ".manifest")
+	if not manifest then
+		return false, "no manifest found!"
+	end
+
+	local pos2 = vector.add(pos1, manifest.range)
+	local iterator = mapblock_lib.pos_iterator(pos1, pos2)
+	local mapblock_pos
+	local count = 0
+
+	return true, function()
+		mapblock_pos = iterator()
+		if mapblock_pos then
+			local rel_pos = vector.subtract(mapblock_pos, pos1)
+			local filename = mapblock_lib.format_multi_mapblock(prefix, rel_pos)
+
+			local _, err = mapblock_lib.deserialize(mapblock_pos, filename, {})
+			if err then
+				return false, "couldn't load mapblock from " .. filename
+			end
+			count = count + 1
+			return true
+		else
+			return nil, count
+		end
+	end
+end
