@@ -81,6 +81,9 @@ options = {
 	mode = "replace"
 }
 
+-- returns the size of a multi-mapblock-export in mapblocks
+local success, result = mapblock_lib.get_multi_size(prefix)
+
 -- mapblock data storage
 mapblock_lib.get_mapblock_data(mapblock_pos)
 mapblock_lib.set_mapblock_data(mapblock_pos, data)

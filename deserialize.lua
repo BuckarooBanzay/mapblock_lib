@@ -193,3 +193,12 @@ function mapblock_lib.deserialize_multi(pos1, prefix)
 		end
 	end
 end
+
+function mapblock_lib.get_multi_size(prefix)
+	local manifest = mapblock_lib.read_manifest(prefix .. ".manifest")
+	if not manifest then
+		return false, "no manifest found!"
+	end
+
+	return true, vector.add(manifest.range, 1)
+end
