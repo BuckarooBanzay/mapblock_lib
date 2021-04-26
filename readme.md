@@ -54,6 +54,9 @@ mapblock_lib.serialize_multi(pos1, pos2, prefix)
 mapblock_lib.deserialize(mapblock_pos, filename, options)
 mapblock_lib.deserialize_multi(pos1, prefix)
 
+mapblock_lib.validate(filename)
+mapblock_lib.validate_multi(prefix)
+
 options = {
 	-- caches the on-disk file, useful for repetitive mapgen events
 	use_cache = false,

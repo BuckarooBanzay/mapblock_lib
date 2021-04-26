@@ -23,6 +23,7 @@ dofile(MP .. "/transform_transpose.lua")
 
 dofile(MP .. "/serialize.lua")
 dofile(MP .. "/deserialize.lua")
+dofile(MP .. "/validate.lua")
 
 dofile(MP .. "/display.lua")
 dofile(MP .. "/chatcommands/single.lua")

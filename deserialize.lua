@@ -5,6 +5,8 @@ local local_nodename_to_id_mapping = {} -- name -> id
 
 local function get_nodeid(node_name)
 	local local_node_id = local_nodename_to_id_mapping[node_name]
+	local is_known = true
+
 	if not local_node_id then
 		if minetest.registered_nodes[node_name] then
 			-- node is locally available
@@ -12,24 +14,35 @@ local function get_nodeid(node_name)
 		else
 			-- node is not available here
 			local_node_id = air_content_id
+			is_known = false
 		end
 		local_nodename_to_id_mapping[node_name] = local_node_id
 	end
 
-	return local_node_id
+	return local_node_id, is_known
 end
 
 -- map foreign node-ids to local node-ids
-local function localize_nodeids(node_mapping, node_ids)
+function mapblock_lib.localize_nodeids(node_mapping, node_ids)
 	local foreign_nodeid_to_name_mapping = {} -- id -> name
 	for k, v in pairs(node_mapping) do
 		foreign_nodeid_to_name_mapping[v] = k
 	end
 
+	local all_nodes_known = true
+	local unknown_nodes = {}
+
 	for i, node_id in ipairs(node_ids) do
 		local node_name = foreign_nodeid_to_name_mapping[node_id]
-		node_ids[i] = get_nodeid(node_name)
+		local is_known
+		node_ids[i], is_known = get_nodeid(node_name)
+		if not is_known then
+			all_nodes_known = false
+			table.insert(unknown_nodes, node_name)
+		end
 	end
+
+	return all_nodes_known, unknown_nodes
 end
 
 function mapblock_lib.deserialize_part(pos1, pos2, data, metadata, options)
@@ -149,7 +162,7 @@ function mapblock_lib.deserialize(mapblock_pos, filename, options)
 
 	-- localize node-ids
 	if not mapblock.node_ids_localized then
-		localize_nodeids(manifest.node_mapping, mapblock.node_ids)
+		mapblock_lib.localize_nodeids(manifest.node_mapping, mapblock.node_ids)
 		mapblock.node_ids_localized = true
 	end
 
