@@ -32,6 +32,23 @@ minetest.register_chatcommand("mapblock_get_data", {
 	end
 })
 
+minetest.register_chatcommand("mapblock_clear_data", {
+	privs = { mapblock_lib = true },
+	description = "removes the current mapblock data",
+	func = function(name)
+		local player = minetest.get_player_by_name(name)
+		if not player then
+			return false, "player not found"
+		end
+
+		local pos = player:get_pos()
+		local mapblock_pos = mapblock_lib.get_mapblock(pos)
+		local data = mapblock_lib.set_mapblock_data(mapblock_pos, nil)
+
+		return true, dump(data)
+	end
+})
+
 minetest.register_chatcommand("mapblock_save", {
 	privs = { mapblock_lib = true },
 	description = "saves the current mapblock",
