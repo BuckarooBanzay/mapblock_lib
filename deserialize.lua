@@ -178,7 +178,7 @@ function mapblock_lib.deserialize(mapblock_pos, filename, options)
 	return true
 end
 
-function mapblock_lib.deserialize_multi(pos1, prefix)
+function mapblock_lib.deserialize_multi(pos1, prefix, options)
 	local manifest = mapblock_lib.read_manifest(prefix .. ".manifest")
 	if not manifest then
 		return false, "no manifest found!"
@@ -195,7 +195,8 @@ function mapblock_lib.deserialize_multi(pos1, prefix)
 			local rel_pos = vector.subtract(mapblock_pos, pos1)
 			local filename = mapblock_lib.format_multi_mapblock(prefix, rel_pos)
 
-			local _, err = mapblock_lib.deserialize(mapblock_pos, filename, {})
+			options = options or {}
+			local _, err = mapblock_lib.deserialize(mapblock_pos, filename, options)
 			if err then
 				return false, "couldn't load mapblock from " .. filename
 			end

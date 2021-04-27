@@ -52,7 +52,7 @@ mapblock_lib.serialize(mapblock_pos, filename)
 mapblock_lib.serialize_multi(pos1, pos2, prefix)
 
 mapblock_lib.deserialize(mapblock_pos, filename, options)
-mapblock_lib.deserialize_multi(pos1, prefix)
+mapblock_lib.deserialize_multi(pos1, prefix, options)
 
 mapblock_lib.validate(filename)
 mapblock_lib.validate_multi(prefix)
