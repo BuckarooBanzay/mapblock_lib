@@ -15,6 +15,9 @@ read_globals = {
 	"dump", "dump2",
 	"VoxelArea",
 
+	-- mods
+	"monitoring",
+
 	-- testing
 	"mineunit",
 	"sourcefile",
