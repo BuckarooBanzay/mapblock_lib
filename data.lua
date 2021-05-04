@@ -30,16 +30,21 @@ local function load_from_world(mapblock)
 	end
 end
 
+local cache_hit_callback = function() end
+local cache_miss_callback = function() end
+
 function mapblock_lib.get_mapblock_data(mapblock_pos)
 	local key = getkey(mapblock_pos)
 	local data = cache[key]
 	if data ~= nil then
 		-- use cached data (false if no data available)
+		cache_hit_callback()
 		return data
 	else
 		-- cache for future use
 		data = load_from_world(mapblock_pos)
 		cache[key] = data or false
+		cache_miss_callback()
 		return data
 	end
 end
@@ -56,4 +61,31 @@ function mapblock_lib.merge_mapblock_data(mapblock_pos, data)
 		info[key] = value
 	end
 	mapblock_lib.set_mapblock_data(mapblock_pos, info)
+end
+
+
+-- monitoring stuff
+if minetest.get_modpath("monitoring") then
+	monitoring.wrap_global({"mapblock_lib", "set_mapblock_data"}, "mapblock_lib_set_mapblock_data")
+	monitoring.wrap_global({"mapblock_lib", "get_mapblock_data"}, "mapblock_lib_get_mapblock_data")
+
+	-- cache size, periodically updated
+	local cache_size = monitoring.gauge("mapblock_lib_data_cache_size", "data cache size")
+	local function update_cache_size()
+		local entries = 0
+		for _ in pairs(cache) do
+			entries = entries + 1
+		end
+		cache_size.set(entries)
+		minetest.after(10, update_cache_size)
+	end
+	update_cache_size()
+
+	-- cache hit stats
+	local cache_hits = monitoring.counter("mapblock_lib_data_cache_hits", "number of cache hits")
+	cache_hit_callback = cache_hits.inc
+
+	local cache_miss = monitoring.counter("mapblock_lib_data_cache_miss", "number of cache misses")
+	cache_miss_callback = cache_miss.inc
+
 end
