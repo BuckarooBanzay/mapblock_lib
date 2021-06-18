@@ -1,3 +1,6 @@
+---------
+-- mapblock data management
+
 local function getkey(mapblock)
 	return mapblock.x .. "/" .. mapblock.y .. "/" .. mapblock.z
 end
@@ -33,6 +36,9 @@ end
 local cache_hit_callback = function() end
 local cache_miss_callback = function() end
 
+--- get the mapblock data
+-- @param mapblock_pos the mapblock position
+-- @return the mapblock data as a table or nil if none available
 function mapblock_lib.get_mapblock_data(mapblock_pos)
 	local key = getkey(mapblock_pos)
 	local data = cache[key]
@@ -49,12 +55,18 @@ function mapblock_lib.get_mapblock_data(mapblock_pos)
 	end
 end
 
+--- set the mapblock data
+-- @param mapblock_pos the mapblock position
+-- @param data the table to set for that mapblock
 function mapblock_lib.set_mapblock_data(mapblock_pos, data)
 	local key = getkey(mapblock_pos)
 	cache[key] = data
 	save_to_world(mapblock_pos, data)
 end
 
+--- merge data with existing mapblock data
+-- @param mapblock_pos the mapblock position
+-- @param data the table to set for that mapblock (keys are merged to existing data)
 function mapblock_lib.merge_mapblock_data(mapblock_pos, data)
 	local info = mapblock_lib.get_mapblock_data(mapblock_pos) or {}
 	for key, value in pairs(data) do

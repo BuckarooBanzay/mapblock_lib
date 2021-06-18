@@ -1,3 +1,6 @@
+---------
+-- mapblock serialization
+
 local air_content_id = minetest.get_content_id("air")
 local ignore_content_id = minetest.get_content_id("ignore")
 
@@ -112,7 +115,9 @@ function mapblock_lib.serialize_part(pos1, pos2, node_mapping)
 	return data
 end
 
-
+--- serialize a mapblock to a file
+-- @param mapblock_pos the mapblock position
+-- @param filename the file to save to
 function mapblock_lib.serialize(block_pos, filename)
 	local node_mapping = {}
 	local pos1, pos2 = mapblock_lib.get_mapblock_bounds_from_mapblock(block_pos)

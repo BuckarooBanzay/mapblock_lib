@@ -1,3 +1,6 @@
+---------
+-- mapblock deserialization
+
 local air_content_id = minetest.get_content_id("air")
 
 -- local nodename->id cache
@@ -110,6 +113,10 @@ end
 local mapblock_cache = {}
 local manifest_cache = {}
 
+--- deserialize a mapblock from a file
+-- @param mapblock_pos the mapblock position
+-- @param filename the file to rad from
+-- @param options the options to apply to the mapblock
 function mapblock_lib.deserialize(mapblock_pos, filename, options)
 	local min, max = mapblock_lib.get_mapblock_bounds_from_mapblock(mapblock_pos)
 	local cache_key = filename
