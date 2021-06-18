@@ -1,3 +1,5 @@
+---------
+-- utilities and helpers
 
 function mapblock_lib.get_mapblock_center(pos)
 	local mapblock = vector.floor( vector.divide(pos, 16))
@@ -66,4 +68,30 @@ end
 
 function mapblock_lib.format_multi_mapblock(prefix, pos)
 	return prefix .. "_" .. minetest.pos_to_string(pos)
+end
+
+-- pre-generate air-only mapblock
+local air_content_id = minetest.get_content_id("air")
+local air_mapblock_nodeids = {}
+local air_mapblock_param1 = {}
+local air_mapblock_param2 = {}
+for i=1,4096 do
+	air_mapblock_nodeids[i] = air_content_id
+	air_mapblock_param1[i] = minetest.LIGHT_MAX
+	air_mapblock_param2[i] = 0
+end
+
+--- clears a mapblock (fills it with air)
+-- @param mapblock_pos the mapblock position
+function mapblock_lib.clear_mapblock(mapblock_pos)
+	local min, max = mapblock_lib.get_mapblock_bounds_from_mapblock(mapblock_pos)
+	local manip = minetest.get_voxel_manip()
+	manip:read_from_map(min, max)
+
+	manip:set_data(air_mapblock_nodeids)
+	manip:set_light_data(air_mapblock_param1)
+	manip:set_param2_data(air_mapblock_param2)
+	manip:write_to_map()
+
+	-- TODO: remove residual metadata
 end

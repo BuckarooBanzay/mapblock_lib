@@ -149,12 +149,20 @@ function mapblock_lib.deserialize(mapblock_pos, filename, options)
 	local mapblock, manifest
 
 	if options.use_cache and mapblock_cache[cache_key] then
-		mapblock = mapblock_cache[cache_key]
 		manifest = manifest_cache[cache_key]
+		mapblock = mapblock_cache[cache_key]
 		is_cached = true
 	else
-		mapblock = mapblock_lib.read_mapblock(filename .. ".bin")
 		manifest = mapblock_lib.read_manifest(filename .. ".manifest.json")
+		if not manifest.air_only then
+			mapblock = mapblock_lib.read_mapblock(filename .. ".bin")
+		end
+	end
+
+	if manifest.air_only then
+		-- set air
+		mapblock_lib.clear_mapblock(mapblock_pos)
+		return true
 	end
 
 	if not mapblock then

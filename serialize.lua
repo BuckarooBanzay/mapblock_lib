@@ -32,6 +32,7 @@ function mapblock_lib.serialize_part(pos1, pos2, node_mapping)
 	local param2 = manip:get_param2_data()
 
 	local node_id_map = {}
+	local air_only = true
 
 	-- prepare data structure
 	local data = {
@@ -53,6 +54,11 @@ function mapblock_lib.serialize_part(pos1, pos2, node_mapping)
 				if node_id == ignore_content_id then
 					-- replace ignore blocks with air
 					node_id = air_content_id
+				end
+
+				if air_only and node_id ~= air_content_id then
+					-- mapblock contains not jut air
+					air_only = false
 				end
 
 				if node_ids_with_timer[node_id] then
@@ -112,7 +118,7 @@ function mapblock_lib.serialize_part(pos1, pos2, node_mapping)
 		end
 	end
 
-	return data
+	return data, air_only
 end
 
 --- serialize a mapblock to a file
@@ -121,12 +127,15 @@ end
 function mapblock_lib.serialize(block_pos, filename)
 	local node_mapping = {}
 	local pos1, pos2 = mapblock_lib.get_mapblock_bounds_from_mapblock(block_pos)
-	local data = mapblock_lib.serialize_part(pos1, pos2, node_mapping)
+	local data, air_only = mapblock_lib.serialize_part(pos1, pos2, node_mapping)
 
-	mapblock_lib.write_mapblock(data, filename .. ".bin")
+	if not air_only then
+		mapblock_lib.write_mapblock(data, filename .. ".bin")
+	end
 
 	local manifest = {
 		node_mapping = node_mapping,
+		air_only = air_only,
 		metadata = data.metadata,
 		version = 2
 	}
