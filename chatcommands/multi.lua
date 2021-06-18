@@ -77,15 +77,23 @@ minetest.register_chatcommand("mapblocks_save", {
 
 		local iterator = result
 		local msg
-		repeat
-			result, msg = iterator()
-		until result ~= true
 
-		if result == nil then
-			return true, msg .. " mapblocks saved as " .. prefix
-		else
-			return false, msg
+		local function worker()
+			result, msg = iterator()
+			if result == true then
+				-- not done yet
+				minetest.after(0, worker)
+			elseif result == nil then
+				-- done
+				minetest.chat_send_player(name, msg .. " mapblocks saved as " .. prefix)
+			else
+				-- error
+				minetest.chat_send_player(name, "error while saving mapblocks: " .. msg or "<unknown>")
+			end
 		end
+
+		minetest.after(0, worker)
+		return true, "Started saving"
 	end
 })
 
