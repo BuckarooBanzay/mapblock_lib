@@ -1,0 +1,209 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Mapblock lib</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>mapblock_lib</h1>
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Chatcommands">Chatcommands </a></li>
+<li><a href="#Api">Api </a></li>
+</ul>
+
+
+<h2>Topics</h2>
+<ul class="">
+  <li><strong>readme</strong></li>
+</ul>
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><a href="../modules/data.html">data</a></li>
+  <li><a href="../modules/deserialize.html">deserialize</a></li>
+  <li><a href="../modules/serialize.html">serialize</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+
+
+<h1>mapblock_lib</h1>
+
+<p><a href="https://content.minetest.net/packages/BuckarooBanzay/mapblock_lib/"><img src="https://content.minetest.net/packages/BuckarooBanzay/mapblock_lib/shields/downloads/" alt="ContentDB"/></a>
+<img src="https://github.com/BuckarooBanzay/mapblock_lib/workflows/luacheck/badge.svg" alt=""/>
+<img src="https://github.com/BuckarooBanzay/mapblock_lib/workflows/ldoc/badge.svg" alt=""/></p>
+
+<p>Mapblock-granular world operations, transformations and utilities</p>
+
+<p><img src="./screenshot.png"/></p>
+
+<p>Features:</p>
+
+<ul>
+    <li>Load/Save mapblocks from/to disk</li>
+    <li>Serializes param1/param2/nodetimers and metadata</li>
+    <li>Transforms mapblock data on the fly (rotation, orientation, replacements)</li>
+    <li>Supports caching of the loaded mapblocks for fast in-world placement (mapgen)</li>
+    <li>Adds a per-mapblock data-storage (<code>get_mapblock_data</code> / <code>set_mapblock_data</code>) with caching</li>
+</ul>
+
+<p>Use-cases:</p>
+
+<ul>
+    <li>Custom mapgens with pre-built schematics</li>
+    <li>Building-mods</li>
+</ul>
+
+<p>Demo:</p>
+
+<ul>
+    <li><a href="https://github.com/BuckarooBanzay/citygen">City mapgen</a></li>
+</ul>
+
+<p><a name="Chatcommands"></a></p>
+<h2>Chatcommands</h2>
+
+<h3>Single mapblock operations</h3>
+<p>* <strong>/mapblock_show</strong> marks the current mapblock with a grid
+* <strong>/mapblock_save [name]</strong> saves the current mapblock in <code>&lt;world_path&gt;/mapblocks/&lt;name&gt;</code>
+* <strong>/mapblock_load [name]</strong> loads a previously saved mapblock
+* <strong>/mapblock<em>rotate</em>y [90,180,270]</strong> rotates the current mapblock around the y axis
+* <strong>/mapblock_mark</strong> (only available if the <code>worldedit</code> mod is present) marks the current mapblock with worledit</p>
+
+<h3>Multi-mapblock operations</h3>
+<p>* <strong>/mapblocks_pos1</strong> marks the pos1 for a multi-mapblock ex-/import
+* <strong>/mapblocks_pos2</strong> marks the pos2 for a multi-mapblock ex-/import
+* <strong>/mapblocks_save [name]</strong> saves the mapblock region in <code>&lt;world_path/mapblocks/&lt;name&gt;</code>
+* <strong>/mapblocks_load [name]</strong> loads a saved mapblock region</p>
+
+<p><a name="Api"></a></p>
+<h2>Api</h2>
+
+<h3>High.level</h3>
+
+<p>Stable, high-level api</p>
+
+
+<pre>
+<span class="comment">-- main api
+</span>mapblock_lib.serialize(mapblock_pos, filename)
+mapblock_lib.serialize_multi(pos1, pos2, prefix)
+
+mapblock_lib.deserialize(mapblock_pos, filename, options)
+mapblock_lib.deserialize_multi(pos1, prefix, options)
+
+mapblock_lib.validate(filename)
+mapblock_lib.validate_multi(prefix)
+
+options = {
+    <span class="comment">-- caches the on-disk file, useful for repetitive mapgen events
+</span> use_cache = <span class="keyword">false</span>,
+    <span class="comment">-- various transformations to apply to the loaded mapblock
+</span> transform = {
+        <span class="comment">-- rotate the mapblock around the given axis with the angle (90, 180, 270)
+</span>     rotate = {
+            angle = <span class="number">90</span>,
+            axis = <span class="string">"y"</span>,
+            <span class="comment">-- disables param2 orientation for the given nodes
+</span>         disable_orientation = {
+                [<span class="string">"default:sandstonebrick"</span>] = <span class="keyword">true</span>
+            }
+        },
+        <span class="comment">-- replace certain nodes with others
+</span>     replace = {
+            [<span class="string">"default:dirt"</span>] = <span class="string">"default:mese"</span>
+        },
+        <span class="comment">-- bulk set param2 for certain nodes, useful for mass-coloring
+</span>     set_param2 = {
+            [<span class="string">"unifiedbricks:brickblock"</span>] = <span class="number">15</span>
+        }
+    }
+    <span class="comment">-- placement mode "replace": replace the whole mapblock, "add": replace only air nodes
+</span> mode = <span class="string">"replace"</span>
+}
+
+<span class="comment">-- returns the size of a multi-mapblock-export in mapblocks
+</span><span class="keyword">local</span> success, result = mapblock_lib.get_multi_size(prefix)
+
+<span class="comment">-- mapblock data storage
+</span>mapblock_lib.get_mapblock_data(mapblock_pos)
+mapblock_lib.set_mapblock_data(mapblock_pos, data)
+mapblock_lib.merge_mapblock_data(mapblock_pos, data)
+</pre>
+
+
+<h3>Utilities</h3>
+
+<p>Basic utilities</p>
+
+
+<pre>
+<span class="comment">-- utils
+</span>mapblock_lib.get_mapblock(pos)
+mapblock_lib.get_mapblock_bounds_from_mapblock(block_pos)
+mapblock_lib.get_mapblock_bounds(pos)
+mapblock_lib.get_mapblock_center(pos)
+mapblock_lib.sort_pos(pos1, pos2)
+mapblock_lib.pos_iterator(pos1, pos2)
+
+<span class="comment">-- display
+</span>mapblock_lib.display_mapblock_at_pos(pos, text, timeout)
+mapblock_lib.display_mapblock(mapblock, text, timeout)
+</pre>
+
+
+<h3>Low level</h3>
+
+<p>Use at your own risk</p>
+
+
+<pre>
+mapblock_lib.serialize_part(pos1, pos2, node_mapping)
+mapblock_lib.deserialize_part(pos1, pos2, data, metadata, options)
+</pre>
+
+
+<h1>License</h1>
+
+<ul>
+    <li>Code: MIT</li>
+    <li>Textures: CC-BY-SA 3.0</li>
+</ul>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
+<i style="float:right;">Last updated 2021-06-18 18:09:45 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>
