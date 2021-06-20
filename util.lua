@@ -1,26 +1,45 @@
 ---------
 -- utilities and helpers
 
+--- returns the mapblock-center of the given coordinates
+-- @param pos the node-position
+-- @return the node-position of the current mapblock-center with fractions
 function mapblock_lib.get_mapblock_center(pos)
 	local mapblock = vector.floor( vector.divide(pos, 16))
 	return vector.add(vector.multiply(mapblock, 16), 7.5)
 end
 
+--- returns the mapblock position for the node-position
+-- @param pos the node-position
+-- @return the mapblock-position
 function mapblock_lib.get_mapblock(pos)
 	return vector.floor( vector.divide(pos, 16))
 end
 
+--- returns the max/min bounds for the mapblock-position
+-- @param block_pos the mapblock-position
+-- @return the min-node-position
+-- @return the max-node-position
 function mapblock_lib.get_mapblock_bounds_from_mapblock(block_pos)
 	local min = vector.multiply(block_pos, 16)
 	local max = vector.add(min, 15)
 	return min, max
 end
 
+--- returns the max/min bounds for the node-position
+-- @param pos the node-position
+-- @return the min-node-position
+-- @return the max-node-position
 function mapblock_lib.get_mapblock_bounds(pos)
 	local mapblock = vector.floor( vector.divide(pos, 16))
 	return mapblock_lib.get_mapblock_bounds_from_mapblock(mapblock)
 end
 
+--- sorts the position by ascending order
+-- @param pos1 the first position
+-- @param pos2 the second position
+-- @return the lower position
+-- @return the upper position
 function mapblock_lib.sort_pos(pos1, pos2)
 	pos1 = {x=pos1.x, y=pos1.y, z=pos1.z}
 	pos2 = {x=pos2.x, y=pos2.y, z=pos2.z}
@@ -36,7 +55,10 @@ function mapblock_lib.sort_pos(pos1, pos2)
 	return pos1, pos2
 end
 
--- returns an iterator function for the mapblock coordinate range
+--- returns an iterator function for the mapblock coordinate range
+-- @param pos1 the lower position
+-- @param pos2 the upper position
+-- @return a position iterator
 function mapblock_lib.pos_iterator(pos1, pos2)
 	local pos
 	return function()

@@ -114,6 +114,7 @@ local mapblock_cache = {}
 local manifest_cache = {}
 
 --- deserialize a mapblock from a file
+-- @see deserialize_options.lua
 -- @param mapblock_pos the mapblock position
 -- @param filename the file to rad from
 -- @param options the options to apply to the mapblock
@@ -193,6 +194,11 @@ function mapblock_lib.deserialize(mapblock_pos, filename, options)
 	return true
 end
 
+--- deserialize multiple mapblocks from a file
+-- @see deserialize_options.lua
+-- @param pos1 the first mapblock position
+-- @param prefix the filename prefix
+-- @param options the options to apply to the mapblocks
 function mapblock_lib.deserialize_multi(pos1, prefix, options)
 	local manifest = mapblock_lib.read_manifest(prefix .. ".manifest")
 	if not manifest then
@@ -223,6 +229,10 @@ function mapblock_lib.deserialize_multi(pos1, prefix, options)
 	end
 end
 
+--- returns the size of a multi-mapblock export
+-- @param prefix the filename prefix
+-- @return success
+-- @return a vector with the size
 function mapblock_lib.get_multi_size(prefix)
 	local manifest = mapblock_lib.read_manifest(prefix .. ".manifest")
 	if not manifest then

@@ -1,4 +1,10 @@
+---------
+-- serialized mapblock validation utilities
 
+--- validate a single mapblock file
+-- @param filename the filename of the mapblock
+-- @return success
+-- @return error-message if success is false
 function mapblock_lib.validate(filename)
     local mapblock = mapblock_lib.read_mapblock(filename .. ".bin")
     if not mapblock then
@@ -26,6 +32,10 @@ function mapblock_lib.validate(filename)
     return true
 end
 
+--- validate a multi-mapblock export
+-- @param prefix the prefix of the files
+-- @return success
+-- @return error-message if success is false
 function mapblock_lib.validate_multi(prefix)
     local manifest = mapblock_lib.read_manifest(prefix .. ".manifest")
 	if not manifest then

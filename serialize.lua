@@ -143,6 +143,10 @@ function mapblock_lib.serialize(block_pos, filename)
 	mapblock_lib.write_manifest(manifest, filename .. ".manifest.json")
 end
 
+--- serialize multiple mapblocks to a file
+-- @param pos1 the first (lower) mapblock position
+-- @param pos1 the second (upper) mapblock position
+-- @param prefix the filename prefix
 function mapblock_lib.serialize_multi(pos1, pos2, prefix)
 	local iterator = mapblock_lib.pos_iterator(pos1, pos2)
 	local mapblock_pos
