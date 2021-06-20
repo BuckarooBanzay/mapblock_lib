@@ -42,10 +42,15 @@
   <li><a href="../modules/deserialize.html">deserialize</a></li>
   <li><a href="../modules/serialize.html">serialize</a></li>
   <li><strong>util</strong></li>
+  <li><a href="../modules/validate.html">validate</a></li>
 </ul>
 <h2>Topics</h2>
 <ul class="">
   <li><a href="../topics/readme.md.html">readme</a></li>
+</ul>
+<h2>Examples</h2>
+<ul class="nowrap">
+  <li><a href="../examples/deserialize_options.lua.html">deserialize_options.lua</a></li>
 </ul>
 
 </div>
@@ -62,6 +67,30 @@
 <h2><a href="#Functions">Functions</a></h2>
 <table class="function_list">
 	<tr>
+	<td class="name" nowrap><a href="#mapblock_lib.get_mapblock_center">mapblock_lib.get_mapblock_center (pos)</a></td>
+	<td class="summary">returns the mapblock-center of the given coordinates</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#mapblock_lib.get_mapblock">mapblock_lib.get_mapblock (pos)</a></td>
+	<td class="summary">returns the mapblock position for the node-position</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#mapblock_lib.get_mapblock_bounds_from_mapblock">mapblock_lib.get_mapblock_bounds_from_mapblock (block_pos)</a></td>
+	<td class="summary">returns the max/min bounds for the mapblock-position</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#mapblock_lib.get_mapblock_bounds">mapblock_lib.get_mapblock_bounds (pos)</a></td>
+	<td class="summary">returns the max/min bounds for the node-position</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#mapblock_lib.sort_pos">mapblock_lib.sort_pos (pos1, pos2)</a></td>
+	<td class="summary">sorts the position by ascending order</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#mapblock_lib.pos_iterator">mapblock_lib.pos_iterator (pos1, pos2)</a></td>
+	<td class="summary">returns an iterator function for the mapblock coordinate range</td>
+	</tr>
+	<tr>
 	<td class="name" nowrap><a href="#mapblock_lib.clear_mapblock">mapblock_lib.clear_mapblock (mapblock_pos)</a></td>
 	<td class="summary">clears a mapblock (fills it with air)</td>
 	</tr>
@@ -74,6 +103,168 @@
     <h2 class="section-header "><a name="Functions"></a>Functions</h2>
 
     <dl class="function">
+    <dt>
+    <a name = "mapblock_lib.get_mapblock_center"></a>
+    <strong>mapblock_lib.get_mapblock_center (pos)</strong>
+    </dt>
+    <dd>
+    returns the mapblock-center of the given coordinates
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pos</span>
+         the node-position
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        the node-position of the current mapblock-center with fractions
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "mapblock_lib.get_mapblock"></a>
+    <strong>mapblock_lib.get_mapblock (pos)</strong>
+    </dt>
+    <dd>
+    returns the mapblock position for the node-position
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pos</span>
+         the node-position
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        the mapblock-position
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "mapblock_lib.get_mapblock_bounds_from_mapblock"></a>
+    <strong>mapblock_lib.get_mapblock_bounds_from_mapblock (block_pos)</strong>
+    </dt>
+    <dd>
+    returns the max/min bounds for the mapblock-position
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">block_pos</span>
+         the mapblock-position
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+        <li>
+        the min-node-position</li>
+        <li>
+        the max-node-position</li>
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "mapblock_lib.get_mapblock_bounds"></a>
+    <strong>mapblock_lib.get_mapblock_bounds (pos)</strong>
+    </dt>
+    <dd>
+    returns the max/min bounds for the node-position
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pos</span>
+         the node-position
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+        <li>
+        the min-node-position</li>
+        <li>
+        the max-node-position</li>
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "mapblock_lib.sort_pos"></a>
+    <strong>mapblock_lib.sort_pos (pos1, pos2)</strong>
+    </dt>
+    <dd>
+    sorts the position by ascending order
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pos1</span>
+         the first position
+        </li>
+        <li><span class="parameter">pos2</span>
+         the second position
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+        <li>
+        the lower position</li>
+        <li>
+        the upper position</li>
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "mapblock_lib.pos_iterator"></a>
+    <strong>mapblock_lib.pos_iterator (pos1, pos2)</strong>
+    </dt>
+    <dd>
+    returns an iterator function for the mapblock coordinate range
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pos1</span>
+         the lower position
+        </li>
+        <li><span class="parameter">pos2</span>
+         the upper position
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        a position iterator
+    </ol>
+
+
+
+
+</dd>
     <dt>
     <a name = "mapblock_lib.clear_mapblock"></a>
     <strong>mapblock_lib.clear_mapblock (mapblock_pos)</strong>
@@ -101,7 +292,7 @@
 </div> <!-- id="main" -->
 <div id="about">
 <i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
-<i style="float:right;">Last updated 2021-06-18 18:54:19 </i>
+<i style="float:right;">Last updated 2021-06-20 08:32:09 </i>
 </div> <!-- id="about" -->
 </div> <!-- id="container" -->
 </body>

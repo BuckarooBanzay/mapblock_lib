@@ -38,11 +38,11 @@
 
 <h2>Modules</h2>
 <ul class="nowrap">
-  <li><strong>data</strong></li>
+  <li><a href="../modules/data.html">data</a></li>
   <li><a href="../modules/deserialize.html">deserialize</a></li>
   <li><a href="../modules/serialize.html">serialize</a></li>
   <li><a href="../modules/util.html">util</a></li>
-  <li><a href="../modules/validate.html">validate</a></li>
+  <li><strong>validate</strong></li>
 </ul>
 <h2>Topics</h2>
 <ul class="">
@@ -57,8 +57,8 @@
 
 <div id="content">
 
-<h1>Module <code>data</code></h1>
-<p>mapblock data management</p>
+<h1>Module <code>validate</code></h1>
+<p>serialized mapblock validation utilities</p>
 <p>
 
 </p>
@@ -67,16 +67,12 @@
 <h2><a href="#Functions">Functions</a></h2>
 <table class="function_list">
 	<tr>
-	<td class="name" nowrap><a href="#mapblock_lib.get_mapblock_data">mapblock_lib.get_mapblock_data (mapblock_pos)</a></td>
-	<td class="summary">get the mapblock data</td>
+	<td class="name" nowrap><a href="#mapblock_lib.validate">mapblock_lib.validate (filename)</a></td>
+	<td class="summary">validate a single mapblock file</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#mapblock_lib.set_mapblock_data">mapblock_lib.set_mapblock_data (mapblock_pos, data)</a></td>
-	<td class="summary">set the mapblock data</td>
-	</tr>
-	<tr>
-	<td class="name" nowrap><a href="#mapblock_lib.merge_mapblock_data">mapblock_lib.merge_mapblock_data (mapblock_pos, data)</a></td>
-	<td class="summary">merge data with existing mapblock data</td>
+	<td class="name" nowrap><a href="#mapblock_lib.validate_multi">mapblock_lib.validate_multi (prefix)</a></td>
+	<td class="summary">validate a multi-mapblock export</td>
 	</tr>
 </table>
 
@@ -88,24 +84,26 @@
 
     <dl class="function">
     <dt>
-    <a name = "mapblock_lib.get_mapblock_data"></a>
-    <strong>mapblock_lib.get_mapblock_data (mapblock_pos)</strong>
+    <a name = "mapblock_lib.validate"></a>
+    <strong>mapblock_lib.validate (filename)</strong>
     </dt>
     <dd>
-    get the mapblock data
+    validate a single mapblock file
 
 
     <h3>Parameters:</h3>
     <ul>
-        <li><span class="parameter">mapblock_pos</span>
-         the mapblock position
+        <li><span class="parameter">filename</span>
+         the filename of the mapblock
         </li>
     </ul>
 
     <h3>Returns:</h3>
     <ol>
-
-        the mapblock data as a table or nil if none available
+        <li>
+        success</li>
+        <li>
+        error-message if success is false</li>
     </ol>
 
 
@@ -113,46 +111,27 @@
 
 </dd>
     <dt>
-    <a name = "mapblock_lib.set_mapblock_data"></a>
-    <strong>mapblock_lib.set_mapblock_data (mapblock_pos, data)</strong>
+    <a name = "mapblock_lib.validate_multi"></a>
+    <strong>mapblock_lib.validate_multi (prefix)</strong>
     </dt>
     <dd>
-    set the mapblock data
+    validate a multi-mapblock export
 
 
     <h3>Parameters:</h3>
     <ul>
-        <li><span class="parameter">mapblock_pos</span>
-         the mapblock position
-        </li>
-        <li><span class="parameter">data</span>
-         the table to set for that mapblock
+        <li><span class="parameter">prefix</span>
+         the prefix of the files
         </li>
     </ul>
 
-
-
-
-
-</dd>
-    <dt>
-    <a name = "mapblock_lib.merge_mapblock_data"></a>
-    <strong>mapblock_lib.merge_mapblock_data (mapblock_pos, data)</strong>
-    </dt>
-    <dd>
-    merge data with existing mapblock data
-
-
-    <h3>Parameters:</h3>
-    <ul>
-        <li><span class="parameter">mapblock_pos</span>
-         the mapblock position
-        </li>
-        <li><span class="parameter">data</span>
-         the table to set for that mapblock (keys are merged to existing data)
-        </li>
-    </ul>
-
+    <h3>Returns:</h3>
+    <ol>
+        <li>
+        success</li>
+        <li>
+        error-message if success is false</li>
+    </ol>
 
 
 
