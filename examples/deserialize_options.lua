@@ -30,7 +30,7 @@ local options = {
 
 	-- metadata callback, can be used to intercept and modify node-metadata/inventory
 	on_metadata = function(pos, content_id, meta)
-		-- resolve nodename (use a global var here for better performance)
+		-- resolve nodename (use a var here for better performance)
 		local nodename = minetest.get_name_from_content_id(content_id)
 		if nodename == "default:chest_locked" then
 			print(minetest.pos_to_string(pos), nodename)
