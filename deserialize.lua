@@ -95,7 +95,14 @@ function mapblock_lib.deserialize_part(pos1, pos2, data, metadata, options)
 		for pos_str, md in pairs(metadata.meta) do
 			local relative_pos = minetest.string_to_pos(pos_str)
 			local absolute_pos = vector.add(pos1, relative_pos)
-			minetest.get_meta(absolute_pos):from_table(md)
+			local meta = minetest.get_meta(absolute_pos)
+			meta:from_table(md)
+			if options.on_metadata then
+				-- execute callback
+				local i = area:indexp(absolute_pos)
+				local content_id = node_data[i]
+				options.on_metadata(absolute_pos, content_id, meta)
+			end
 		end
 	end
 
