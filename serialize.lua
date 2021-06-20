@@ -145,7 +145,7 @@ end
 
 --- serialize multiple mapblocks to a file
 -- @param pos1 the first (lower) mapblock position
--- @param pos1 the second (upper) mapblock position
+-- @param pos2 the second (upper) mapblock position
 -- @param prefix the filename prefix
 function mapblock_lib.serialize_multi(pos1, pos2, prefix)
 	local iterator = mapblock_lib.pos_iterator(pos1, pos2)
