@@ -29,6 +29,7 @@ Demo:
 ## Chatcommands
 
 ### Single mapblock operations
+
 * `/mapblock_show` marks the current mapblock with a grid
 * `/mapblock_save [name]` saves the current mapblock in `<world_path>/mapblocks/<name>`
 * `/mapblock_load [name]` loads a previously saved mapblock
@@ -36,6 +37,7 @@ Demo:
 * `/mapblock_mark` (only available if the `worldedit` mod is present) marks the current mapblock with worledit
 
 ### Multi-mapblock operations
+
 * `/mapblocks_pos1` marks the pos1 for a multi-mapblock ex-/import
 * `/mapblocks_pos2` marks the pos2 for a multi-mapblock ex-/import
 * `/mapblocks_save [name]` saves the mapblock region in `<world_path/mapblocks/<name>`
