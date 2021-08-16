@@ -161,7 +161,11 @@ function mapblock_lib.deserialize(mapblock_pos, filename, options)
 		mapblock = mapblock_cache[cache_key]
 		is_cached = true
 	else
-		manifest = mapblock_lib.read_manifest(filename .. ".manifest.json")
+		local manifest_file = filename .. ".manifest.json"
+		manifest = mapblock_lib.read_manifest(manifest_file)
+		if not manifest then
+			return false, "manifest '" .. manifest_file .. "' not found"
+		end
 		if not manifest.air_only then
 			mapblock = mapblock_lib.read_mapblock(filename .. ".bin")
 		end
