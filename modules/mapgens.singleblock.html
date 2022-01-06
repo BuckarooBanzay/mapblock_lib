@@ -40,10 +40,10 @@
 <ul class="nowrap">
   <li><a href="../modules/data.html">data</a></li>
   <li><a href="../modules/deserialize.html">deserialize</a></li>
-  <li><a href="../modules/mapgens.singleblock.html">mapgens.singleblock</a></li>
+  <li><strong>mapgens.singleblock</strong></li>
   <li><a href="../modules/serialize.html">serialize</a></li>
   <li><a href="../modules/util.html">util</a></li>
-  <li><strong>validate</strong></li>
+  <li><a href="../modules/validate.html">validate</a></li>
 </ul>
 <h2>Topics</h2>
 <ul class="">
@@ -59,8 +59,8 @@
 
 <div id="content">
 
-<h1>Module <code>validate</code></h1>
-<p>serialized mapblock validation utilities</p>
+<h1>Module <code>mapgens.singleblock</code></h1>
+<p>singleblock mapgen helper</p>
 <p>
 
 </p>
@@ -69,12 +69,9 @@
 <h2><a href="#Functions">Functions</a></h2>
 <table class="function_list">
 	<tr>
-	<td class="name" nowrap><a href="#mapblock_lib.validate">mapblock_lib.validate (filename)</a></td>
-	<td class="summary">validate a single mapblock file</td>
-	</tr>
-	<tr>
-	<td class="name" nowrap><a href="#mapblock_lib.validate_multi">mapblock_lib.validate_multi (prefix)</a></td>
-	<td class="summary">validate a multi-mapblock export</td>
+	<td class="name" nowrap><a href="#mapblock_lib.mapgens.singleblock">mapblock_lib.mapgens.singleblock (cfg)</a></td>
+	<td class="summary">creates a new mapgen-function that generates a single mapblock,
+ the resulting function can be passed to <code>minetest.register_on_generated</code></td>
 	</tr>
 </table>
 
@@ -86,56 +83,36 @@
 
     <dl class="function">
     <dt>
-    <a name = "mapblock_lib.validate"></a>
-    <strong>mapblock_lib.validate (filename)</strong>
+    <a name = "mapblock_lib.mapgens.singleblock"></a>
+    <strong>mapblock_lib.mapgens.singleblock (cfg)</strong>
     </dt>
     <dd>
-    validate a single mapblock file
+    creates a new mapgen-function that generates a single mapblock,
+ the resulting function can be passed to <code>minetest.register_on_generated</code>
 
 
     <h3>Parameters:</h3>
     <ul>
+        <li><span class="parameter">cfg</span> configuration table
+        <ul>
         <li><span class="parameter">filename</span>
-         the filename of the mapblock
+         the filename of the mapblock to use
         </li>
+        <li><span class="parameter">filter</span>
+         an optional filter function of the type <code>fn(blockpos)</code>, returning true means the mapblock is placed
+        </li>
+        <li><span class="parameter">options</span>
+         optional table for <code>mapblock_lib.deserialize</code>
+        </li>
+        </li></ul>
     </ul>
 
-    <h3>Returns:</h3>
-    <ol>
-        <li>
-        success</li>
-        <li>
-        error-message if success is false</li>
-    </ol>
 
 
-
-
-</dd>
-    <dt>
-    <a name = "mapblock_lib.validate_multi"></a>
-    <strong>mapblock_lib.validate_multi (prefix)</strong>
-    </dt>
-    <dd>
-    validate a multi-mapblock export
-
-
-    <h3>Parameters:</h3>
+    <h3>See also:</h3>
     <ul>
-        <li><span class="parameter">prefix</span>
-         the prefix of the files
-        </li>
+         <a href="../examples/singleblock_mapgen.lua.html#">singleblock_mapgen.lua</a>
     </ul>
-
-    <h3>Returns:</h3>
-    <ol>
-        <li>
-        success</li>
-        <li>
-        error-message if success is false</li>
-    </ol>
-
-
 
 
 </dd>
