@@ -17,12 +17,12 @@ local options = {
 			}
 		},
 
-        -- replace certain nodes with others
+		-- replace certain nodes with others
 		replace = {
 			["default:dirt"] = "default:mese"
 		},
 
-        -- bulk set param2 for certain nodes, useful for mass-coloring
+		-- bulk set param2 for certain nodes, useful for mass-coloring
 		set_param2 = {
 			["unifiedbricks:brickblock"] = 15
 		}
@@ -39,7 +39,7 @@ local options = {
 		end
 	end,
 
-    -- placement mode "replace": replace the whole mapblock, "add": replace only air nodes
+	-- placement mode "replace": replace the whole mapblock, "add": replace only air nodes
 	mode = "replace"
 }
 
@@ -53,6 +53,6 @@ local filename = minetest.get_modpath("my_mod") .. "/schematics/my_mapblock"
 local success, msg = mapblock_lib.deserialize(mapblock_pos, filename, options)
 
 if not success then
-    -- not successful, abort with error
-    error(msg)
+	-- not successful, abort with error
+	error(msg)
 end

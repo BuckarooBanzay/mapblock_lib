@@ -1,5 +1,6 @@
 mapblock_lib = {
-	schema_path = minetest.get_worldpath() .. "/mapblocks"
+	schema_path = minetest.get_worldpath() .. "/mapblocks",
+	mapgens = {}
 }
 
 -- create global schema_path
@@ -28,3 +29,5 @@ dofile(MP .. "/validate.lua")
 dofile(MP .. "/display.lua")
 dofile(MP .. "/chatcommands/single.lua")
 dofile(MP .. "/chatcommands/multi.lua")
+
+dofile(MP .. "/mapgens/singleblock.lua")
