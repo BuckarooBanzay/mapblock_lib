@@ -208,6 +208,7 @@ end
 ------
 -- Deerialize multi options
 -- @number delay for async mode: delay between deserialization-calls
+-- @number rotate_y the y rotation, can be 90,180 or 270 degrees
 -- @field callback function to call when the blocks are deserialized
 -- @field progress_callback function to call when the progress is update
 -- @field error_callback function to call on errors
@@ -236,6 +237,21 @@ function mapblock_lib.deserialize_multi(pos1, prefix, options)
 	options.error_callback = options.error_callback or function() end
 	options.mapblock_options = options.mapblock_options or function() end
 
+	local function rotate_pos(pos)
+		if options.rotate_y == 0 then
+			return pos
+		elseif options.rotate_y == 90 then
+			mapblock_lib.flip_pos(pos, vector.add(pos, manifest.range), "x")
+			mapblock_lib.transpose_pos(pos, "x", "z")
+		elseif options.rotate_y == 180 then
+			mapblock_lib.flip_pos(pos, vector.add(pos, manifest.range), "x")
+			mapblock_lib.flip_pos(pos, vector.add(pos, manifest.range), "z")
+		elseif options.rotate_y == 270 then
+			mapblock_lib.flip_pos(pos, vector.add(pos, manifest.range), "z")
+			mapblock_lib.transpose_pos(pos, "x", "z")
+		end
+	end
+
 	local start = minetest.get_us_time()
 
 	local worker
@@ -243,9 +259,18 @@ function mapblock_lib.deserialize_multi(pos1, prefix, options)
 		mapblock_pos = iterator()
 		if mapblock_pos then
 			local rel_pos = vector.subtract(mapblock_pos, pos1)
+			rotate_pos(rel_pos)
 			local filename = mapblock_lib.format_multi_mapblock(prefix, rel_pos)
 
 			local mapblock_options = options.mapblock_options(mapblock_pos)
+			if options.rotate_y then
+				-- apply mapblock rotation to mapblock-nodes
+				mapblock_options = mapblock_options or {}
+				mapblock_options.transform = mapblock_options.transform or {}
+				mapblock_options.transform.rotate = mapblock_options.transform.rotate or {}
+				mapblock_options.transform.rotate.axis = "y"
+				mapblock_options.transform.rotate.angle = options.rotate_y
+			end
 			local _, err = mapblock_lib.deserialize(mapblock_pos, filename, mapblock_options)
 			if err then
 				options.error_callback(err)

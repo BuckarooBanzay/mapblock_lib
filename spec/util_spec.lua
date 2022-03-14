@@ -61,3 +61,21 @@ describe("mapblock_lib.pos_iterator", function()
 		assert.is_nil(iterator())
 	end)
 end)
+
+
+describe("mapblock_lib.transpose_pos", function()
+	it("transposes the pos correctly", function()
+		local pos = { x=2, y=0, z=5 }
+		mapblock_lib.transpose_pos(pos, "x", "z")
+		pos_equals({ x=5, y=0, z=2 }, pos)
+	end)
+end)
+
+describe("mapblock_lib.flip_pos", function()
+	it("flips the pos correctly", function()
+		local pos = { x=2, y=0, z=1 }
+		local max = { x=10, y=0, z=10 }
+		mapblock_lib.flip_pos(pos, max, "x")
+		pos_equals({ x=8, y=0, z=1 }, pos)
+	end)
+end)
