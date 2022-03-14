@@ -33,6 +33,7 @@
 <h2>Contents</h2>
 <ul>
 <li><a href="#Functions">Functions</a></li>
+<li><a href="#Tables">Tables</a></li>
 </ul>
 
 
@@ -97,6 +98,17 @@
 	<td class="summary">clears a mapblock (fills it with air)</td>
 	</tr>
 </table>
+<h2><a href="#Tables">Tables</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#mapblock_pos">mapblock_pos</a></td>
+	<td class="summary">Mapblock position</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#node_pos">node_pos</a></td>
+	<td class="summary">Node position</td>
+	</tr>
+</table>
 
 <br/>
 <br/>
@@ -116,14 +128,14 @@
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">pos</span>
-         the node-position
+         <a href="../modules/util.html#node_pos">node_pos</a> the node-position
         </li>
     </ul>
 
     <h3>Returns:</h3>
     <ol>
 
-        the node-position of the current mapblock-center with fractions
+        <a href="../modules/util.html#node_pos">node_pos</a> the node-position of the current mapblock-center with fractions
     </ol>
 
 
@@ -141,14 +153,14 @@
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">pos</span>
-         the node-position
+         <a href="../modules/util.html#node_pos">node_pos</a> the node-position
         </li>
     </ul>
 
     <h3>Returns:</h3>
     <ol>
 
-        the mapblock-position
+        <a href="../modules/util.html#mapblock_pos">mapblock_pos</a> the mapblock-position
     </ol>
 
 
@@ -166,16 +178,16 @@
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">block_pos</span>
-         the mapblock-position
+         <a href="../modules/util.html#mapblock_pos">mapblock_pos</a> the mapblock-position
         </li>
     </ul>
 
     <h3>Returns:</h3>
     <ol>
         <li>
-        the min-node-position</li>
+        <a href="../modules/util.html#node_pos">node_pos</a> the min-node-position</li>
         <li>
-        the max-node-position</li>
+        <a href="../modules/util.html#node_pos">node_pos</a> the max-node-position</li>
     </ol>
 
 
@@ -193,16 +205,16 @@
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">pos</span>
-         the node-position
+         <a href="../modules/util.html#node_pos">node_pos</a> the node-position
         </li>
     </ul>
 
     <h3>Returns:</h3>
     <ol>
         <li>
-        the min-node-position</li>
+        <a href="../modules/util.html#node_pos">node_pos</a> the min-node-position</li>
         <li>
-        the max-node-position</li>
+        <a href="../modules/util.html#node_pos">node_pos</a> the max-node-position</li>
     </ol>
 
 
@@ -220,19 +232,19 @@
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">pos1</span>
-         the first position
+         <a href="../modules/util.html#node_pos">node_pos</a> the first position
         </li>
         <li><span class="parameter">pos2</span>
-         the second position
+         <a href="../modules/util.html#node_pos">node_pos</a> the second position
         </li>
     </ul>
 
     <h3>Returns:</h3>
     <ol>
         <li>
-        the lower position</li>
+        <a href="../modules/util.html#node_pos">node_pos</a> the lower position</li>
         <li>
-        the upper position</li>
+        <a href="../modules/util.html#node_pos">node_pos</a> the upper position</li>
     </ol>
 
 
@@ -250,17 +262,19 @@
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">pos1</span>
-         the lower position
+         <a href="../modules/util.html#mapblock_pos">mapblock_pos</a> the lower position
         </li>
         <li><span class="parameter">pos2</span>
-         the upper position
+         <a href="../modules/util.html#mapblock_pos">mapblock_pos</a> the upper position
         </li>
     </ul>
 
     <h3>Returns:</h3>
     <ol>
-
-        a position iterator
+        <li>
+        a position iterator</li>
+        <li>
+        the total node/mapblock count</li>
     </ol>
 
 
@@ -288,13 +302,75 @@
 
 </dd>
 </dl>
+    <h2 class="section-header "><a name="Tables"></a>Tables</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "mapblock_pos"></a>
+    <strong>mapblock_pos</strong>
+    </dt>
+    <dd>
+    Mapblock position
+
+
+    <h3>Fields:</h3>
+    <ul>
+        <li><span class="parameter">x</span>
+            <span class="types"><span class="type">number</span></span>
+         mapblock x-position
+        </li>
+        <li><span class="parameter">y</span>
+            <span class="types"><span class="type">number</span></span>
+         mapblock y-position
+        </li>
+        <li><span class="parameter">z</span>
+            <span class="types"><span class="type">number</span></span>
+         mapblock z-position
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "node_pos"></a>
+    <strong>node_pos</strong>
+    </dt>
+    <dd>
+    Node position
+
+
+    <h3>Fields:</h3>
+    <ul>
+        <li><span class="parameter">x</span>
+            <span class="types"><span class="type">number</span></span>
+         node x-position
+        </li>
+        <li><span class="parameter">y</span>
+            <span class="types"><span class="type">number</span></span>
+         node y-position
+        </li>
+        <li><span class="parameter">z</span>
+            <span class="types"><span class="type">number</span></span>
+         node z-position
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
 
 
 </div> <!-- id="content" -->
 </div> <!-- id="main" -->
 <div id="about">
 <i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
-<i style="float:right;">Last updated 2022-01-06 20:25:39 </i>
+<i style="float:right;">Last updated 2022-03-14 13:15:31 </i>
 </div> <!-- id="about" -->
 </div> <!-- id="container" -->
 </body>
