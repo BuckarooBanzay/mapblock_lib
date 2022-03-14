@@ -135,14 +135,9 @@ function mapblock_lib.clear_mapblock(mapblock_pos)
 end
 
 function mapblock_lib.flip_pos(rel_pos, max, axis)
-	local start = max[axis]
-	local value = rel_pos[axis] -- Save position
-	rel_pos[axis] = start - value -- Shift position
+	rel_pos[axis] = max[axis] - rel_pos[axis]
 end
 
 function mapblock_lib.transpose_pos(rel_pos, axis1, axis2)
-	local extent1, extent2 = rel_pos[axis1], rel_pos[axis2]
-	if extent1 < extent2 then -- Transpose only if below the diagonal
-		rel_pos[axis1], rel_pos[axis2] = extent2, extent1 -- Swap axis extents
-	end
+	rel_pos[axis1], rel_pos[axis2] = rel_pos[axis2], rel_pos[axis1]
 end

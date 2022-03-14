@@ -68,6 +68,18 @@ describe("mapblock_lib.transpose_pos", function()
 		local pos = { x=2, y=0, z=5 }
 		mapblock_lib.transpose_pos(pos, "x", "z")
 		pos_equals({ x=5, y=0, z=2 }, pos)
+
+		pos = { x=3, y=0, z=10 }
+		mapblock_lib.transpose_pos(pos, "x", "z")
+		pos_equals({ x=10, y=0, z=3 }, pos)
+
+		pos = { x=10, y=0, z=3 }
+		mapblock_lib.transpose_pos(pos, "x", "z")
+		pos_equals({ x=3, y=0, z=10 }, pos)
+
+		pos = { x=0, y=0, z=0 }
+		mapblock_lib.transpose_pos(pos, "x", "z")
+		pos_equals({ x=0, y=0, z=0 }, pos)
 	end)
 end)
 
@@ -77,5 +89,42 @@ describe("mapblock_lib.flip_pos", function()
 		local max = { x=10, y=0, z=10 }
 		mapblock_lib.flip_pos(pos, max, "x")
 		pos_equals({ x=8, y=0, z=1 }, pos)
+
+		pos = { x=5, y=0, z=1 }
+		mapblock_lib.flip_pos(pos, max, "x")
+		pos_equals({ x=5, y=0, z=1 }, pos)
+
+		pos = { x=6, y=0, z=1 }
+		mapblock_lib.flip_pos(pos, max, "x")
+		pos_equals({ x=4, y=0, z=1 }, pos)
+
+		max = { x=1, y=0, z=1 }
+		pos = { x=0, y=0, z=0 }
+		mapblock_lib.flip_pos(pos, max, "x")
+		pos_equals({ x=1, y=0, z=0 }, pos)
+	end)
+end)
+
+describe("mapblock_lib.flip and transpose", function()
+	it("flips and transposes the pos correctly", function()
+		-- perform four 90° rotations
+		local max = { x=1, y=0, z=1 }
+		local pos = { x=0, y=0, z=0 }
+
+		mapblock_lib.flip_pos(pos, max, "x")
+		mapblock_lib.transpose_pos(pos, "x", "z")
+		pos_equals({ x=0, y=0, z=1 }, pos)
+
+		mapblock_lib.flip_pos(pos, max, "x")
+		mapblock_lib.transpose_pos(pos, "x", "z")
+		pos_equals({ x=1, y=0, z=1 }, pos)
+
+		mapblock_lib.flip_pos(pos, max, "x")
+		mapblock_lib.transpose_pos(pos, "x", "z")
+		pos_equals({ x=1, y=0, z=0 }, pos)
+
+		mapblock_lib.flip_pos(pos, max, "x")
+		mapblock_lib.transpose_pos(pos, "x", "z")
+		pos_equals({ x=0, y=0, z=0 }, pos)
 	end)
 end)

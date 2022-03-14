@@ -237,18 +237,16 @@ function mapblock_lib.deserialize_multi(pos1, prefix, options)
 	options.error_callback = options.error_callback or function() end
 	options.mapblock_options = options.mapblock_options or function() end
 
-	local function rotate_pos(pos)
-		if options.rotate_y == 0 then
-			return pos
-		elseif options.rotate_y == 90 then
-			mapblock_lib.flip_pos(pos, vector.add(pos, manifest.range), "x")
-			mapblock_lib.transpose_pos(pos, "x", "z")
+	local function rotate_pos(rel_pos)
+		if options.rotate_y == 90 then
+			mapblock_lib.flip_pos(rel_pos, manifest.range, "z")
+			mapblock_lib.transpose_pos(rel_pos, "x", "z")
 		elseif options.rotate_y == 180 then
-			mapblock_lib.flip_pos(pos, vector.add(pos, manifest.range), "x")
-			mapblock_lib.flip_pos(pos, vector.add(pos, manifest.range), "z")
+			mapblock_lib.flip_pos(rel_pos, manifest.range, "x")
+			mapblock_lib.flip_pos(rel_pos, manifest.range, "z")
 		elseif options.rotate_y == 270 then
-			mapblock_lib.flip_pos(pos, vector.add(pos, manifest.range), "z")
-			mapblock_lib.transpose_pos(pos, "x", "z")
+			mapblock_lib.flip_pos(rel_pos, manifest.range, "x")
+			mapblock_lib.transpose_pos(rel_pos, "x", "z")
 		end
 	end
 
@@ -259,7 +257,9 @@ function mapblock_lib.deserialize_multi(pos1, prefix, options)
 		mapblock_pos = iterator()
 		if mapblock_pos then
 			local rel_pos = vector.subtract(mapblock_pos, pos1)
+			print("before rotation: " .. minetest.pos_to_string(rel_pos))
 			rotate_pos(rel_pos)
+			print("after rotation: " .. minetest.pos_to_string(rel_pos))
 			local filename = mapblock_lib.format_multi_mapblock(prefix, rel_pos)
 
 			local mapblock_options = options.mapblock_options(mapblock_pos)

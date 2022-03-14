@@ -128,8 +128,7 @@ minetest.register_chatcommand("mapblocks_load", {
 			end,
 			progress_callback = function(p)
 				minetest.chat_send_player(name, "[mapblock_lib] load-progress: " .. math.floor(p*100) .. " %")
-			end,
-			-- rotate_y = 90
+			end
 		})
 
 		return true, "Started loading from '" .. prefix .. "'"
