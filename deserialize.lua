@@ -207,7 +207,6 @@ end
 
 ------
 -- Deerialize multi options
--- @bool async async mode, default: true
 -- @number delay for async mode: delay between deserialization-calls
 -- @field callback function to call when the blocks are deserialized
 -- @field progress_callback function to call when the progress is update
@@ -216,7 +215,7 @@ end
 -- @table deserialize_multi_options
 
 --- deserialize multiple mapblocks from a file
--- @param pos1 @{utils.mapblock_pos} the first mapblock position
+-- @param pos1 @{util.mapblock_pos} the first mapblock position
 -- @string prefix the filename prefix
 -- @param options[opt] @{deserialize_multi_options} multi-deserialization options
 function mapblock_lib.deserialize_multi(pos1, prefix, options)
