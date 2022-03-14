@@ -38,7 +38,11 @@ describe("mapblock_lib.pos_iterator", function()
 	it("returns properly iterated coordinates", function()
 		local pos1 = {x=0, y=0, z=0}
 		local pos2 = {x=1, y=2, z=1}
-		local iterator = mapblock_lib.pos_iterator(pos1, pos2)
+		local iterator, total_count = mapblock_lib.pos_iterator(pos1, pos2)
+
+		-- 2 x 2 x 3
+		assert.equals(12, total_count)
+
 		pos_equals({x=0,y=0,z=0}, iterator())
 		pos_equals({x=1,y=0,z=0}, iterator())
 		pos_equals({x=0,y=0,z=1}, iterator())

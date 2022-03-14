@@ -122,11 +122,11 @@ function mapblock_lib.serialize_part(pos1, pos2, node_mapping)
 end
 
 --- serialize a mapblock to a file
--- @param mapblock_pos the mapblock position
--- @param filename the file to save to
-function mapblock_lib.serialize(block_pos, filename)
+-- @param mapblock_pos @{util.mapblock_pos} the mapblock position
+-- @string filename the file to save to
+function mapblock_lib.serialize(mapblock_pos, filename)
 	local node_mapping = {}
-	local pos1, pos2 = mapblock_lib.get_mapblock_bounds_from_mapblock(block_pos)
+	local pos1, pos2 = mapblock_lib.get_mapblock_bounds_from_mapblock(mapblock_pos)
 	local data, air_only = mapblock_lib.serialize_part(pos1, pos2, node_mapping)
 
 	if not air_only then
@@ -143,30 +143,54 @@ function mapblock_lib.serialize(block_pos, filename)
 	mapblock_lib.write_manifest(manifest, filename .. ".manifest.json")
 end
 
+------
+-- Serialize multi options
+-- @number delay for async mode: delay between serialization-calls
+-- @field callback function to call when the blocks are serialized
+-- @field progress_callback function to call when the progress is update
+-- @table serialize_multi_options
+
 --- serialize multiple mapblocks to a file
--- @param pos1 the first (lower) mapblock position
--- @param pos2 the second (upper) mapblock position
--- @param prefix the filename prefix
-function mapblock_lib.serialize_multi(pos1, pos2, prefix)
-	local iterator = mapblock_lib.pos_iterator(pos1, pos2)
+-- @param pos1 @{util.node_pos} the first (lower) mapblock position
+-- @param pos2 @{util.node_pos} the second (upper) mapblock position
+-- @string prefix the filename prefix
+-- @param options[opt] @{serialize_multi_options} multi-serialization options
+function mapblock_lib.serialize_multi(pos1, pos2, prefix, options)
+	local iterator, total_count = mapblock_lib.pos_iterator(pos1, pos2)
 	local mapblock_pos
 	local count = 0
 
-	return true, function()
+	-- default to async serialization
+	options = options or {}
+	options.delay = options.delay or 0.2
+	options.callback = options.callback or function() end
+	options.progress_callback = options.progress_callback or function() end
+
+	pos1, pos2 = mapblock_lib.sort_pos(pos1, pos2)
+	local start = minetest.get_us_time()
+
+	local worker
+	worker = function()
 		mapblock_pos = iterator()
 		if mapblock_pos then
 			local rel_pos = vector.subtract(mapblock_pos, pos1)
 			local filename = mapblock_lib.format_multi_mapblock(prefix, rel_pos)
 			mapblock_lib.serialize(mapblock_pos, filename)
 			count = count + 1
-			return true
+			options.progress_callback(count / total_count)
+			minetest.after(options.delay, worker)
 		else
+			-- done, write manifest
 			local manifest = {
 				range = vector.subtract(pos2, pos1)
 			}
 			mapblock_lib.write_manifest(manifest, prefix .. ".manifest")
-
-			return nil, count
+			options.progress_callback(1)
+			local micros = minetest.get_us_time() - start
+			options.callback(count, micros)
 		end
 	end
+
+	-- initial call
+	worker()
 end

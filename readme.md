@@ -42,6 +42,7 @@ Demo:
 * `/mapblocks_pos2` marks the pos2 for a multi-mapblock ex-/import
 * `/mapblocks_save [name]` saves the mapblock region in `<world_path/mapblocks/<name>`
 * `/mapblocks_load [name]` loads a saved mapblock region
+* `/mapblocks_allocate [name]` allocates and displays the affected region
 
 ## Api
 

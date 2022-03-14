@@ -1,25 +1,39 @@
 ---------
 -- utilities and helpers
 
+------
+-- Mapblock position
+-- @number x mapblock x-position
+-- @number y mapblock y-position
+-- @number z mapblock z-position
+-- @table mapblock_pos
+
+------
+-- Node position
+-- @number x node x-position
+-- @number y node y-position
+-- @number z node z-position
+-- @table node_pos
+
 --- returns the mapblock-center of the given coordinates
--- @param pos the node-position
--- @return the node-position of the current mapblock-center with fractions
+-- @param pos @{node_pos} the node-position
+-- @return @{node_pos} the node-position of the current mapblock-center with fractions
 function mapblock_lib.get_mapblock_center(pos)
 	local mapblock = vector.floor( vector.divide(pos, 16))
 	return vector.add(vector.multiply(mapblock, 16), 7.5)
 end
 
 --- returns the mapblock position for the node-position
--- @param pos the node-position
--- @return the mapblock-position
+-- @param pos @{node_pos} the node-position
+-- @return @{mapblock_pos} the mapblock-position
 function mapblock_lib.get_mapblock(pos)
 	return vector.floor( vector.divide(pos, 16))
 end
 
 --- returns the max/min bounds for the mapblock-position
--- @param block_pos the mapblock-position
--- @return the min-node-position
--- @return the max-node-position
+-- @param block_pos @{mapblock_pos} the mapblock-position
+-- @return @{node_pos} the min-node-position
+-- @return @{node_pos} the max-node-position
 function mapblock_lib.get_mapblock_bounds_from_mapblock(block_pos)
 	local min = vector.multiply(block_pos, 16)
 	local max = vector.add(min, 15)
@@ -27,19 +41,19 @@ function mapblock_lib.get_mapblock_bounds_from_mapblock(block_pos)
 end
 
 --- returns the max/min bounds for the node-position
--- @param pos the node-position
--- @return the min-node-position
--- @return the max-node-position
+-- @param pos @{node_pos} the node-position
+-- @return @{node_pos} the min-node-position
+-- @return @{node_pos} the max-node-position
 function mapblock_lib.get_mapblock_bounds(pos)
 	local mapblock = vector.floor( vector.divide(pos, 16))
 	return mapblock_lib.get_mapblock_bounds_from_mapblock(mapblock)
 end
 
 --- sorts the position by ascending order
--- @param pos1 the first position
--- @param pos2 the second position
--- @return the lower position
--- @return the upper position
+-- @param pos1 @{node_pos} the first position
+-- @param pos2 @{node_pos} the second position
+-- @return @{node_pos} the lower position
+-- @return @{node_pos} the upper position
 function mapblock_lib.sort_pos(pos1, pos2)
 	pos1 = {x=pos1.x, y=pos1.y, z=pos1.z}
 	pos2 = {x=pos2.x, y=pos2.y, z=pos2.z}
@@ -56,10 +70,12 @@ function mapblock_lib.sort_pos(pos1, pos2)
 end
 
 --- returns an iterator function for the mapblock coordinate range
--- @param pos1 the lower position
--- @param pos2 the upper position
+-- @param pos1 @{mapblock_pos} the lower position
+-- @param pos2 @{mapblock_pos} the upper position
 -- @return a position iterator
+-- @return the total node/mapblock count
 function mapblock_lib.pos_iterator(pos1, pos2)
+	local total_count = ((pos2.x - pos1.x) + 1) * ((pos2.y - pos1.y) + 1) * ((pos2.z - pos1.z) + 1)
 	local pos
 	return function()
 		if not pos then
@@ -85,7 +101,7 @@ function mapblock_lib.pos_iterator(pos1, pos2)
 		end
 
 		return pos
-	end
+	end, total_count
 end
 
 function mapblock_lib.format_multi_mapblock(prefix, pos)

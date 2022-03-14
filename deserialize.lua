@@ -205,11 +205,20 @@ function mapblock_lib.deserialize(mapblock_pos, filename, options)
 	return true
 end
 
+------
+-- Deerialize multi options
+-- @bool async async mode, default: true
+-- @number delay for async mode: delay between deserialization-calls
+-- @field callback function to call when the blocks are deserialized
+-- @field progress_callback function to call when the progress is update
+-- @field error_callback function to call on errors
+-- @field mapblock_options function that returns the deserialization options when called with a mapblock_pos as param
+-- @table deserialize_multi_options
+
 --- deserialize multiple mapblocks from a file
--- @see deserialize_options.lua
--- @param pos1 the first mapblock position
--- @param prefix the filename prefix
--- @param options the options to apply to the mapblocks
+-- @param pos1 @{utils.mapblock_pos} the first mapblock position
+-- @string prefix the filename prefix
+-- @param options[opt] @{deserialize_multi_options} multi-deserialization options
 function mapblock_lib.deserialize_multi(pos1, prefix, options)
 	local manifest = mapblock_lib.read_manifest(prefix .. ".manifest")
 	if not manifest then
@@ -217,27 +226,44 @@ function mapblock_lib.deserialize_multi(pos1, prefix, options)
 	end
 
 	local pos2 = vector.add(pos1, manifest.range)
-	local iterator = mapblock_lib.pos_iterator(pos1, pos2)
+	local iterator, total_count = mapblock_lib.pos_iterator(pos1, pos2)
 	local mapblock_pos
 	local count = 0
 
-	return true, function()
+	options = options or {}
+	options.delay = options.delay or 0.2
+	options.callback = options.callback or function() end
+	options.progress_callback = options.progress_callback or function() end
+	options.error_callback = options.error_callback or function() end
+	options.mapblock_options = options.mapblock_options or function() end
+
+	local start = minetest.get_us_time()
+
+	local worker
+	worker = function()
 		mapblock_pos = iterator()
 		if mapblock_pos then
 			local rel_pos = vector.subtract(mapblock_pos, pos1)
 			local filename = mapblock_lib.format_multi_mapblock(prefix, rel_pos)
 
-			options = options or {}
-			local _, err = mapblock_lib.deserialize(mapblock_pos, filename, options)
+			local mapblock_options = options.mapblock_options(mapblock_pos)
+			local _, err = mapblock_lib.deserialize(mapblock_pos, filename, mapblock_options)
 			if err then
-				return false, "couldn't load mapblock from " .. filename
+				options.error_callback(err)
+				return
 			end
 			count = count + 1
-			return true
+			options.progress_callback(count / total_count)
+			minetest.after(options.delay, worker)
 		else
-			return nil, count
+			options.progress_callback(1)
+			local micros = minetest.get_us_time() - start
+			options.callback(count, micros)
 		end
 	end
+
+	-- initial call
+	worker()
 end
 
 --- returns the size of a multi-mapblock export
