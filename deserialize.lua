@@ -120,11 +120,28 @@ end
 local mapblock_cache = {}
 local manifest_cache = {}
 
+------
+-- Transformation options
+-- @field replace
+-- @field rotate
+-- @field set_param2
+-- @table transform_options
+
+------
+-- Deserialize options
+-- @bool use_cache caches the on-disk file, useful for repetitive mapgen events
+-- @field on_metadata metadata callback, can be used to intercept and modify node-metadata/inventory
+--  `function(pos, content_id, meta)`
+-- @field transform @{transform_options} transformation options
+-- @string mode placement mode "replace": replace the whole mapblock, "add": replace only air nodes
+-- @table deserialize_options
+
+
 --- deserialize a mapblock from a file
 -- @see deserialize_options.lua
 -- @param mapblock_pos the mapblock position
 -- @param filename the file to rad from
--- @param options the options to apply to the mapblock
+-- @param options[opt] @{deserialize_options} the options to apply to the mapblock
 function mapblock_lib.deserialize(mapblock_pos, filename, options)
 	local min, max = mapblock_lib.get_mapblock_bounds_from_mapblock(mapblock_pos)
 	local cache_key = filename
