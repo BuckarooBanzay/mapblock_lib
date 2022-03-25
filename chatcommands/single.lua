@@ -66,7 +66,7 @@ minetest.register_chatcommand("mapblock_save", {
 		end
 
 		local block_pos = mapblock_lib.get_mapblock(pos)
-		local filename = mapblock_lib.schema_path .. "/" .. params
+		local filename = mapblock_lib.schema_path .. "/" .. params .. ".zip"
 		mapblock_lib.serialize(block_pos, filename)
 		return true, "mapblock saved as " .. filename
 	end
@@ -89,7 +89,7 @@ minetest.register_chatcommand("mapblock_load", {
 		end
 
 		local mapblock_pos = mapblock_lib.get_mapblock(pos)
-		local filename = mapblock_lib.schema_path .. "/" .. params
+		local filename = mapblock_lib.schema_path .. "/" .. params .. ".zip"
 		local ok, err = mapblock_lib.deserialize(mapblock_pos, filename, {})
 		return ok, err or ("mapblock loaded from " .. filename)
 	end

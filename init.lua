@@ -1,12 +1,16 @@
+local MP = minetest.get_modpath("mapblock_lib")
+
+-- load mtzip bootstrap
+local bootstrap = loadfile(MP.."/mtzip/bootstrap.lua")()
+
 mapblock_lib = {
 	schema_path = minetest.get_worldpath() .. "/mapblocks",
-	mapgens = {}
+	mapgens = {},
+	mtzip = bootstrap(MP .. "/mtzip")
 }
 
 -- create global schema_path
 minetest.mkdir(mapblock_lib.schema_path)
-
-local MP = minetest.get_modpath("mapblock_lib")
 
 dofile(MP .. "/privs.lua")
 dofile(MP .. "/util.lua")

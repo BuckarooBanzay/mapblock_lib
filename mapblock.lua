@@ -6,8 +6,8 @@ local function int_to_bytes(i)
 	return(string.char(h, l));
 end
 
-function mapblock_lib.write_mapblock(mapblock, filename)
-	local file = io.open(filename,"wb")
+-- converts a mapblock object to a string
+function mapblock_lib.write_mapblock(mapblock)
 	local data = ""
 	for i=1,4096 do
 		data = data .. int_to_bytes(mapblock.node_ids[i])
@@ -19,23 +19,11 @@ function mapblock_lib.write_mapblock(mapblock, filename)
 		data = data .. string.char(mapblock.param2[i])
 	end
 
-	file:write(minetest.compress(data, "deflate"))
-
-	if file and file:close() then
-		return
-	else
-		error("write to '" .. filename .. "' failed!")
-	end
+	return data
 end
 
-function mapblock_lib.read_mapblock(filename)
-	local file = io.open(filename,"rb")
-	if not file then
-		return
-	end
-
-	local data = file:read("*all")
-	data = minetest.decompress(data, "deflate")
+-- creates a mapblock object from a data string
+function mapblock_lib.read_mapblock(data)
 	local mapblock = {
 		node_ids = {},
 		param1 = {},

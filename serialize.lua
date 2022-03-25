@@ -125,22 +125,26 @@ end
 -- @param mapblock_pos @{util.mapblock_pos} the mapblock position
 -- @string filename the file to save to
 function mapblock_lib.serialize(mapblock_pos, filename)
+	local f = io.open(filename, "w")
+	local z = mapblock_lib.mtzip.zip(f)
 	local node_mapping = {}
 	local pos1, pos2 = mapblock_lib.get_mapblock_bounds_from_mapblock(mapblock_pos)
-	local data, air_only = mapblock_lib.serialize_part(pos1, pos2, node_mapping)
+	local mapblock, air_only = mapblock_lib.serialize_part(pos1, pos2, node_mapping)
 
 	if not air_only then
-		mapblock_lib.write_mapblock(data, filename .. ".bin")
+		z:add("mapblock.bin", mapblock_lib.write_mapblock(mapblock))
 	end
 
 	local manifest = {
 		node_mapping = node_mapping,
 		air_only = air_only,
-		metadata = data.metadata,
+		metadata = mapblock.metadata,
 		version = 2
 	}
 
-	mapblock_lib.write_manifest(manifest, filename .. ".manifest.json")
+	z:add("manifest.json", minetest.write_json(manifest))
+	z:close()
+	f:close()
 end
 
 ------

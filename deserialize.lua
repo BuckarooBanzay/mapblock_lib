@@ -178,14 +178,21 @@ function mapblock_lib.deserialize(mapblock_pos, filename, options)
 		mapblock = mapblock_cache[cache_key]
 		is_cached = true
 	else
-		local manifest_file = filename .. ".manifest.json"
-		manifest = mapblock_lib.read_manifest(manifest_file)
-		if not manifest then
-			return false, "manifest '" .. manifest_file .. "' not found"
+		local f = io.open(filename)
+		local z = mapblock_lib.mtzip.unzip(f)
+		local data, err_msg = z:get("manifest.json")
+		if not data then
+			return false, "error reading manifest: " .. err_msg
 		end
+		manifest = minetest.parse_json(data)
 		if not manifest.air_only then
-			mapblock = mapblock_lib.read_mapblock(filename .. ".bin")
+			data, err_msg = z:get("mapblock.bin")
+			if not data then
+				return false, "error reading mapblock data: " .. err_msg
+			end
+			mapblock = mapblock_lib.read_mapblock(data)
 		end
+		f:close()
 	end
 
 	if manifest.air_only then
