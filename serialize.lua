@@ -139,7 +139,7 @@ function mapblock_lib.serialize(mapblock_pos, filename)
 		node_mapping = node_mapping,
 		air_only = air_only,
 		metadata = mapblock.metadata,
-		version = 2
+		version = mapblock_lib.version
 	}
 
 	z:add("manifest.json", minetest.write_json(manifest))
@@ -192,8 +192,7 @@ function mapblock_lib.serialize_multi(pos1, pos2, filename, options)
 			local manifest = {
 				node_mapping = node_mapping,
 				air_only = air_only,
-				metadata = mapblock.metadata,
-				version = 2
+				metadata = mapblock.metadata
 			}
 			z:add("mapblock_" .. minetest.pos_to_string(rel_pos) .. ".meta.json", minetest.write_json(manifest))
 
@@ -204,7 +203,7 @@ function mapblock_lib.serialize_multi(pos1, pos2, filename, options)
 			-- done, write manifest
 			local manifest = {
 				range = vector.subtract(pos2, pos1),
-				version = 2
+				version = mapblock_lib.version
 			}
 			z:add("manifest.json", minetest.write_json(manifest))
 			z:close()

@@ -2,7 +2,8 @@ local MP = minetest.get_modpath("mapblock_lib")
 
 mapblock_lib = {
 	schema_path = minetest.get_worldpath() .. "/mapblocks",
-	mapgens = {}
+	mapgens = {},
+	version = 2
 }
 
 -- create global schema_path
