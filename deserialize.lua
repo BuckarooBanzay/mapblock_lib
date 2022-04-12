@@ -243,8 +243,14 @@ end
 -- @param pos1 @{util.mapblock_pos} the first mapblock position
 -- @string prefix the filename prefix
 -- @param options[opt] @{deserialize_multi_options} multi-deserialization options
-function mapblock_lib.deserialize_multi(pos1, prefix, options)
-	local manifest = mapblock_lib.read_manifest(prefix .. ".manifest")
+function mapblock_lib.deserialize_multi(pos1, filename, options)
+	local f = io.open(filename)
+	local z, err = mtzip.unzip(f)
+	if err then
+		return false, err
+	end
+
+	local manifest = minetest.parse_json(z:get("manifest.json"))
 	if not manifest then
 		return false, "no manifest found!"
 	end
@@ -281,29 +287,36 @@ function mapblock_lib.deserialize_multi(pos1, prefix, options)
 		mapblock_pos = iterator()
 		if mapblock_pos then
 			local rel_pos = vector.subtract(mapblock_pos, pos1)
-			print("before rotation: " .. minetest.pos_to_string(rel_pos))
 			rotate_pos(rel_pos)
-			print("after rotation: " .. minetest.pos_to_string(rel_pos))
-			local filename = mapblock_lib.format_multi_mapblock(prefix, rel_pos)
+			local mapblock_entry_name = "mapblock_" .. minetest.pos_to_string(rel_pos) .. ".bin"
+			local manifest_entry_name = "mapblock_" .. minetest.pos_to_string(rel_pos) .. ".meta.json"
 
-			local mapblock_options = options.mapblock_options(mapblock_pos)
-			if options.rotate_y then
-				-- apply mapblock rotation to mapblock-nodes
-				mapblock_options = mapblock_options or {}
-				mapblock_options.transform = mapblock_options.transform or {}
-				mapblock_options.transform.rotate = mapblock_options.transform.rotate or {}
-				mapblock_options.transform.rotate.axis = "y"
-				mapblock_options.transform.rotate.angle = options.rotate_y
+			local mb_manifest = z:get(manifest_entry_name)
+			if mb_manifest then
+				local mapblock = z:get(mapblock_entry_name)
+				local mapblock_options = options.mapblock_options(mapblock_pos)
+				if options.rotate_y then
+					-- apply mapblock rotation to mapblock-nodes
+					mapblock_options = mapblock_options or {}
+					mapblock_options.transform = mapblock_options.transform or {}
+					mapblock_options.transform.rotate = mapblock_options.transform.rotate or {}
+					mapblock_options.transform.rotate.axis = "y"
+					mapblock_options.transform.rotate.angle = options.rotate_y
+				end
+				-- TODO: deserialize stuff
+				local _, deser_err = mapblock_lib.deserialize(mapblock_pos, filename, mapblock_options, mapblock)
+				if deser_err then
+					options.error_callback(deser_err)
+					return
+				end
 			end
-			local _, err = mapblock_lib.deserialize(mapblock_pos, filename, mapblock_options)
-			if err then
-				options.error_callback(err)
-				return
-			end
+
 			count = count + 1
 			options.progress_callback(count / total_count)
 			minetest.after(options.delay, worker)
 		else
+			-- done
+			f:close()
 			options.progress_callback(1)
 			local micros = minetest.get_us_time() - start
 			options.callback(count, micros)
@@ -315,11 +328,17 @@ function mapblock_lib.deserialize_multi(pos1, prefix, options)
 end
 
 --- returns the size of a multi-mapblock export
--- @param prefix the filename prefix
+-- @param filename the filename
 -- @return success
 -- @return a vector with the size
-function mapblock_lib.get_multi_size(prefix)
-	local manifest = mapblock_lib.read_manifest(prefix .. ".manifest")
+function mapblock_lib.get_multi_size(filename)
+	local f = io.open(filename)
+	local z, err = mtzip.unzip(f)
+	if err then
+		return false, err
+	end
+
+	local manifest = minetest.parse_json(z:get("manifest.json"))
 	if not manifest then
 		return false, "no manifest found!"
 	end

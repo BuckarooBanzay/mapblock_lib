@@ -88,7 +88,7 @@ minetest.register_chatcommand("mapblocks_save", {
 		end
 
 		pos1, pos2 = mapblock_lib.sort_pos(pos1, pos2)
-		local prefix = mapblock_lib.schema_path .. "/" .. params
+		local prefix = mapblock_lib.schema_path .. "/" .. params .. ".zip"
 
 		mapblock_lib.serialize_multi(pos1, pos2, prefix, {
 			callback = function(total_count, micros)
@@ -119,7 +119,7 @@ minetest.register_chatcommand("mapblocks_load", {
 			return false, "specify a name for the schema"
 		end
 
-		local prefix = mapblock_lib.schema_path .. "/" .. params
+		local prefix = mapblock_lib.schema_path .. "/" .. params .. ".zip"
 
 		mapblock_lib.deserialize_multi(pos1, prefix, {
 			callback = function(total_count, micros)
@@ -150,7 +150,7 @@ minetest.register_chatcommand("mapblocks_allocate", {
 			return false, "specify a name for the schema"
 		end
 
-		local prefix = mapblock_lib.schema_path .. "/" .. params
+		local prefix = mapblock_lib.schema_path .. "/" .. params .. ".zip"
 
 		local success, result = mapblock_lib.get_multi_size(prefix)
 		if success then
@@ -160,6 +160,6 @@ minetest.register_chatcommand("mapblocks_allocate", {
 			return false, "Error: " .. result
 		end
 
-		return true, "Started loading from '" .. prefix .. "'"
+		return true, "Allocated: '" .. prefix .. "' with size: " .. minetest.pos_to_string(result)
 	end
 })
