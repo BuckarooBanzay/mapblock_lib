@@ -126,7 +126,7 @@ end
 -- @string filename the file to save to
 function mapblock_lib.serialize(mapblock_pos, filename)
 	local f = io.open(filename, "w")
-	local z = mapblock_lib.mtzip.zip(f)
+	local z = mtzip.zip(f)
 	local node_mapping = {}
 	local pos1, pos2 = mapblock_lib.get_mapblock_bounds_from_mapblock(mapblock_pos)
 	local mapblock, air_only = mapblock_lib.serialize_part(pos1, pos2, node_mapping)
@@ -161,7 +161,7 @@ end
 -- @param options[opt] @{serialize_multi_options} multi-serialization options
 function mapblock_lib.serialize_multi(pos1, pos2, filename, options)
 	local f = io.open(filename, "w")
-	local z = mapblock_lib.mtzip.zip(f)
+	local z = mtzip.zip(f)
 
 	local iterator, total_count = mapblock_lib.pos_iterator(pos1, pos2)
 	local mapblock_pos

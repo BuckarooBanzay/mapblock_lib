@@ -179,7 +179,7 @@ function mapblock_lib.deserialize(mapblock_pos, filename, options)
 		is_cached = true
 	else
 		local f = io.open(filename)
-		local z = mapblock_lib.mtzip.unzip(f)
+		local z = mtzip.unzip(f)
 		local data, err_msg = z:get("manifest.json")
 		if not data then
 			return false, "error reading manifest: " .. err_msg
