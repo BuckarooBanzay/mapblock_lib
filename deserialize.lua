@@ -140,7 +140,7 @@ local manifest_cache = {}
 --- deserialize a mapblock from a file
 -- @see deserialize_options.lua
 -- @param mapblock_pos the mapblock position
--- @param filename the file to rad from
+-- @param filename the file to read from
 -- @param options[opt] @{deserialize_options} the options to apply to the mapblock
 function mapblock_lib.deserialize(mapblock_pos, filename, options)
 	local min, max = mapblock_lib.get_mapblock_bounds_from_mapblock(mapblock_pos)
@@ -230,7 +230,7 @@ function mapblock_lib.deserialize(mapblock_pos, filename, options)
 end
 
 ------
--- Deerialize multi options
+-- Deserialize multi options
 -- @number delay for async mode: delay between deserialization-calls
 -- @number rotate_y the y rotation, can be 90,180 or 270 degrees
 -- @field callback function to call when the blocks are deserialized
