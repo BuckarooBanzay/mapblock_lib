@@ -152,7 +152,7 @@ function mapblock_lib.deserialize(mapblock_pos, filename, options)
 	if options.transform.rotate then
 		-- add rotation info to cache key if specified
 		cache_key = cache_key .. "/" .. options.transform.rotate.axis .. "/" .. options.transform.rotate.angle
-  end
+	end
 
 	if options.transform.replace then
 		-- add nodeids to cache-key
