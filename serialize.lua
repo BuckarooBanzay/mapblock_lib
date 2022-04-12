@@ -157,9 +157,12 @@ end
 --- serialize multiple mapblocks to a file
 -- @param pos1 @{util.node_pos} the first (lower) mapblock position
 -- @param pos2 @{util.node_pos} the second (upper) mapblock position
--- @string prefix the filename prefix
+-- @string filename the filename to save to
 -- @param options[opt] @{serialize_multi_options} multi-serialization options
-function mapblock_lib.serialize_multi(pos1, pos2, prefix, options)
+function mapblock_lib.serialize_multi(pos1, pos2, filename, options)
+	local f = io.open(filename, "w")
+	local z = mapblock_lib.mtzip.zip(f)
+
 	local iterator, total_count = mapblock_lib.pos_iterator(pos1, pos2)
 	local mapblock_pos
 	local count = 0
@@ -178,17 +181,34 @@ function mapblock_lib.serialize_multi(pos1, pos2, prefix, options)
 		mapblock_pos = iterator()
 		if mapblock_pos then
 			local rel_pos = vector.subtract(mapblock_pos, pos1)
-			local filename = mapblock_lib.format_multi_mapblock(prefix, rel_pos)
-			mapblock_lib.serialize(mapblock_pos, filename)
+			local nodepos1, nodepos2 = mapblock_lib.get_mapblock_bounds_from_mapblock(mapblock_pos)
+			local node_mapping = {}
+			local mapblock, air_only = mapblock_lib.serialize_part(nodepos1, nodepos2, node_mapping)
+
+			if not air_only then
+				z:add("mapblock_" .. minetest.pos_to_string(rel_pos) .. ".bin", mapblock_lib.write_mapblock(mapblock))
+			end
+
+			local manifest = {
+				node_mapping = node_mapping,
+				air_only = air_only,
+				metadata = mapblock.metadata,
+				version = 2
+			}
+			z:add("mapblock_" .. minetest.pos_to_string(rel_pos) .. ".meta.json", minetest.write_json(manifest))
+
 			count = count + 1
 			options.progress_callback(count / total_count)
 			minetest.after(options.delay, worker)
 		else
 			-- done, write manifest
 			local manifest = {
-				range = vector.subtract(pos2, pos1)
+				range = vector.subtract(pos2, pos1),
+				version = 2
 			}
-			mapblock_lib.write_manifest(manifest, prefix .. ".manifest")
+			z:add("manifest.json", minetest.write_json(manifest))
+			z:close()
+			f:close()
 			options.progress_callback(1)
 			local micros = minetest.get_us_time() - start
 			options.callback(count, micros)
