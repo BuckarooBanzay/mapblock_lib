@@ -47,7 +47,7 @@ local options = {
 local mapblock_pos = { x=0, y=0, z=0 }
 
 -- local from a mod folder
-local filename = minetest.get_modpath("my_mod") .. "/schematics/my_mapblock"
+local filename = minetest.get_modpath("my_mod") .. "/schematics/my_mapblock.zip"
 
 -- deserialize
 local success, msg = mapblock_lib.deserialize(mapblock_pos, filename, options)
