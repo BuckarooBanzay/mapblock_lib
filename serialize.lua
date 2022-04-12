@@ -185,16 +185,16 @@ function mapblock_lib.serialize_multi(pos1, pos2, filename, options)
 			local node_mapping = {}
 			local mapblock, air_only = mapblock_lib.serialize_part(nodepos1, nodepos2, node_mapping)
 
+			-- only serialize non-air blocks
 			if not air_only then
 				z:add("mapblock_" .. minetest.pos_to_string(rel_pos) .. ".bin", mapblock_lib.write_mapblock(mapblock))
-			end
 
-			local manifest = {
-				node_mapping = node_mapping,
-				air_only = air_only,
-				metadata = mapblock.metadata
-			}
-			z:add("mapblock_" .. minetest.pos_to_string(rel_pos) .. ".meta.json", minetest.write_json(manifest))
+				local manifest = {
+					node_mapping = node_mapping,
+					metadata = mapblock.metadata
+				}
+				z:add("mapblock_" .. minetest.pos_to_string(rel_pos) .. ".meta.json", minetest.write_json(manifest))
+			end
 
 			count = count + 1
 			options.progress_callback(count / total_count)
