@@ -121,45 +121,19 @@ function mapblock_lib.serialize_part(pos1, pos2, node_mapping)
 	return data, air_only
 end
 
---- serialize a mapblock to a file
--- @param mapblock_pos @{util.mapblock_pos} the mapblock position
--- @string filename the file to save to
-function mapblock_lib.serialize(mapblock_pos, filename)
-	local f = io.open(filename, "w")
-	local z = mtzip.zip(f)
-	local node_mapping = {}
-	local pos1, pos2 = mapblock_lib.get_mapblock_bounds_from_mapblock(mapblock_pos)
-	local mapblock, air_only = mapblock_lib.serialize_part(pos1, pos2, node_mapping)
-
-	if not air_only then
-		z:add("mapblock.bin", mapblock_lib.write_mapblock(mapblock))
-	end
-
-	local manifest = {
-		node_mapping = node_mapping,
-		air_only = air_only,
-		metadata = mapblock.metadata,
-		version = mapblock_lib.version
-	}
-
-	z:add("manifest.json", minetest.write_json(manifest))
-	z:close()
-	f:close()
-end
-
 ------
--- Serialize multi options
+-- Serialize options
 -- @number delay for async mode: delay between serialization-calls
 -- @field callback function to call when the blocks are serialized
 -- @field progress_callback function to call when the progress is update
--- @table serialize_multi_options
+-- @table serialize_options
 
---- serialize multiple mapblocks to a file
+--- serialize mapblocks to a file
 -- @param pos1 @{util.node_pos} the first (lower) mapblock position
 -- @param pos2 @{util.node_pos} the second (upper) mapblock position
 -- @string filename the filename to save to
--- @param options[opt] @{serialize_multi_options} multi-serialization options
-function mapblock_lib.serialize_multi(pos1, pos2, filename, options)
+-- @param options[opt] @{serialize_options} serialization options
+function mapblock_lib.serialize(pos1, pos2, filename, options)
 	local f = io.open(filename, "w")
 	local z = mtzip.zip(f)
 

@@ -34,7 +34,7 @@ local function update_position_marks(name)
 	worldedit.mark_pos2(name)
 end
 
-minetest.register_chatcommand("mapblocks_pos1", {
+minetest.register_chatcommand("mapblock_pos1", {
 	privs = { mapblock_lib = true },
 	description = "selects the current mapblock as pos1 for multi mapblock export/import",
 	func = function(name)
@@ -52,7 +52,7 @@ minetest.register_chatcommand("mapblocks_pos1", {
 	end
 })
 
-minetest.register_chatcommand("mapblocks_pos2", {
+minetest.register_chatcommand("mapblock_pos2", {
 	privs = { mapblock_lib = true },
 	description = "selects the current mapblock as pos2 for multi mapblock export/import",
 	func = function(name)
@@ -70,7 +70,7 @@ minetest.register_chatcommand("mapblocks_pos2", {
 	end
 })
 
-minetest.register_chatcommand("mapblocks_save", {
+minetest.register_chatcommand("mapblock_save", {
 	privs = { mapblock_lib = true },
 	description = "saves the current mapblocks region",
 	params = "<filename>",
@@ -88,23 +88,23 @@ minetest.register_chatcommand("mapblocks_save", {
 		end
 
 		pos1, pos2 = mapblock_lib.sort_pos(pos1, pos2)
-		local prefix = mapblock_lib.schema_path .. "/" .. params .. ".zip"
+		local filename = mapblock_lib.schema_path .. "/" .. params .. ".zip"
 
-		mapblock_lib.serialize_multi(pos1, pos2, prefix, {
+		mapblock_lib.serialize(pos1, pos2, filename, {
 			callback = function(total_count, micros)
 				minetest.chat_send_player(name, "[mapblock_lib] saved " .. total_count ..
-					" mapblocks to '" .. prefix .. "' in " .. micros/1000 .. " ms")
+					" mapblocks to '" .. filename .. "' in " .. micros/1000 .. " ms")
 			end,
 			progress_callback = function(p)
 				minetest.chat_send_player(name, "[mapblock_lib] save-progress: " .. math.floor(p*100) .. " %")
 			end
 		})
 
-		return true, "Started saving to '" .. prefix .. "'"
+		return true, "Started saving to '" .. filename .. "'"
 	end
 })
 
-minetest.register_chatcommand("mapblocks_load", {
+minetest.register_chatcommand("mapblock_load", {
 	privs = { mapblock_lib = true },
 	description = "loads a saved mapblock region",
 	params = "<filename>",
@@ -135,7 +135,7 @@ minetest.register_chatcommand("mapblocks_load", {
 	end
 })
 
-minetest.register_chatcommand("mapblocks_allocate", {
+minetest.register_chatcommand("mapblock_allocate", {
 	privs = { mapblock_lib = true },
 	description = "allocates a saved mapblock region",
 	params = "<filename>",
