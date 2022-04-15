@@ -69,8 +69,7 @@ minetest.register_chatcommand("mapblock_rotate_y", {
 		local mapblock_pos = mapblock_lib.get_mapblock(pos)
 		local min, max = mapblock_lib.get_mapblock_bounds_from_mapblock(mapblock_pos)
 
-		local node_mapping = {}
-		local data = mapblock_lib.serialize_part(min, max, node_mapping)
+		local data = mapblock_lib.serialize_mapblock(mapblock_pos)
 
 		local transform = {
 			rotate = {

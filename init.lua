@@ -15,6 +15,7 @@ dofile(MP .. "/data.lua")
 
 dofile(MP .. "/manifest.lua")
 dofile(MP .. "/mapblock.lua")
+dofile(MP .. "/create_catalog.lua")
 
 dofile(MP .. "/transform.lua")
 dofile(MP .. "/transform_set_param2.lua")

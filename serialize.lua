@@ -20,10 +20,10 @@ local function is_empty(tbl)
 	return not tbl or not next(tbl)
 end
 
--- serialize the mapblock at the given node-position
-function mapblock_lib.serialize_part(pos1, pos2, node_mapping)
-	node_mapping = node_mapping or {}
+-- serialize the mapblock at the given mapblock-position
+function mapblock_lib.serialize_mapblock(mapblock_pos)
 	local manip = minetest.get_voxel_manip()
+	local pos1, pos2 = mapblock_lib.get_mapblock_bounds_from_mapblock(mapblock_pos)
 	local e1, e2 = manip:read_from_map(pos1, pos2)
 	local area = VoxelArea:new({MinEdge=e1, MaxEdge=e2})
 
@@ -32,11 +32,12 @@ function mapblock_lib.serialize_part(pos1, pos2, node_mapping)
 	local param2 = manip:get_param2_data()
 
 	local node_id_map = {}
-	local air_only = true
 
 	-- prepare data structure
 	local data = {
+		air_only = true,
 		node_ids = {},
+		node_mapping = {},
 		param1 = {},
 		param2 = {},
 		metadata = nil
@@ -56,9 +57,9 @@ function mapblock_lib.serialize_part(pos1, pos2, node_mapping)
 					node_id = air_content_id
 				end
 
-				if air_only and node_id ~= air_content_id then
+				if data.air_only and node_id ~= air_content_id then
 					-- mapblock contains not jut air
-					air_only = false
+					data.air_only = false
 				end
 
 				if node_ids_with_timer[node_id] then
@@ -86,108 +87,39 @@ function mapblock_lib.serialize_part(pos1, pos2, node_mapping)
 	-- gather node id mapping
 	for node_id in pairs(node_id_map) do
 		local node_name = minetest.get_name_from_content_id(node_id)
-		node_mapping[node_name] = node_id
+		data.node_mapping[node_name] = node_id
 	end
 
-	-- serialize metadata
-	local pos_with_meta = minetest.find_nodes_with_meta(pos1, pos2)
-	for _, mpos in ipairs(pos_with_meta) do
-		local relative_pos = vector.subtract(mpos, pos1)
-		local meta = minetest.get_meta(mpos):to_table()
+	if not data.air_only then
+		-- serialize metadata
+		local pos_with_meta = minetest.find_nodes_with_meta(pos1, pos2)
+		for _, mpos in ipairs(pos_with_meta) do
+			local relative_pos = vector.subtract(mpos, pos1)
+			local meta = minetest.get_meta(mpos):to_table()
 
-		-- Convert metadata item stacks to item strings
-		for _, invlist in pairs(meta.inventory) do
-			for index = 1, #invlist do
-				local itemstack = invlist[index]
-				if itemstack.to_string then
-					invlist[index] = itemstack:to_string()
+			-- Convert metadata item stacks to item strings
+			for _, invlist in pairs(meta.inventory) do
+				for index = 1, #invlist do
+					local itemstack = invlist[index]
+					if itemstack.to_string then
+						invlist[index] = itemstack:to_string()
+					end
 				end
 			end
-		end
 
-		-- re-check if metadata actually exists (may happen with minetest.find_nodes_with_meta)
-		if not is_empty(meta.fields) or not is_empty(meta.inventory) then
-			data.metadata = data.metadata or {}
-			data.metadata.meta = data.metadata.meta or {}
-			data.metadata.meta[minetest.pos_to_string(relative_pos)] = meta
-		end
-
-		if not is_empty(timers) then
-			data.metadata = data.metadata or {}
-			data.metadata.timers = timers
-		end
-	end
-
-	return data, air_only
-end
-
-------
--- Serialize options
--- @number delay for async mode: delay between serialization-calls
--- @field callback function to call when the blocks are serialized
--- @field progress_callback function to call when the progress is update
--- @table serialize_options
-
---- serialize mapblocks to a file
--- @param pos1 @{util.node_pos} the first (lower) mapblock position
--- @param pos2 @{util.node_pos} the second (upper) mapblock position
--- @string filename the filename to save to
--- @param options[opt] @{serialize_options} serialization options
-function mapblock_lib.serialize(pos1, pos2, filename, options)
-	local f = io.open(filename, "w")
-	local z = mtzip.zip(f)
-
-	local iterator, total_count = mapblock_lib.pos_iterator(pos1, pos2)
-	local mapblock_pos
-	local count = 0
-
-	-- default to async serialization
-	options = options or {}
-	options.delay = options.delay or 0.2
-	options.callback = options.callback or function() end
-	options.progress_callback = options.progress_callback or function() end
-
-	pos1, pos2 = mapblock_lib.sort_pos(pos1, pos2)
-	local start = minetest.get_us_time()
-
-	local worker
-	worker = function()
-		mapblock_pos = iterator()
-		if mapblock_pos then
-			local rel_pos = vector.subtract(mapblock_pos, pos1)
-			local nodepos1, nodepos2 = mapblock_lib.get_mapblock_bounds_from_mapblock(mapblock_pos)
-			local node_mapping = {}
-			local mapblock, air_only = mapblock_lib.serialize_part(nodepos1, nodepos2, node_mapping)
-
-			-- only serialize non-air blocks
-			if not air_only then
-				z:add("mapblock_" .. minetest.pos_to_string(rel_pos) .. ".bin", mapblock_lib.write_mapblock(mapblock))
-
-				local manifest = {
-					node_mapping = node_mapping,
-					metadata = mapblock.metadata
-				}
-				z:add("mapblock_" .. minetest.pos_to_string(rel_pos) .. ".meta.json", minetest.write_json(manifest))
+			-- re-check if metadata actually exists (may happen with minetest.find_nodes_with_meta)
+			if not is_empty(meta.fields) or not is_empty(meta.inventory) then
+				data.metadata = data.metadata or {}
+				data.metadata.meta = data.metadata.meta or {}
+				data.metadata.meta[minetest.pos_to_string(relative_pos)] = meta
 			end
 
-			count = count + 1
-			options.progress_callback(count / total_count)
-			minetest.after(options.delay, worker)
-		else
-			-- done, write manifest
-			local manifest = {
-				range = vector.subtract(pos2, pos1),
-				version = mapblock_lib.version
-			}
-			z:add("manifest.json", minetest.write_json(manifest))
-			z:close()
-			f:close()
-			options.progress_callback(1)
-			local micros = minetest.get_us_time() - start
-			options.callback(count, micros)
+			if not is_empty(timers) then
+				data.metadata = data.metadata or {}
+				data.metadata.timers = timers
+			end
 		end
 	end
 
-	-- initial call
-	worker()
+	return data
 end
