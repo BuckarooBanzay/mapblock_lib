@@ -1,3 +1,5 @@
+---------
+-- create catalog
 
 ------
 -- Serialize options
@@ -7,9 +9,9 @@
 -- @table serialize_options
 
 --- create a new catalog and serialize the mapblocks from pos1 to pos2 in it
+-- @string filename the filename to save to
 -- @param pos1 @{util.node_pos} the first (lower) mapblock position
 -- @param pos2 @{util.node_pos} the second (upper) mapblock position
--- @string filename the filename to save to
 -- @param options[opt] @{serialize_options} serialization options
 function mapblock_lib.create_catalog(filename, pos1, pos2, options)
 	local f = io.open(filename, "w")

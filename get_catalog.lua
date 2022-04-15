@@ -1,7 +1,16 @@
+---------
+-- Catalog functions
 
 local Catalog = {}
 local Catalog_mt = { __index = Catalog }
 
+------
+-- Catalog object
+-- @table Catalog
+
+--- create a new catalog wrapper for the given filename
+-- @param filename the file to read from
+-- @return @{Catalog} the catalog object
 function mapblock_lib.get_catalog(filename)
     local f = io.open(filename)
     if not f then
