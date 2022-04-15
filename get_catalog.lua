@@ -134,7 +134,6 @@ function Catalog:deserialize_all(target_mapblock_pos, options)
 		else
 			-- done
 			f:close()
-			options.progress_callback(1)
 			local micros = minetest.get_us_time() - start
 			options.callback(count, micros)
 		end

@@ -1,7 +1,7 @@
 
 local tests = {}
 local pos1 = { x=-32, y=-32, z=-32 }
-local pos2 = { x=32, y=32, z=32 }
+local pos2 = { x=64, y=32, z=64 }
 
 local mb_pos1 = { x=0, y=0, z=0 }
 local mb_pos2 = { x=1, y=1, z=1 }
@@ -77,7 +77,7 @@ table.insert(tests, function(callback)
   local c, err = mapblock_lib.get_catalog(filename)
   assert(err == nil, "err is nil")
 
-  c:deserialize_all({x=20,y=10,z=10}, {
+  c:deserialize_all({x=0,y=1,z=2}, {
     callback = callback,
     progress_callback = function(p)
       print("progress: " .. p)
@@ -91,12 +91,14 @@ table.insert(tests, function(callback)
   for x=mb_pos1.x,mb_pos2.x do
     for y=mb_pos1.y,mb_pos2.y do
       for z=mb_pos1.z,mb_pos2.z do
-        local mapblock_pos = {x=x,y=x,z=x}
+        local mapblock_pos = {x=x,y=y,z=x}
+        local target_pos = {x=x,y=1+y,z=2+z}
         local mb1 = mapblock_lib.serialize_mapblock(mapblock_pos)
-        local mb2 = mapblock_lib.serialize_mapblock({x=20+x,y=10+y,z=10+z})
+        local mb2 = mapblock_lib.serialize_mapblock(target_pos)
         local equal, err = mapblock_lib.compare_mapblock(mb1, mb2)
         if err then
-          error(err .. ", mapblock " .. minetest.pos_to_string(mapblock_pos))
+          error(err .. ", mapblock " .. minetest.pos_to_string(mapblock_pos) ..
+            " -> " .. minetest.pos_to_string(target_pos))
         end
         assert(equal, "deserialized mapblock is equal to the serialized")
       end
