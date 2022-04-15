@@ -91,7 +91,7 @@ table.insert(tests, function(callback)
   for x=mb_pos1.x,mb_pos2.x do
     for y=mb_pos1.y,mb_pos2.y do
       for z=mb_pos1.z,mb_pos2.z do
-        local mapblock_pos = {x=x,y=y,z=x}
+        local mapblock_pos = {x=x,y=y,z=z}
         local target_pos = {x=x,y=1+y,z=2+z}
         local mb1 = mapblock_lib.serialize_mapblock(mapblock_pos)
         local mb2 = mapblock_lib.serialize_mapblock(target_pos)
