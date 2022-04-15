@@ -119,19 +119,19 @@ minetest.register_chatcommand("mapblock_load", {
 			return false, "specify a name for the schema"
 		end
 
-		local prefix = mapblock_lib.schema_path .. "/" .. params .. ".zip"
+		local filename = mapblock_lib.schema_path .. "/" .. params .. ".zip"
 
-		mapblock_lib.deserialize_multi(pos1, prefix, {
+		mapblock_lib.deserialize_multi(pos1, filename, {
 			callback = function(total_count, micros)
 				minetest.chat_send_player(name, "[mapblock_lib] loaded " .. total_count ..
-					" mapblocks to '" .. prefix .. "' in " .. micros/1000 .. " ms")
+					" mapblocks to '" .. filename .. "' in " .. micros/1000 .. " ms")
 			end,
 			progress_callback = function(p)
 				minetest.chat_send_player(name, "[mapblock_lib] load-progress: " .. math.floor(p*100) .. " %")
 			end
 		})
 
-		return true, "Started loading from '" .. prefix .. "'"
+		return true, "Started loading from '" .. filename .. "'"
 	end
 })
 
@@ -150,16 +150,16 @@ minetest.register_chatcommand("mapblock_allocate", {
 			return false, "specify a name for the schema"
 		end
 
-		local prefix = mapblock_lib.schema_path .. "/" .. params .. ".zip"
-
-		local success, result = mapblock_lib.get_multi_size(prefix)
-		if success then
-			pos2_map[name] = vector.subtract(vector.add(pos1, result), 1)
-			update_position_marks(name)
-		else
-			return false, "Error: " .. result
+		local filename = mapblock_lib.schema_path .. "/" .. params .. ".zip"
+		local catalog, err = mapblock_lib.get_catalog(filename)
+		if err then
+			return false, "Error: " .. err
 		end
 
-		return true, "Allocated: '" .. prefix .. "' with size: " .. minetest.pos_to_string(result)
+		local size = catalog:get_size()
+		pos2_map[name] = vector.subtract(vector.add(pos1, size), 1)
+		update_position_marks(name)
+
+		return true, "Allocated: '" .. filename .. "' with size: " .. minetest.pos_to_string(size)
 	end
 })

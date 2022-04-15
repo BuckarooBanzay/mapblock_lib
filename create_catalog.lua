@@ -38,19 +38,14 @@ function mapblock_lib.create_catalog(filename, pos1, pos2, options)
 			-- only serialize non-air blocks
 			if not mapblock.air_only then
 				z:add("mapblock_" .. minetest.pos_to_string(rel_pos) .. ".bin", mapblock_lib.write_mapblock(mapblock))
-
-				local manifest = {
-					node_mapping = mapblock.node_mapping,
-					metadata = mapblock.metadata
-				}
-				z:add("mapblock_" .. minetest.pos_to_string(rel_pos) .. ".meta.json", minetest.write_json(manifest))
+				z:add("mapblock_" .. minetest.pos_to_string(rel_pos) .. ".meta.json", mapblock_lib.write_mapblock_manifest(mapblock))
 			end
 
 			count = count + 1
 			options.progress_callback(count / total_count)
 			minetest.after(options.delay, worker)
 		else
-			-- done, write manifest
+			-- done, write global manifest
 			local manifest = {
 				range = vector.subtract(pos2, pos1),
 				version = mapblock_lib.version

@@ -22,6 +22,14 @@ function mapblock_lib.write_mapblock(mapblock)
 	return data
 end
 
+function mapblock_lib.write_mapblock_manifest(mapblock)
+	local manifest = {
+		node_mapping = mapblock.node_mapping,
+		metadata = mapblock.metadata
+	}
+	return minetest.write_json(manifest)
+end
+
 -- creates a mapblock object from a data string
 function mapblock_lib.read_mapblock(data)
 	local mapblock = {

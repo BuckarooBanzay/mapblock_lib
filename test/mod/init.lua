@@ -6,6 +6,8 @@ local pos2 = { x=32, y=32, z=32 }
 local mb_pos1 = { x=0, y=0, z=0 }
 local mb_pos2 = { x=1, y=1, z=1 }
 
+local filename = minetest.get_worldpath() .. "/mapblocks/test.zip"
+
 -- defer emerging until stuff is settled
 table.insert(tests, function(callback)
   print("defer test-start")
@@ -25,13 +27,30 @@ end)
 -- catalog
 table.insert(tests, function(callback)
   print("creating catalog")
-  local filename = minetest.get_worldpath() .. "/mapblocks/test.zip"
   mapblock_lib.create_catalog(filename, mb_pos1, mb_pos2, {
     callback = callback,
     progress_callback = function(p)
       print("progress: " .. p)
     end
   })
+end)
+
+table.insert(tests, function(callback)
+  print("reading catalog")
+  local c = mapblock_lib.get_catalog(filename)
+  local size = c:get_size()
+  assert(size.x == 2, "x-size wrong")
+  assert(size.y == 2, "y-size wrong")
+  assert(size.z == 2, "z-size wrong")
+  callback()
+end)
+
+table.insert(tests, function(callback)
+  print("reading non-existent catalog")
+  local c, err = mapblock_lib.get_catalog(filename .. "blah")
+  assert(c == nil, "catalog is not nil")
+  assert(err, "err is nil")
+  callback()
 end)
 
 -- job queue

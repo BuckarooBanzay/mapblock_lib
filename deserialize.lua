@@ -142,6 +142,7 @@ local manifest_cache = {}
 -- @param mapblock_pos the mapblock position
 -- @param filename the file to read from
 -- @param options[opt] @{deserialize_options} the options to apply to the mapblock
+--function mapblock_lib.deserialize(mapblock_pos, mapblock, options)
 function mapblock_lib.deserialize(mapblock_pos, filename, options)
 	local min, max = mapblock_lib.get_mapblock_bounds_from_mapblock(mapblock_pos)
 	local cache_key = filename
@@ -325,25 +326,6 @@ function mapblock_lib.deserialize_multi(pos1, filename, options)
 
 	-- initial call
 	worker()
-end
-
---- returns the size of a multi-mapblock export
--- @param filename the filename
--- @return success
--- @return a vector with the size
-function mapblock_lib.get_multi_size(filename)
-	local f = io.open(filename)
-	local z, err = mtzip.unzip(f)
-	if err then
-		return false, err
-	end
-
-	local manifest = minetest.parse_json(z:get("manifest.json"))
-	if not manifest then
-		return false, "no manifest found!"
-	end
-
-	return true, vector.add(manifest.range, 1)
 end
 
 -- monitoring stuff

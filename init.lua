@@ -13,9 +13,7 @@ dofile(MP .. "/privs.lua")
 dofile(MP .. "/util.lua")
 dofile(MP .. "/data.lua")
 
-dofile(MP .. "/manifest.lua")
 dofile(MP .. "/mapblock.lua")
-dofile(MP .. "/create_catalog.lua")
 
 dofile(MP .. "/transform.lua")
 dofile(MP .. "/transform_set_param2.lua")
@@ -24,9 +22,11 @@ dofile(MP .. "/transform_flip.lua")
 dofile(MP .. "/transform_orient.lua")
 dofile(MP .. "/transform_transpose.lua")
 
-dofile(MP .. "/serialize.lua")
+dofile(MP .. "/serialize_mapblock.lua")
 dofile(MP .. "/deserialize.lua")
-dofile(MP .. "/validate.lua")
+
+dofile(MP .. "/get_catalog.lua")
+dofile(MP .. "/create_catalog.lua")
 
 dofile(MP .. "/display.lua")
 dofile(MP .. "/chatcommands/single.lua")
