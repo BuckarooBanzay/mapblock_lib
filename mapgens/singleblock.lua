@@ -23,7 +23,7 @@ function mapblock_lib.mapgens.singleblock(cfg)
                     local mapblock_pos = {x=x, y=y, z=z}
                     local do_place = cfg.filter(mapblock_pos)
                     if do_place then
-                        mapblock_lib.deserialize(mapblock_pos, cfg.filename, cfg.options)
+                        mapblock_lib.deserialize_mapblock(mapblock_pos, cfg.filename, cfg.options)
                     end
                 end
             end

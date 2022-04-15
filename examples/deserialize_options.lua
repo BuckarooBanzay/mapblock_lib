@@ -50,7 +50,7 @@ local mapblock_pos = { x=0, y=0, z=0 }
 local filename = minetest.get_modpath("my_mod") .. "/schematics/my_mapblock.zip"
 
 -- deserialize
-local success, msg = mapblock_lib.deserialize(mapblock_pos, filename, options)
+local success, msg = mapblock_lib.deserialize_mapblock(mapblock_pos, filename, options)
 
 if not success then
 	-- not successful, abort with error

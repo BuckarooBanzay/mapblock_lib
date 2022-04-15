@@ -142,13 +142,12 @@ local manifest_cache = {}
 -- @param mapblock_pos the mapblock position
 -- @param filename the file to read from
 -- @param options[opt] @{deserialize_options} the options to apply to the mapblock
---function mapblock_lib.deserialize(mapblock_pos, mapblock, options)
-function mapblock_lib.deserialize(mapblock_pos, filename, options)
+function mapblock_lib.deserialize_mapblock(mapblock_pos, mapblock, manifest, options)
 	local min, max = mapblock_lib.get_mapblock_bounds_from_mapblock(mapblock_pos)
-	local cache_key = filename
 
 	options = options or {}
 	options.transform = options.transform or {}
+	local cache_key = options.cache_key or ""
 
 	if options.transform.rotate then
 		-- add rotation info to cache key if specified
@@ -172,28 +171,11 @@ function mapblock_lib.deserialize(mapblock_pos, filename, options)
 	-- true if the mapblock and metadata are read from cache
 	-- they are already transformed
 	local is_cached = false
-	local mapblock, manifest
 
 	if options.use_cache and mapblock_cache[cache_key] then
 		manifest = manifest_cache[cache_key]
 		mapblock = mapblock_cache[cache_key]
 		is_cached = true
-	else
-		local f = io.open(filename)
-		local z = mtzip.unzip(f)
-		local data, err_msg = z:get("manifest.json")
-		if not data then
-			return false, "error reading manifest: " .. err_msg
-		end
-		manifest = minetest.parse_json(data)
-		if not manifest.air_only then
-			data, err_msg = z:get("mapblock.bin")
-			if not data then
-				return false, "error reading mapblock data: " .. err_msg
-			end
-			mapblock = mapblock_lib.read_mapblock(data)
-		end
-		f:close()
 	end
 
 	if manifest.air_only then
@@ -228,104 +210,6 @@ function mapblock_lib.deserialize(mapblock_pos, filename, options)
 	mapblock_lib.deserialize_part(min, max, mapblock, manifest.metadata, options)
 
 	return true
-end
-
-------
--- Deserialize multi options
--- @number delay for async mode: delay between deserialization-calls
--- @number rotate_y the y rotation, can be 90,180 or 270 degrees
--- @field callback function to call when the blocks are deserialized
--- @field progress_callback function to call when the progress is update
--- @field error_callback function to call on errors
--- @field mapblock_options function that returns the deserialization options when called with a mapblock_pos as param
--- @table deserialize_multi_options
-
---- deserialize multiple mapblocks from a file
--- @param pos1 @{util.mapblock_pos} the first mapblock position
--- @string prefix the filename prefix
--- @param options[opt] @{deserialize_multi_options} multi-deserialization options
-function mapblock_lib.deserialize_multi(pos1, filename, options)
-	local f = io.open(filename)
-	local z, err = mtzip.unzip(f)
-	if err then
-		return false, err
-	end
-
-	local manifest = minetest.parse_json(z:get("manifest.json"))
-	if not manifest then
-		return false, "no manifest found!"
-	end
-
-	local pos2 = vector.add(pos1, manifest.range)
-	local iterator, total_count = mapblock_lib.pos_iterator(pos1, pos2)
-	local mapblock_pos
-	local count = 0
-
-	options = options or {}
-	options.delay = options.delay or 0.2
-	options.callback = options.callback or function() end
-	options.progress_callback = options.progress_callback or function() end
-	options.error_callback = options.error_callback or function() end
-	options.mapblock_options = options.mapblock_options or function() end
-
-	local function rotate_pos(rel_pos)
-		if options.rotate_y == 90 then
-			mapblock_lib.flip_pos(rel_pos, manifest.range, "z")
-			mapblock_lib.transpose_pos(rel_pos, "x", "z")
-		elseif options.rotate_y == 180 then
-			mapblock_lib.flip_pos(rel_pos, manifest.range, "x")
-			mapblock_lib.flip_pos(rel_pos, manifest.range, "z")
-		elseif options.rotate_y == 270 then
-			mapblock_lib.flip_pos(rel_pos, manifest.range, "x")
-			mapblock_lib.transpose_pos(rel_pos, "x", "z")
-		end
-	end
-
-	local start = minetest.get_us_time()
-
-	local worker
-	worker = function()
-		mapblock_pos = iterator()
-		if mapblock_pos then
-			local rel_pos = vector.subtract(mapblock_pos, pos1)
-			rotate_pos(rel_pos)
-			local mapblock_entry_name = "mapblock_" .. minetest.pos_to_string(rel_pos) .. ".bin"
-			local manifest_entry_name = "mapblock_" .. minetest.pos_to_string(rel_pos) .. ".meta.json"
-
-			local mb_manifest = z:get(manifest_entry_name)
-			if mb_manifest then
-				local mapblock = z:get(mapblock_entry_name)
-				local mapblock_options = options.mapblock_options(mapblock_pos)
-				if options.rotate_y then
-					-- apply mapblock rotation to mapblock-nodes
-					mapblock_options = mapblock_options or {}
-					mapblock_options.transform = mapblock_options.transform or {}
-					mapblock_options.transform.rotate = mapblock_options.transform.rotate or {}
-					mapblock_options.transform.rotate.axis = "y"
-					mapblock_options.transform.rotate.angle = options.rotate_y
-				end
-				-- TODO: deserialize stuff
-				local _, deser_err = mapblock_lib.deserialize(mapblock_pos, filename, mapblock_options, mapblock)
-				if deser_err then
-					options.error_callback(deser_err)
-					return
-				end
-			end
-
-			count = count + 1
-			options.progress_callback(count / total_count)
-			minetest.after(options.delay, worker)
-		else
-			-- done
-			f:close()
-			options.progress_callback(1)
-			local micros = minetest.get_us_time() - start
-			options.callback(count, micros)
-		end
-	end
-
-	-- initial call
-	worker()
 end
 
 -- monitoring stuff

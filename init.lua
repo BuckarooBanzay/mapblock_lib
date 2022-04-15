@@ -23,7 +23,7 @@ dofile(MP .. "/transform_orient.lua")
 dofile(MP .. "/transform_transpose.lua")
 
 dofile(MP .. "/serialize_mapblock.lua")
-dofile(MP .. "/deserialize.lua")
+dofile(MP .. "/deserialize_mapblock.lua")
 
 dofile(MP .. "/get_catalog.lua")
 dofile(MP .. "/create_catalog.lua")

@@ -141,3 +141,16 @@ end
 function mapblock_lib.transpose_pos(rel_pos, axis1, axis2)
 	rel_pos[axis1], rel_pos[axis2] = rel_pos[axis2], rel_pos[axis1]
 end
+
+function mapblock_lib.compare_mapblock(mb1, mb2, strict)
+	for i=1,4096 do
+		if mb1.node_ids[i] ~= mb2.node_ids[i] then
+			return false, "node-id mismatch at index " .. i
+		elseif strict and mb1.param1[i] ~= mb2.param1[i] then
+			return false, "param1 mismatch at index " .. i
+		elseif mb1.param2[i] ~= mb2.param2[i] then
+			return false, "param2 mismatch at index " .. i
+		end
+	end
+	return true
+end

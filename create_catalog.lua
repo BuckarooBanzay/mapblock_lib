@@ -37,8 +37,8 @@ function mapblock_lib.create_catalog(filename, pos1, pos2, options)
 
 			-- only serialize non-air blocks
 			if not mapblock.air_only then
-				z:add("mapblock_" .. minetest.pos_to_string(rel_pos) .. ".bin", mapblock_lib.write_mapblock(mapblock))
-				z:add("mapblock_" .. minetest.pos_to_string(rel_pos) .. ".meta.json", mapblock_lib.write_mapblock_manifest(mapblock))
+				z:add("mapblock_" .. minetest.pos_to_string(rel_pos) .. ".bin",mapblock_lib.write_mapblock(mapblock))
+				z:add("mapblock_" .. minetest.pos_to_string(rel_pos) .. ".meta.json",mapblock_lib.write_mapblock_manifest(mapblock))
 			end
 
 			count = count + 1

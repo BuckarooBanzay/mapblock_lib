@@ -90,13 +90,13 @@ minetest.register_chatcommand("mapblock_save", {
 		pos1, pos2 = mapblock_lib.sort_pos(pos1, pos2)
 		local filename = mapblock_lib.schema_path .. "/" .. params .. ".zip"
 
-		mapblock_lib.serialize(pos1, pos2, filename, {
+		mapblock_lib.create_catalog(filename, pos1, pos2, {
 			callback = function(total_count, micros)
 				minetest.chat_send_player(name, "[mapblock_lib] saved " .. total_count ..
 					" mapblocks to '" .. filename .. "' in " .. micros/1000 .. " ms")
 			end,
 			progress_callback = function(p)
-				minetest.chat_send_player(name, "[mapblock_lib] save-progress: " .. math.floor(p*100) .. " %")
+				minetest.chat_send_player(name, "[mapblock_lib] save-progress: " .. math.floor(p*1000)/10 .. " %")
 			end
 		})
 
@@ -121,13 +121,17 @@ minetest.register_chatcommand("mapblock_load", {
 
 		local filename = mapblock_lib.schema_path .. "/" .. params .. ".zip"
 
-		mapblock_lib.deserialize_multi(pos1, filename, {
+		local catalog, err = mapblock_lib.get_catalog(filename)
+		if err then
+			return false, err
+		end
+		catalog:deserialize_all(pos1, {
 			callback = function(total_count, micros)
 				minetest.chat_send_player(name, "[mapblock_lib] loaded " .. total_count ..
 					" mapblocks to '" .. filename .. "' in " .. micros/1000 .. " ms")
 			end,
 			progress_callback = function(p)
-				minetest.chat_send_player(name, "[mapblock_lib] load-progress: " .. math.floor(p*100) .. " %")
+				minetest.chat_send_player(name, "[mapblock_lib] load-progress: " .. math.floor(p*1000)/10 .. " %")
 			end
 		})
 
