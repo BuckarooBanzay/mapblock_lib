@@ -10,7 +10,7 @@ local Catalog_mt = { __index = Catalog }
 --- Get the overall size of the catalog
 -- @return @{util.mapblock_pos} the size in mapblocks
 function Catalog:get_size()
-    return vector.add(self.manifest.range, 1)
+	return vector.add(self.manifest.range, 1)
 end
 
 -- TODO: Catalog:prepare(catalog_mapblock_pos, options)
@@ -21,23 +21,23 @@ end
 -- @param world_mapblock_pos @{util.mapblock_pos} the mapblock position in the world
 -- @param options @{deserialize_mapblock.deserialize_options} mapblock deserialization options
 function Catalog:deserialize(catalog_mapblock_pos, world_mapblock_pos, options)
-    local f = io.open(self.filename)
+	local f = io.open(self.filename)
 	local z, err = mtzip.unzip(f)
-    if err then
-        f:close()
-        return nil, err
-    end
+	if err then
+		f:close()
+		return nil, err
+	end
 
-    local pos_str = minetest.pos_to_string(catalog_mapblock_pos)
-    local mapblock_data = z:get("mapblock_" .. pos_str .. ".bin")
-    local manifest_data = z:get("mapblock_" .. pos_str .. ".meta.json")
-    local mapblock = mapblock_lib.read_mapblock(mapblock_data)
-    local manifest = minetest.parse_json(manifest_data)
-    f:close()
+	local pos_str = minetest.pos_to_string(catalog_mapblock_pos)
+	local mapblock_data = z:get("mapblock_" .. pos_str .. ".bin")
+	local manifest_data = z:get("mapblock_" .. pos_str .. ".meta.json")
+	local mapblock = mapblock_lib.read_mapblock(mapblock_data)
+	local manifest = minetest.parse_json(manifest_data)
+	f:close()
 
-    options = options or {}
-    options.cache_key = self.filename .. "/" .. pos_str
-    return mapblock_lib.deserialize_mapblock(world_mapblock_pos, mapblock, manifest, options)
+	options = options or {}
+	options.cache_key = self.filename .. "/" .. pos_str
+	return mapblock_lib.deserialize_mapblock(world_mapblock_pos, mapblock, manifest, options)
 end
 
 ------
@@ -55,13 +55,13 @@ end
 -- @param target_mapblock_pos @{util.mapblock_pos} the first mapblock position
 -- @param options[opt] @{deserialize_all_options} deserialization options
 function Catalog:deserialize_all(target_mapblock_pos, options)
-    local f = io.open(self.filename)
+	local f = io.open(self.filename)
 	local z, err = mtzip.unzip(f)
 	if err then
 		return false, err
 	end
 
-    local pos1 = target_mapblock_pos
+	local pos1 = target_mapblock_pos
 	local pos2 = vector.add(pos1, self.manifest.range)
 	local iterator, total_count = mapblock_lib.pos_iterator(pos1, pos2)
 	local mapblock_pos
@@ -100,7 +100,7 @@ function Catalog:deserialize_all(target_mapblock_pos, options)
 
 			local mb_manifest = z:get(manifest_entry_name)
 			if mb_manifest then
-                local manifest = minetest.parse_json(mb_manifest)
+				local manifest = minetest.parse_json(mb_manifest)
 				local mapblock = mapblock_lib.read_mapblock(z:get(mapblock_entry_name))
 				local mapblock_options = options.mapblock_options(mapblock_pos)
 				if options.rotate_y then
@@ -137,25 +137,25 @@ end
 -- @param filename the file to read from
 -- @return @{Catalog} the catalog object
 function mapblock_lib.get_catalog(filename)
-    local f = io.open(filename)
-    if not f then
-        return nil, "file is nil: '" .. filename .. "'"
-    end
+	local f = io.open(filename)
+	if not f then
+		return nil, "file is nil: '" .. filename .. "'"
+	end
 	local z, err = mtzip.unzip(f)
-    if err then
-        f:close()
-        return nil, err
-    end
+	if err then
+		f:close()
+		return nil, err
+	end
 
-    local manifest = minetest.parse_json(z:get("manifest.json"))
-    f:close()
+	local manifest = minetest.parse_json(z:get("manifest.json"))
+	f:close()
 	if not manifest then
 		return false, "no manifest found!"
 	end
 
-    local self = {
-        filename = filename,
-        manifest = manifest
-    }
-    return setmetatable(self, Catalog_mt)
+	local self = {
+		filename = filename,
+		manifest = manifest
+	}
+	return setmetatable(self, Catalog_mt)
 end
