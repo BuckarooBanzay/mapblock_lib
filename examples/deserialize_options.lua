@@ -2,9 +2,6 @@
 
 -- all fields are optional
 local options = {
-	-- caches the on-disk file, useful for repetitive mapgen events
-	use_cache = false,
-
 	-- various transformations to apply to the loaded mapblock
 	transform = {
 		-- rotate the mapblock around the given axis with the angle (90, 180, 270)
@@ -83,3 +80,11 @@ catalog:deserialize_all({x=1,y=1,z=1}, {
 		error(import_err)
 	end
 })
+
+-- load and prepare a mapblock for faster access (mapgen)
+local deserFn, prep_err = catalog:prepare({x=0,y=0,z=0}, options)
+if prep_err then
+	error(prep_err)
+end
+-- apply to the given position
+deserFn({x=1,y=1,z=1})

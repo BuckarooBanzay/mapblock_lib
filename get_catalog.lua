@@ -13,19 +13,12 @@ function Catalog:get_size()
 	return vector.add(self.manifest.range, 1)
 end
 
--- TODO: Catalog:prepare(catalog_mapblock_pos, options)
-
---- Deserialize a single mapblock from the catalog
--- @see deserialize_options.lua
--- @param catalog_mapblock_pos @{util.mapblock_pos} the mapblock position in the catalog
--- @param world_mapblock_pos @{util.mapblock_pos} the mapblock position in the world
--- @param options @{deserialize_mapblock.deserialize_options} mapblock deserialization options
-function Catalog:deserialize(catalog_mapblock_pos, world_mapblock_pos, options)
-	local f = io.open(self.filename)
+local function read_manifest_mapblock(filename, catalog_mapblock_pos)
+	local f = io.open(filename)
 	local z, err = mtzip.unzip(f)
 	if err then
 		f:close()
-		return nil, err
+		return nil, nil, err
 	end
 
 	local pos_str = minetest.pos_to_string(catalog_mapblock_pos)
@@ -35,9 +28,50 @@ function Catalog:deserialize(catalog_mapblock_pos, world_mapblock_pos, options)
 	local manifest = minetest.parse_json(manifest_data)
 	f:close()
 
+	return manifest, mapblock
+end
+
+--- Deserialize a single mapblock from the catalog
+-- @see deserialize_options.lua
+-- @param catalog_mapblock_pos @{util.mapblock_pos} the mapblock position in the catalog
+-- @param world_mapblock_pos @{util.mapblock_pos} the mapblock position in the world
+-- @param options @{deserialize_mapblock.deserialize_options} mapblock deserialization options
+-- @return success true on success
+-- @return error in case of an error
+function Catalog:deserialize(catalog_mapblock_pos, world_mapblock_pos, options)
+	local manifest, mapblock, err = read_manifest_mapblock(self.filename, catalog_mapblock_pos)
+	if err then
+		return nil, err
+	end
 	options = options or {}
-	options.cache_key = self.filename .. "/" .. pos_str
 	return mapblock_lib.deserialize_mapblock(world_mapblock_pos, mapblock, manifest, options)
+end
+
+--- Prepare a mapblock with options for faster access
+-- @param catalog_mapblock_pos @{util.mapblock_pos} the mapblock position in the catalog
+-- @param options @{deserialize_mapblock.deserialize_options} mapblock deserialization options
+-- @return deserFn a function that accepts a mapblock position @{util.mapblock_pos} to write the mapblock to the map
+-- @return error in case of an error
+function Catalog:prepare(catalog_mapblock_pos, options)
+	options = options or {}
+	local manifest, mapblock, err = read_manifest_mapblock(self.filename, catalog_mapblock_pos)
+	if err then
+		return nil, err
+	end
+
+	-- localize node ids
+	mapblock_lib.localize_nodeids(manifest.node_mapping, mapblock.node_ids)
+	-- transform, if needed
+	if options.transform then
+		local size = {x=15, y=15, z=15}
+		mapblock_lib.transform(options.transform, size, mapblock, manifest.metadata)
+	end
+
+	return function(mapblock_pos)
+		-- write to map
+		local min, max = mapblock_lib.get_mapblock_bounds_from_mapblock(mapblock_pos)
+		mapblock_lib.deserialize_part(min, max, mapblock, manifest.metadata, options)
+	end
 end
 
 ------

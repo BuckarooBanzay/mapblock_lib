@@ -117,9 +117,6 @@ function mapblock_lib.deserialize_part(pos1, pos2, data, metadata, options)
 
 end
 
-local mapblock_cache = {}
-local manifest_cache = {}
-
 ------
 -- Transformation options
 -- @field replace
@@ -130,7 +127,6 @@ local manifest_cache = {}
 ------
 -- Deserialize options
 -- @see deserialize_options.lua
--- @bool use_cache caches the on-disk file, useful for repetitive mapgen events
 -- @field on_metadata metadata callback, can be used to intercept and modify node-metadata/inventory
 --  `function(pos, content_id, meta)`
 -- @field transform @{transform_options} transformation options
@@ -143,41 +139,13 @@ local manifest_cache = {}
 -- @param mapblock_pos the mapblock position
 -- @param filename the file to read from
 -- @param options[opt] @{deserialize_options} the options to apply to the mapblock
+-- @return success true on success
+-- @return error in case of an error
 function mapblock_lib.deserialize_mapblock(mapblock_pos, mapblock, manifest, options)
 	local min, max = mapblock_lib.get_mapblock_bounds_from_mapblock(mapblock_pos)
 
 	options = options or {}
 	options.transform = options.transform or {}
-	local cache_key = options.cache_key or ""
-
-	if options.transform.rotate then
-		-- add rotation info to cache key if specified
-		cache_key = cache_key .. "/" .. options.transform.rotate.axis .. "/" .. options.transform.rotate.angle
-	end
-
-	if options.transform.replace then
-		-- add nodeids to cache-key
-		for k, v in pairs(options.transform.replace) do
-			cache_key = cache_key .. "/" .. get_nodeid(k) .. "=" .. get_nodeid(v)
-		end
-	end
-
-	if options.transform.set_param2 then
-		-- add nodeids/param2 to cache-key
-		for k, param2 in pairs(options.transform.set_param2) do
-			cache_key = cache_key .. "/" .. get_nodeid(k) .. "=" .. param2
-		end
-	end
-
-	-- true if the mapblock and metadata are read from cache
-	-- they are already transformed
-	local is_cached = false
-
-	if options.use_cache and mapblock_cache[cache_key] then
-		manifest = manifest_cache[cache_key]
-		mapblock = mapblock_cache[cache_key]
-		is_cached = true
-	end
 
 	if manifest.air_only then
 		-- set air
@@ -189,20 +157,14 @@ function mapblock_lib.deserialize_mapblock(mapblock_pos, mapblock, manifest, opt
 		return false, "mapblock data not found"
 	end
 
-	if options.use_cache and not is_cached then
-		-- populate cache
-		mapblock_cache[cache_key] = mapblock
-		manifest_cache[cache_key] = manifest
-	end
-
 	-- localize node-ids
 	if not mapblock.node_ids_localized then
 		mapblock_lib.localize_nodeids(manifest.node_mapping, mapblock.node_ids)
 		mapblock.node_ids_localized = true
 	end
 
-	-- apply transformation only on uncached data
-	if not is_cached then
+	-- apply transformation
+	if options.transform then
 		local size = {x=15, y=15, z=15}
 		mapblock_lib.transform(options.transform, size, mapblock, manifest.metadata)
 	end
@@ -220,17 +182,4 @@ if minetest.get_modpath("monitoring") then
 
 	local time = monitoring.counter("mapblock_lib_deserialize_time", "deserialization time")
 	mapblock_lib.deserialize_mapblock = time.wraptime(mapblock_lib.deserialize)
-
-	-- cache size, periodically updated
-	local cache_size = monitoring.gauge("mapblock_lib_deserialize_cache_size", "deserialization cache size")
-	local function update_cache_size()
-		local entries = 0
-		for _ in pairs(mapblock_cache) do
-			entries = entries + 1
-		end
-		cache_size.set(entries)
-		minetest.after(10, update_cache_size)
-	end
-
-	update_cache_size()
 end
