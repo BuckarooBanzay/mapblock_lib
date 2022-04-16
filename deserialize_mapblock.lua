@@ -216,10 +216,10 @@ end
 -- monitoring stuff
 if minetest.get_modpath("monitoring") then
 	local count = monitoring.counter("mapblock_lib_deserialize_count", "deserialization count")
-	mapblock_lib.deserialize = count.wrap(mapblock_lib.deserialize)
+	mapblock_lib.deserialize_mapblock = count.wrap(mapblock_lib.deserialize)
 
 	local time = monitoring.counter("mapblock_lib_deserialize_time", "deserialization time")
-	mapblock_lib.deserialize = time.wraptime(mapblock_lib.deserialize)
+	mapblock_lib.deserialize_mapblock = time.wraptime(mapblock_lib.deserialize)
 
 	-- cache size, periodically updated
 	local cache_size = monitoring.gauge("mapblock_lib_deserialize_cache_size", "deserialization cache size")
