@@ -8,10 +8,17 @@
 -- @param cfg.filename the filename of the mapblock to use
 -- @param cfg.filter an optional filter function of the type `fn(blockpos)`, returning true means the mapblock is placed
 -- @param cfg.options optional table for `mapblock_lib.deserialize`
+-- @return the on_generated function or nil on error
+-- @return the error or nil
 function mapblock_lib.mapgens.singleblock(cfg)
     cfg.filter = cfg.filter or function() return true end
     cfg.options = cfg.options or { use_cache = true }
     assert(cfg.filename, "missing schema filename")
+
+    local catalog, err = mapblock_lib.get_catalog(cfg.filename)
+    if err then
+        return nil, err
+    end
 
     return function(minp, maxp)
         local min_block = mapblock_lib.get_mapblock(minp)
@@ -23,7 +30,7 @@ function mapblock_lib.mapgens.singleblock(cfg)
                     local mapblock_pos = {x=x, y=y, z=z}
                     local do_place = cfg.filter(mapblock_pos)
                     if do_place then
-                        mapblock_lib.deserialize_mapblock(mapblock_pos, cfg.filename, cfg.options)
+                        catalog:deserialize({x=0,y=0,z=0}, mapblock_pos)
                     end
                 end
             end

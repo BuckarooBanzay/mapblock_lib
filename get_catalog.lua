@@ -1,44 +1,25 @@
 ---------
 -- Catalog functions
 
+------
+-- Catalog object
+-- @type Catalog
 local Catalog = {}
 local Catalog_mt = { __index = Catalog }
 
-------
--- Catalog object
--- @table Catalog
-
---- create a new catalog wrapper for the given filename
--- @param filename the file to read from
--- @return @{Catalog} the catalog object
-function mapblock_lib.get_catalog(filename)
-    local f = io.open(filename)
-    if not f then
-        return nil, "file is nil: '" .. filename .. "'"
-    end
-	local z, err = mtzip.unzip(f)
-    if err then
-        f:close()
-        return nil, err
-    end
-
-    local manifest = minetest.parse_json(z:get("manifest.json"))
-    f:close()
-	if not manifest then
-		return false, "no manifest found!"
-	end
-
-    local self = {
-        filename = filename,
-        manifest = manifest
-    }
-    return setmetatable(self, Catalog_mt)
-end
-
+--- Get the overall size of the catalog
+-- @return @{util.mapblock_pos} the size in mapblocks
 function Catalog:get_size()
     return vector.add(self.manifest.range, 1)
 end
 
+-- TODO: Catalog:prepare(catalog_mapblock_pos, options)
+
+--- Deserialize a single mapblock from the catalog
+-- @see deserialize_options.lua
+-- @param catalog_mapblock_pos @{util.mapblock_pos} the mapblock position in the catalog
+-- @param world_mapblock_pos @{util.mapblock_pos} the mapblock position in the world
+-- @param options @{deserialize_mapblock.deserialize_options} mapblock deserialization options
 function Catalog:deserialize(catalog_mapblock_pos, world_mapblock_pos, options)
     local f = io.open(self.filename)
 	local z, err = mtzip.unzip(f)
@@ -60,19 +41,19 @@ function Catalog:deserialize(catalog_mapblock_pos, world_mapblock_pos, options)
 end
 
 ------
--- Deserialize multi options
+-- Deserialize options
 -- @number delay for async mode: delay between deserialization-calls
--- @number rotate_y the y rotation, can be 90,180 or 270 degrees
+-- @number rotate_y the y rotation, can be 0,90,180 or 270 degrees
 -- @field callback function to call when the blocks are deserialized
 -- @field progress_callback function to call when the progress is update
 -- @field error_callback function to call on errors
 -- @field mapblock_options function that returns the deserialization options when called with a mapblock_pos as param
--- @table deserialize_multi_options
+-- @table deserialize_all_options
 
---- deserialize multiple mapblocks from a file
--- @param pos1 @{util.mapblock_pos} the first mapblock position
--- @string prefix the filename prefix
--- @param options[opt] @{deserialize_multi_options} multi-deserialization options
+--- Deserialize all mapblocks in the catalog to the world
+-- @see deserialize_options.lua
+-- @param target_mapblock_pos @{util.mapblock_pos} the first mapblock position
+-- @param options[opt] @{deserialize_all_options} deserialization options
 function Catalog:deserialize_all(target_mapblock_pos, options)
     local f = io.open(self.filename)
 	local z, err = mtzip.unzip(f)
@@ -150,4 +131,31 @@ function Catalog:deserialize_all(target_mapblock_pos, options)
 
 	-- initial call
 	worker()
+end
+
+--- create a new catalog wrapper for the given filename
+-- @param filename the file to read from
+-- @return @{Catalog} the catalog object
+function mapblock_lib.get_catalog(filename)
+    local f = io.open(filename)
+    if not f then
+        return nil, "file is nil: '" .. filename .. "'"
+    end
+	local z, err = mtzip.unzip(f)
+    if err then
+        f:close()
+        return nil, err
+    end
+
+    local manifest = minetest.parse_json(z:get("manifest.json"))
+    f:close()
+	if not manifest then
+		return false, "no manifest found!"
+	end
+
+    local self = {
+        filename = filename,
+        manifest = manifest
+    }
+    return setmetatable(self, Catalog_mt)
 end

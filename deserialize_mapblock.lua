@@ -129,6 +129,7 @@ local manifest_cache = {}
 
 ------
 -- Deserialize options
+-- @see deserialize_options.lua
 -- @bool use_cache caches the on-disk file, useful for repetitive mapgen events
 -- @field on_metadata metadata callback, can be used to intercept and modify node-metadata/inventory
 --  `function(pos, content_id, meta)`

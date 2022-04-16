@@ -43,16 +43,43 @@ local options = {
 	mode = "replace"
 }
 
--- place at mapblock 0,0,0
-local mapblock_pos = { x=0, y=0, z=0 }
-
 -- local from a mod folder
-local filename = minetest.get_modpath("my_mod") .. "/schematics/my_mapblock.zip"
+local filename = minetest.get_modpath("my_mod") .. "/schematics/my_catalog.zip"
 
--- deserialize
-local success, msg = mapblock_lib.deserialize_mapblock(mapblock_pos, filename, options)
-
-if not success then
-	-- not successful, abort with error
-	error(msg)
+local catalog, err = mapblock_lib.get_catalog(filename)
+if err then
+	error(err)
 end
+
+-- deserialize the mapblock at 0,0,0 in the catalog to 1,1,1 in the world
+local success, deser_err = catalog:deserialize({x=0,y=0,z=0}, {x=1,y=1,z=1})
+if not success then
+	error(deser_err)
+end
+
+-- deserialize the same mapblock but with additional options
+success, deser_err = catalog:deserialize({x=0,y=0,z=0}, {x=1,y=1,z=1}, options)
+if not success then
+	error(deser_err)
+end
+
+-- deserialize all mapblocks to position 1,1,1 without any callback
+catalog:deserialize_all({x=1,y=1,z=1})
+
+-- deserialize all mapblocks to position 1,1,1 with options
+catalog:deserialize_all({x=1,y=1,z=1}, {
+	-- delay between mapblock exports in seconds (default is 0.2)
+	delay = 1,
+	callback = function(count, micros)
+		-- called after the export is done
+		print("Imported " .. count .. " mapblocks in " .. micros .. " us")
+	end,
+	progress_callback = function(f)
+		-- progress is a fractional number from 0 to 1
+		print("Progress: " .. (f*100) .. "%")
+	end,
+	error_callback = function(import_err)
+		-- handle errors
+		error(import_err)
+	end
+})
