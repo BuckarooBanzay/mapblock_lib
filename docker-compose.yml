@@ -1,0 +1,17 @@
+version: "3.6"
+
+services:
+ sut:
+  build: ./test
+  user: root
+  volumes:
+    - "./:/root/.minetest/worlds/world/worldmods/mapblock_lib/"
+    - "world_data:/root/.minetest/worlds/world"
+    - "./test/mod:/root/.minetest/worlds/world/worldmods/mapblock_lib_test/"
+    - "./test/world.mt:/root/.minetest/worlds/world/world.mt"
+    - "./test/minetest.conf:/minetest.conf"
+  ports:
+    - "30000:30000/udp"
+
+volumes:
+  world_data: {}

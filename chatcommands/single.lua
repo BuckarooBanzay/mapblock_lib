@@ -49,52 +49,6 @@ minetest.register_chatcommand("mapblock_clear_data", {
 	end
 })
 
-minetest.register_chatcommand("mapblock_save", {
-	privs = { mapblock_lib = true },
-	description = "saves the current mapblock",
-	params = "<filename>",
-	func = function(name, params)
-		local player = minetest.get_player_by_name(name)
-		if not player then
-			return false, "player not found"
-		end
-
-		local pos = player:get_pos()
-
-		if not params or params == "" then
-			return false, "specify a name for the schema"
-		end
-
-		local block_pos = mapblock_lib.get_mapblock(pos)
-		local filename = mapblock_lib.schema_path .. "/" .. params
-		mapblock_lib.serialize(block_pos, filename)
-		return true, "mapblock saved as " .. filename
-	end
-})
-
-minetest.register_chatcommand("mapblock_load", {
-	privs = { mapblock_lib = true },
-	description = "loads the mapblock from a file to the world",
-	params = "<filename>",
-	func = function(name, params)
-		local player = minetest.get_player_by_name(name)
-		if not player then
-			return false, "player not found"
-		end
-
-		local pos = player:get_pos()
-
-		if not params or params == "" then
-			return false, "specify a name for the schema"
-		end
-
-		local mapblock_pos = mapblock_lib.get_mapblock(pos)
-		local filename = mapblock_lib.schema_path .. "/" .. params
-		local ok, err = mapblock_lib.deserialize(mapblock_pos, filename, {})
-		return ok, err or ("mapblock loaded from " .. filename)
-	end
-})
-
 minetest.register_chatcommand("mapblock_rotate_y", {
 	privs = { mapblock_lib = true },
 	description = "rotates the current mapblock around the y axis",
@@ -115,8 +69,7 @@ minetest.register_chatcommand("mapblock_rotate_y", {
 		local mapblock_pos = mapblock_lib.get_mapblock(pos)
 		local min, max = mapblock_lib.get_mapblock_bounds_from_mapblock(mapblock_pos)
 
-		local node_mapping = {}
-		local data = mapblock_lib.serialize_part(min, max, node_mapping)
+		local data = mapblock_lib.serialize_mapblock(mapblock_pos)
 
 		local transform = {
 			rotate = {
