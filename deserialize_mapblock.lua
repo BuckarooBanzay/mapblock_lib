@@ -118,19 +118,26 @@ function mapblock_lib.deserialize_part(pos1, pos2, data, metadata, options)
 end
 
 ------
+-- Rotate options
+-- @field @number angle the angle to rotate, can be 0,90,180 or 270
+-- @field @string axis the axis to rotate, can be "x","y" or "z" **NOTE**: orientation only works with the y-rotation
+-- @field disable_orientation map of nodename to bool/true of nodenames that shouldn't get oriented
+-- @table rotate_options
+
+------
 -- Transformation options
--- @field replace
--- @field rotate
--- @field set_param2
+-- @field replace map of nodename to replacement-nodename for node-replacements on place
+-- @field rotate[opt] @{rotate_options} optional rotation options
+-- @field set_param2[opt] map of nodename to param2-value to bulk-set param2 values
 -- @table transform_options
 
 ------
 -- Deserialize options
 -- @see deserialize_options.lua
--- @field on_metadata metadata callback, can be used to intercept and modify node-metadata/inventory
+-- @field on_metadata[opt] metadata callback, can be used to intercept and modify node-metadata/inventory
 --  `function(pos, content_id, meta)`
--- @field transform @{transform_options} transformation options
--- @string mode placement mode "replace": replace the whole mapblock, "add": replace only air nodes
+-- @field transform[opt] @{transform_options} transformation options
+-- @string mode[opt] placement mode "replace": replace the whole mapblock, "add": replace only air nodes
 -- @table deserialize_options
 
 
