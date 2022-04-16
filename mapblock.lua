@@ -32,6 +32,12 @@ end
 
 -- creates a mapblock object from a data string
 function mapblock_lib.read_mapblock(data)
+	if not data then
+		return nil, "mapblock data is empty"
+	elseif #data ~= 16384 then
+		return nil, "unexpected mapblock size"
+	end
+
 	local mapblock = {
 		node_ids = {},
 		param1 = {},
