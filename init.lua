@@ -15,12 +15,12 @@ dofile(MP .. "/data.lua")
 
 dofile(MP .. "/mapblock.lua")
 
-dofile(MP .. "/transform.lua")
-dofile(MP .. "/transform_set_param2.lua")
-dofile(MP .. "/transform_replace.lua")
-dofile(MP .. "/transform_flip.lua")
-dofile(MP .. "/transform_orient.lua")
-dofile(MP .. "/transform_transpose.lua")
+dofile(MP .. "/transform/transform.lua")
+dofile(MP .. "/transform/transform_set_param2.lua")
+dofile(MP .. "/transform/transform_replace.lua")
+dofile(MP .. "/transform/transform_flip.lua")
+dofile(MP .. "/transform/transform_orient.lua")
+dofile(MP .. "/transform/transform_transpose.lua")
 
 dofile(MP .. "/serialize_mapblock.lua")
 dofile(MP .. "/deserialize_mapblock.lua")
