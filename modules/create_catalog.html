@@ -39,12 +39,14 @@
 
 <h2>Modules</h2>
 <ul class="nowrap">
+  <li><strong>create_catalog</strong></li>
   <li><a href="../modules/data.html">data</a></li>
   <li><a href="../modules/deserialize.html">deserialize</a></li>
+  <li><a href="../modules/deserialize_mapblock.html">deserialize_mapblock</a></li>
+  <li><a href="../modules/get_catalog.html">get_catalog</a></li>
   <li><a href="../modules/mapgens.singleblock.html">mapgens.singleblock</a></li>
-  <li><strong>serialize</strong></li>
+  <li><a href="../modules/serialize_mapblock.html">serialize_mapblock</a></li>
   <li><a href="../modules/util.html">util</a></li>
-  <li><a href="../modules/validate.html">validate</a></li>
 </ul>
 <h2>Topics</h2>
 <ul class="">
@@ -52,6 +54,7 @@
 </ul>
 <h2>Examples</h2>
 <ul class="nowrap">
+  <li><a href="../examples/create_catalog.lua.html">create_catalog.lua</a></li>
   <li><a href="../examples/deserialize_options.lua.html">deserialize_options.lua</a></li>
   <li><a href="../examples/singleblock_mapgen.lua.html">singleblock_mapgen.lua</a></li>
 </ul>
@@ -60,8 +63,8 @@
 
 <div id="content">
 
-<h1>Module <code>serialize</code></h1>
-<p>mapblock serialization</p>
+<h1>Module <code>create_catalog</code></h1>
+<p>Create catalog function</p>
 <p>
 
 </p>
@@ -70,19 +73,15 @@
 <h2><a href="#Functions">Functions</a></h2>
 <table class="function_list">
 	<tr>
-	<td class="name" nowrap><a href="#mapblock_lib.serialize">mapblock_lib.serialize (mapblock_pos, filename)</a></td>
-	<td class="summary">serialize a mapblock to a file</td>
-	</tr>
-	<tr>
-	<td class="name" nowrap><a href="#mapblock_lib.serialize_multi">mapblock_lib.serialize_multi (pos1, pos2, prefix, options)</a></td>
-	<td class="summary">serialize multiple mapblocks to a file</td>
+	<td class="name" nowrap><a href="#mapblock_lib.create_catalog">mapblock_lib.create_catalog (filename, pos1, pos2, options)</a></td>
+	<td class="summary">create a new catalog and serialize the mapblocks from pos1 to pos2 in it</td>
 	</tr>
 </table>
 <h2><a href="#Tables">Tables</a></h2>
 <table class="function_list">
 	<tr>
-	<td class="name" nowrap><a href="#serialize_multi_options">serialize_multi_options</a></td>
-	<td class="summary">Serialize multi options</td>
+	<td class="name" nowrap><a href="#serialize_options">serialize_options</a></td>
+	<td class="summary">Serialize options</td>
 	</tr>
 </table>
 
@@ -94,56 +93,36 @@
 
     <dl class="function">
     <dt>
-    <a name = "mapblock_lib.serialize"></a>
-    <strong>mapblock_lib.serialize (mapblock_pos, filename)</strong>
+    <a name = "mapblock_lib.create_catalog"></a>
+    <strong>mapblock_lib.create_catalog (filename, pos1, pos2, options)</strong>
     </dt>
     <dd>
-    serialize a mapblock to a file
+    create a new catalog and serialize the mapblocks from pos1 to pos2 in it
 
 
     <h3>Parameters:</h3>
     <ul>
-        <li><span class="parameter">mapblock_pos</span>
-         <a href="../modules/util.html#mapblock_pos">util.mapblock_pos</a> the mapblock position
-        </li>
         <li><span class="parameter">filename</span>
             <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
-         the file to save to
+         the filename to save to
         </li>
-    </ul>
-
-
-
-
-
-</dd>
-    <dt>
-    <a name = "mapblock_lib.serialize_multi"></a>
-    <strong>mapblock_lib.serialize_multi (pos1, pos2, prefix, options)</strong>
-    </dt>
-    <dd>
-    serialize multiple mapblocks to a file
-
-
-    <h3>Parameters:</h3>
-    <ul>
         <li><span class="parameter">pos1</span>
-         <a href="../modules/util.html#node_pos">util.node_pos</a> the first (lower) mapblock position
+         <a href="../modules/util.html#mapblock_pos">util.mapblock_pos</a> the first (lower) mapblock position
         </li>
         <li><span class="parameter">pos2</span>
-         <a href="../modules/util.html#node_pos">util.node_pos</a> the second (upper) mapblock position
-        </li>
-        <li><span class="parameter">prefix</span>
-            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
-         the filename prefix
+         <a href="../modules/util.html#mapblock_pos">util.mapblock_pos</a> the second (upper) mapblock position
         </li>
         <li><span class="parameter">options</span>
-        [opt] <a href="../modules/serialize.html#serialize_multi_options">serialize_multi_options</a> multi-serialization options
+        [opt] <a href="../modules/create_catalog.html#serialize_options">serialize_options</a> serialization options
         </li>
     </ul>
 
 
 
+    <h3>See also:</h3>
+    <ul>
+         <a href="../examples/create_catalog.lua.html#">create_catalog.lua</a>
+    </ul>
 
 
 </dd>
@@ -152,11 +131,11 @@
 
     <dl class="function">
     <dt>
-    <a name = "serialize_multi_options"></a>
-    <strong>serialize_multi_options</strong>
+    <a name = "serialize_options"></a>
+    <strong>serialize_options</strong>
     </dt>
     <dd>
-    Serialize multi options
+    Serialize options
 
 
     <h3>Fields:</h3>
@@ -185,7 +164,7 @@
 </div> <!-- id="main" -->
 <div id="about">
 <i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
-<i style="float:right;">Last updated 2022-03-21 09:33:50 </i>
+<i style="float:right;">Last updated 2022-04-16 20:14:38 </i>
 </div> <!-- id="about" -->
 </div> <!-- id="container" -->
 </body>

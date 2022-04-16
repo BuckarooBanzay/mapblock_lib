@@ -1,0 +1,296 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Mapblock lib</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>mapblock_lib</h1>
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Class_Catalog">Class Catalog </a></li>
+</ul>
+
+
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><a href="../modules/create_catalog.html">create_catalog</a></li>
+  <li><a href="../modules/data.html">data</a></li>
+  <li><a href="../modules/deserialize.html">deserialize</a></li>
+  <li><a href="../modules/deserialize_mapblock.html">deserialize_mapblock</a></li>
+  <li><strong>get_catalog</strong></li>
+  <li><a href="../modules/mapgens.singleblock.html">mapgens.singleblock</a></li>
+  <li><a href="../modules/serialize_mapblock.html">serialize_mapblock</a></li>
+  <li><a href="../modules/util.html">util</a></li>
+</ul>
+<h2>Topics</h2>
+<ul class="">
+  <li><a href="../topics/readme.md.html">readme</a></li>
+</ul>
+<h2>Examples</h2>
+<ul class="nowrap">
+  <li><a href="../examples/create_catalog.lua.html">create_catalog.lua</a></li>
+  <li><a href="../examples/deserialize_options.lua.html">deserialize_options.lua</a></li>
+  <li><a href="../examples/singleblock_mapgen.lua.html">singleblock_mapgen.lua</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Module <code>get_catalog</code></h1>
+<p>Catalog functions</p>
+<p>
+
+</p>
+
+
+<h2><a href="#Class_Catalog">Class Catalog </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#Catalog:get_size">Catalog:get_size ()</a></td>
+	<td class="summary">Get the overall size of the catalog</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Catalog:deserialize">Catalog:deserialize (catalog_mapblock_pos, world_mapblock_pos, options)</a></td>
+	<td class="summary">Deserialize a single mapblock from the catalog</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Catalog:prepare">Catalog:prepare (catalog_mapblock_pos, options)</a></td>
+	<td class="summary">Prepare a mapblock with options for faster access</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Catalog.deserialize_all_options">Catalog.deserialize_all_options</a></td>
+	<td class="summary">Deserialize options</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Catalog:deserialize_all">Catalog:deserialize_all (target_mapblock_pos, options)</a></td>
+	<td class="summary">Deserialize all mapblocks in the catalog to the world</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#mapblock_lib.get_catalog">mapblock_lib.get_catalog (filename)</a></td>
+	<td class="summary">create a new catalog wrapper for the given filename</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header has-description"><a name="Class_Catalog"></a>Class Catalog </h2>
+
+          <div class="section-description">
+          Catalog object
+          </div>
+    <dl class="function">
+    <dt>
+    <a name = "Catalog:get_size"></a>
+    <strong>Catalog:get_size ()</strong>
+    </dt>
+    <dd>
+    Get the overall size of the catalog
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        <a href="../modules/util.html#mapblock_pos">util.mapblock_pos</a> the size in mapblocks
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Catalog:deserialize"></a>
+    <strong>Catalog:deserialize (catalog_mapblock_pos, world_mapblock_pos, options)</strong>
+    </dt>
+    <dd>
+    Deserialize a single mapblock from the catalog
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">catalog_mapblock_pos</span>
+         <a href="../modules/util.html#mapblock_pos">util.mapblock_pos</a> the mapblock position in the catalog
+        </li>
+        <li><span class="parameter">world_mapblock_pos</span>
+         <a href="../modules/util.html#mapblock_pos">util.mapblock_pos</a> the mapblock position in the world
+        </li>
+        <li><span class="parameter">options</span>
+         <a href="../modules/deserialize_mapblock.html#deserialize_options">deserialize_mapblock.deserialize_options</a> mapblock deserialization options
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+        <li>
+        success true on success</li>
+        <li>
+        error in case of an error</li>
+    </ol>
+
+
+    <h3>See also:</h3>
+    <ul>
+         <a href="../examples/deserialize_options.lua.html#">deserialize_options.lua</a>
+    </ul>
+
+
+</dd>
+    <dt>
+    <a name = "Catalog:prepare"></a>
+    <strong>Catalog:prepare (catalog_mapblock_pos, options)</strong>
+    </dt>
+    <dd>
+    Prepare a mapblock with options for faster access
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">catalog_mapblock_pos</span>
+         <a href="../modules/util.html#mapblock_pos">util.mapblock_pos</a> the mapblock position in the catalog
+        </li>
+        <li><span class="parameter">options</span>
+         <a href="../modules/deserialize_mapblock.html#deserialize_options">deserialize_mapblock.deserialize_options</a> mapblock deserialization options
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+        <li>
+        deserFn a function that accepts a mapblock position <a href="../modules/util.html#mapblock_pos">util.mapblock_pos</a> to write the mapblock to the map</li>
+        <li>
+        error in case of an error</li>
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Catalog.deserialize_all_options"></a>
+    <strong>Catalog.deserialize_all_options</strong>
+    </dt>
+    <dd>
+    Deserialize options
+
+
+    <h3>Fields:</h3>
+    <ul>
+        <li><span class="parameter">callback</span>
+         function to call when the blocks are deserialized
+        </li>
+        <li><span class="parameter">progress_callback</span>
+         function to call when the progress is update
+        </li>
+        <li><span class="parameter">error_callback</span>
+         function to call on errors
+        </li>
+        <li><span class="parameter">mapblock_options</span>
+         function that returns the deserialization options when called with a mapblock_pos as param
+        </li>
+        <li><span class="parameter">delay</span>
+            <span class="types"><span class="type">number</span></span>
+         for async mode: delay between deserialization-calls
+        </li>
+        <li><span class="parameter">rotate_y</span>
+            <span class="types"><span class="type">number</span></span>
+         the y rotation, can be 0,90,180 or 270 degrees
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Catalog:deserialize_all"></a>
+    <strong>Catalog:deserialize_all (target_mapblock_pos, options)</strong>
+    </dt>
+    <dd>
+    Deserialize all mapblocks in the catalog to the world
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">target_mapblock_pos</span>
+         <a href="../modules/util.html#mapblock_pos">util.mapblock_pos</a> the first mapblock position
+        </li>
+        <li><span class="parameter">options</span>
+        [opt] <a href="../modules/get_catalog.html#Catalog.deserialize_all_options">deserialize_all_options</a> deserialization options
+        </li>
+    </ul>
+
+
+
+    <h3>See also:</h3>
+    <ul>
+         <a href="../examples/deserialize_options.lua.html#">deserialize_options.lua</a>
+    </ul>
+
+
+</dd>
+    <dt>
+    <a name = "mapblock_lib.get_catalog"></a>
+    <strong>mapblock_lib.get_catalog (filename)</strong>
+    </dt>
+    <dd>
+    create a new catalog wrapper for the given filename
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">filename</span>
+         the file to read from
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        <a href="../modules/get_catalog.html#Catalog">Catalog</a> the catalog object
+    </ol>
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
+<i style="float:right;">Last updated 2022-04-16 20:14:38 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

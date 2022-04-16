@@ -34,17 +34,20 @@
 
 <h2>Examples</h2>
 <ul class="nowrap">
+  <li><a href="../examples/create_catalog.lua.html">create_catalog.lua</a></li>
   <li><strong>deserialize_options.lua</strong></li>
   <li><a href="../examples/singleblock_mapgen.lua.html">singleblock_mapgen.lua</a></li>
 </ul>
 <h2>Modules</h2>
 <ul class="nowrap">
+  <li><a href="../modules/create_catalog.html">create_catalog</a></li>
   <li><a href="../modules/data.html">data</a></li>
   <li><a href="../modules/deserialize.html">deserialize</a></li>
+  <li><a href="../modules/deserialize_mapblock.html">deserialize_mapblock</a></li>
+  <li><a href="../modules/get_catalog.html">get_catalog</a></li>
   <li><a href="../modules/mapgens.singleblock.html">mapgens.singleblock</a></li>
-  <li><a href="../modules/serialize.html">serialize</a></li>
+  <li><a href="../modules/serialize_mapblock.html">serialize_mapblock</a></li>
   <li><a href="../modules/util.html">util</a></li>
-  <li><a href="../modules/validate.html">validate</a></li>
 </ul>
 <h2>Topics</h2>
 <ul class="">
@@ -61,9 +64,6 @@
 </span>
 <span class="comment">-- all fields are optional
 </span><span class="keyword">local</span> options = {
-	<span class="comment">-- caches the on-disk file, useful for repetitive mapgen events
-</span>	use_cache = <span class="keyword">false</span>,
-
 	<span class="comment">-- various transformations to apply to the loaded mapblock
 </span>	transform = {
 		<span class="comment">-- rotate the mapblock around the given axis with the angle (90, 180, 270)
@@ -102,26 +102,61 @@
 </span>	mode = <span class="string">"replace"</span>
 }
 
-<span class="comment">-- place at mapblock 0,0,0
-</span><span class="keyword">local</span> mapblock_pos = { x=<span class="number">0</span>, y=<span class="number">0</span>, z=<span class="number">0</span> }
-
 <span class="comment">-- local from a mod folder
-</span><span class="keyword">local</span> filename = minetest.get_modpath(<span class="string">"my_mod"</span>) .. <span class="string">"/schematics/my_mapblock"</span>
+</span><span class="keyword">local</span> filename = minetest.get_modpath(<span class="string">"my_mod"</span>) .. <span class="string">"/schematics/my_catalog.zip"</span>
 
-<span class="comment">-- deserialize
-</span><span class="keyword">local</span> success, msg = mapblock_lib.deserialize(mapblock_pos, filename, options)
+<span class="keyword">local</span> catalog, err = mapblock_lib.get_catalog(filename)
+<span class="keyword">if</span> err <span class="keyword">then</span>
+	<span class="global">error</span>(err)
+<span class="keyword">end</span>
 
+<span class="comment">-- deserialize the mapblock at 0,0,0 in the catalog to 1,1,1 in the world
+</span><span class="keyword">local</span> success, deser_err = catalog:deserialize({x=<span class="number">0</span>,y=<span class="number">0</span>,z=<span class="number">0</span>}, {x=<span class="number">1</span>,y=<span class="number">1</span>,z=<span class="number">1</span>})
 <span class="keyword">if</span> <span class="keyword">not</span> success <span class="keyword">then</span>
-	<span class="comment">-- not successful, abort with error
-</span>	<span class="global">error</span>(msg)
-<span class="keyword">end</span></pre>
+	<span class="global">error</span>(deser_err)
+<span class="keyword">end</span>
+
+<span class="comment">-- deserialize the same mapblock but with additional options
+</span>success, deser_err = catalog:deserialize({x=<span class="number">0</span>,y=<span class="number">0</span>,z=<span class="number">0</span>}, {x=<span class="number">1</span>,y=<span class="number">1</span>,z=<span class="number">1</span>}, options)
+<span class="keyword">if</span> <span class="keyword">not</span> success <span class="keyword">then</span>
+	<span class="global">error</span>(deser_err)
+<span class="keyword">end</span>
+
+<span class="comment">-- deserialize all mapblocks to position 1,1,1 without any callback
+</span>catalog:deserialize_all({x=<span class="number">1</span>,y=<span class="number">1</span>,z=<span class="number">1</span>})
+
+<span class="comment">-- deserialize all mapblocks to position 1,1,1 with options
+</span>catalog:deserialize_all({x=<span class="number">1</span>,y=<span class="number">1</span>,z=<span class="number">1</span>}, {
+	<span class="comment">-- delay between mapblock exports in seconds (default is 0.2)
+</span>	delay = <span class="number">1</span>,
+	callback = <span class="keyword">function</span>(count, micros)
+		<span class="comment">-- called after the export is done
+</span>		<span class="global">print</span>(<span class="string">"Imported "</span> .. count .. <span class="string">" mapblocks in "</span> .. micros .. <span class="string">" us"</span>)
+	<span class="keyword">end</span>,
+	progress_callback = <span class="keyword">function</span>(f)
+		<span class="comment">-- progress is a fractional number from 0 to 1
+</span>		<span class="global">print</span>(<span class="string">"Progress: "</span> .. (f*<span class="number">100</span>) .. <span class="string">"%"</span>)
+	<span class="keyword">end</span>,
+	error_callback = <span class="keyword">function</span>(import_err)
+		<span class="comment">-- handle errors
+</span>		<span class="global">error</span>(import_err)
+	<span class="keyword">end</span>
+})
+
+<span class="comment">-- load and prepare a mapblock for faster access (mapgen)
+</span><span class="keyword">local</span> deserFn, prep_err = catalog:prepare({x=<span class="number">0</span>,y=<span class="number">0</span>,z=<span class="number">0</span>}, options)
+<span class="keyword">if</span> prep_err <span class="keyword">then</span>
+	<span class="global">error</span>(prep_err)
+<span class="keyword">end</span>
+<span class="comment">-- apply to the given position
+</span>deserFn({x=<span class="number">1</span>,y=<span class="number">1</span>,z=<span class="number">1</span>})</pre>
 
 
 </div> <!-- id="content" -->
 </div> <!-- id="main" -->
 <div id="about">
 <i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
-<i style="float:right;">Last updated 2022-03-21 09:33:50 </i>
+<i style="float:right;">Last updated 2022-04-16 20:14:38 </i>
 </div> <!-- id="about" -->
 </div> <!-- id="container" -->
 </body>
