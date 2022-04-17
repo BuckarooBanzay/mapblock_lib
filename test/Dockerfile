@@ -1,4 +1,5 @@
-FROM registry.gitlab.com/minetest/minetest/server:5.5.0
+ARG ENGINE_VERSION=5.5.0
+FROM registry.gitlab.com/minetest/minetest/server:${ENGINE_VERSION}
 
 USER root
 RUN apk add git &&\

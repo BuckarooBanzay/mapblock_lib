@@ -2,7 +2,10 @@ version: "3.6"
 
 services:
  sut:
-  build: ./test
+  build:
+   context: ./test
+   args:
+    ENGINE_VERSION: ${ENGINE_VERSION:-5.5.0}
   user: root
   volumes:
     - "./:/root/.minetest/worlds/world/worldmods/mapblock_lib/"
