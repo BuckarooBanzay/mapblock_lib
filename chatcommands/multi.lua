@@ -167,3 +167,26 @@ minetest.register_chatcommand("mapblock_allocate", {
 		return true, "Allocated: '" .. filename .. "' with size: " .. minetest.pos_to_string(size)
 	end
 })
+
+minetest.register_chatcommand("mapblock_load_plain", {
+	privs = { mapblock_lib = true },
+	description = "loads a saved (single-file) mapblock region",
+	params = "<filename>",
+	func = function(name, params)
+		local pos1 = pos1_map[name]
+
+		if not pos1 then
+			return false, "select /mapblocks_pos1 first"
+		end
+
+		if not params or params == "" then
+			return false, "specify a name for the schema"
+		end
+
+		local prefix = mapblock_lib.schema_path .. "/" .. params
+
+		local success, err = mapblock_lib.deserialize(pos1, prefix)
+
+		return success, err or "Loaded mapblock from '" .. prefix .. "'"
+	end
+})

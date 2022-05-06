@@ -22,8 +22,13 @@ function mapblock_lib.deserialize(mapblock_pos, prefix, options)
     local mapblock_filename = prefix .. ".bin"
     local manifest_filename = prefix .. ".manifest.json"
 
-    local manifest, mapblock ,err
-    manifest, err = minetest.parse_json(read_file(manifest_filename))
+    local manifest_data, err = read_file(manifest_filename)
+    if err then
+        return false, err
+    end
+
+    local manifest, mapblock
+    manifest, err = minetest.parse_json(manifest_data)
     if err then
         return false, err
     end
