@@ -80,7 +80,7 @@ minetest.register_chatcommand("mapblock_save", {
 		local pos2 = pos2_map[name]
 
 		if not pos1 or not pos2 then
-			return false, "select a region with /mapblocks_pos[1|2] first"
+			return false, "select a region with /mapblock_pos[1|2] first"
 		end
 
 		if not params or params == "" then
