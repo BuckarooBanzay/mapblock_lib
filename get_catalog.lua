@@ -22,9 +22,14 @@ local function read_manifest_mapblock(filename, catalog_mapblock_pos)
 	end
 
 	local pos_str = minetest.pos_to_string(catalog_mapblock_pos)
-	local mapblock_data = z:get("mapblock_" .. pos_str .. ".bin")
-	local manifest_data = z:get("mapblock_" .. pos_str .. ".meta.json")
+	local meta_name = "mapblock_" .. pos_str .. ".meta.json"
+	local bin_name = "mapblock_" .. pos_str .. ".bin"
+	local mapblock_data = z:get(bin_name)
+	local manifest_data = z:get(meta_name)
 	local mapblock = mapblock_lib.read_mapblock(mapblock_data)
+	if not manifest_data then
+		return nil, nil, "no manifest found in '" .. meta_name .. "'"
+	end
 	local manifest = minetest.parse_json(manifest_data)
 	f:close()
 
