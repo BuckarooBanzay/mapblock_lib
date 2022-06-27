@@ -1,38 +1,4 @@
 
-local pos1_map = {}
-local pos2_map = {}
-
-local function update_position_marks(name)
-	if not minetest.get_modpath("worldedit") then
-		return
-	end
-
-	if pos1_map[name] and pos2_map[name] then
-		-- mark all affected mapblocks
-		local mb_min, mb_max = mapblock_lib.sort_pos(pos1_map[name], pos2_map[name])
-
-		local min = mapblock_lib.get_mapblock_bounds_from_mapblock(mb_min)
-		local _, max = mapblock_lib.get_mapblock_bounds_from_mapblock(mb_max)
-		worldedit.pos1[name] = min
-		worldedit.pos2[name] = max
-
-	elseif pos1_map[name] then
-		-- mark single mapblock
-		local min, max = mapblock_lib.get_mapblock_bounds_from_mapblock(pos1_map[name])
-		worldedit.pos1[name] = min
-		worldedit.pos2[name] = max
-
-	elseif pos2_map[name] then
-		-- mark single mapblock
-		local min, max = mapblock_lib.get_mapblock_bounds_from_mapblock(pos2_map[name])
-		worldedit.pos1[name] = min
-		worldedit.pos2[name] = max
-
-	end
-
-	worldedit.mark_pos1(name)
-	worldedit.mark_pos2(name)
-end
 
 minetest.register_chatcommand("mapblock_pos1", {
 	privs = { mapblock_lib = true },
@@ -45,8 +11,7 @@ minetest.register_chatcommand("mapblock_pos1", {
 
 		local pos = player:get_pos()
 		local mapblock_pos = mapblock_lib.get_mapblock(pos)
-		pos1_map[name] = mapblock_pos
-		update_position_marks(name)
+		mapblock_lib.set_pos(1, name, mapblock_pos)
 
 		return true, "selected mapblock " .. minetest.pos_to_string(mapblock_pos) .. " as pos1"
 	end
@@ -63,8 +28,7 @@ minetest.register_chatcommand("mapblock_pos2", {
 
 		local pos = player:get_pos()
 		local mapblock_pos = mapblock_lib.get_mapblock(pos)
-		pos2_map[name] = mapblock_pos
-		update_position_marks(name)
+		mapblock_lib.set_pos(2, name, mapblock_pos)
 
 		return true, "selected mapblock " .. minetest.pos_to_string(mapblock_pos) .. " as pos2"
 	end
@@ -76,8 +40,8 @@ minetest.register_chatcommand("mapblock_save", {
 	params = "<filename>",
 	func = function(name, params)
 
-		local pos1 = pos1_map[name]
-		local pos2 = pos2_map[name]
+		local pos1 = mapblock_lib.get_pos(1, name)
+		local pos2 = mapblock_lib.get_pos(2, name)
 
 		if not pos1 or not pos2 then
 			return false, "select a region with /mapblock_pos[1|2] first"
@@ -109,7 +73,7 @@ minetest.register_chatcommand("mapblock_load", {
 	description = "loads a saved mapblock region",
 	params = "<filename>",
 	func = function(name, params)
-		local pos1 = pos1_map[name]
+		local pos1 = mapblock_lib.get_pos(1, name)
 
 		if not pos1 then
 			return false, "select /mapblocks_pos1 first"
@@ -144,7 +108,7 @@ minetest.register_chatcommand("mapblock_allocate", {
 	description = "allocates a saved mapblock region",
 	params = "<filename>",
 	func = function(name, params)
-		local pos1 = pos1_map[name]
+		local pos1 = mapblock_lib.get_pos(1, name)
 
 		if not pos1 then
 			return false, "select /mapblocks_pos1 first"
@@ -161,8 +125,7 @@ minetest.register_chatcommand("mapblock_allocate", {
 		end
 
 		local size = catalog:get_size()
-		pos2_map[name] = vector.subtract(vector.add(pos1, size), 1)
-		update_position_marks(name)
+		mapblock_lib.set_pos(2, name, vector.subtract(vector.add(pos1, size), 1))
 
 		return true, "Allocated: '" .. filename .. "' with size: " .. minetest.pos_to_string(size)
 	end
@@ -173,7 +136,7 @@ minetest.register_chatcommand("mapblock_load_plain", {
 	description = "loads a saved (single-file) mapblock region",
 	params = "<filename>",
 	func = function(name, params)
-		local pos1 = pos1_map[name]
+		local pos1 = mapblock_lib.get_pos(1, name)
 
 		if not pos1 then
 			return false, "select /mapblocks_pos1 first"
