@@ -8,7 +8,7 @@
 
 Mapblock-granular world operations, transformations and utilities
 
-<img src="./screenshot.png"/>
+![Screenshot](screenshot.png)
 
 Features:
 
@@ -51,3 +51,5 @@ See: https://buckaroobanzay.github.io/mapblock_lib/
 
 * Code: MIT
 * Textures: CC-BY-SA 3.0
+
+![Always has been](mapblocks.jpg)
