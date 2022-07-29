@@ -32,7 +32,7 @@
 
 <h2>Contents</h2>
 <ul>
-<li><a href="#Functions">Functions</a></li>
+<li><a href="#Class_DataStorage">Class DataStorage </a></li>
 </ul>
 
 
@@ -63,25 +63,30 @@
 <div id="content">
 
 <h1>Module <code>data</code></h1>
-<p>mapblock data management</p>
+<p>off-world storage for position-dependent data (data in mapblocks, tilenames, etc)
+ indexed in 10^3 groups and saved in the mod-storage</p>
 <p>
 
 </p>
 
 
-<h2><a href="#Functions">Functions</a></h2>
+<h2><a href="#Class_DataStorage">Class DataStorage </a></h2>
 <table class="function_list">
 	<tr>
-	<td class="name" nowrap><a href="#mapblock_lib.get_mapblock_data">mapblock_lib.get_mapblock_data (mapblock_pos)</a></td>
-	<td class="summary">get the mapblock data</td>
+	<td class="name" nowrap><a href="#mapblock_lib.create_data_storage">mapblock_lib.create_data_storage (storage)</a></td>
+	<td class="summary">create a new world data storage object</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#mapblock_lib.set_mapblock_data">mapblock_lib.set_mapblock_data (mapblock_pos, data)</a></td>
-	<td class="summary">set the mapblock data</td>
+	<td class="name" nowrap><a href="#DataStorage:get">DataStorage:get (pos)</a></td>
+	<td class="summary">Returns the data at given position</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#mapblock_lib.merge_mapblock_data">mapblock_lib.merge_mapblock_data (mapblock_pos, data)</a></td>
-	<td class="summary">merge data with existing mapblock data</td>
+	<td class="name" nowrap><a href="#DataStorage:set">DataStorage:set (pos, data)</a></td>
+	<td class="summary">Sets the data at given position</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#DataStorage:merge">DataStorage:merge (pos, data)</a></td>
+	<td class="summary">Merges the data at given position with the existing data</td>
 	</tr>
 </table>
 
@@ -89,28 +94,31 @@
 <br/>
 
 
-    <h2 class="section-header "><a name="Functions"></a>Functions</h2>
+    <h2 class="section-header has-description"><a name="Class_DataStorage"></a>Class DataStorage </h2>
 
+          <div class="section-description">
+          World data storage object
+          </div>
     <dl class="function">
     <dt>
-    <a name = "mapblock_lib.get_mapblock_data"></a>
-    <strong>mapblock_lib.get_mapblock_data (mapblock_pos)</strong>
+    <a name = "mapblock_lib.create_data_storage"></a>
+    <strong>mapblock_lib.create_data_storage (storage)</strong>
     </dt>
     <dd>
-    get the mapblock data
+    create a new world data storage object
 
 
     <h3>Parameters:</h3>
     <ul>
-        <li><span class="parameter">mapblock_pos</span>
-         the mapblock position
+        <li><span class="parameter">storage</span>
+         the mod<em>storage object from "minetest.get</em>mod_storage()"
         </li>
     </ul>
 
     <h3>Returns:</h3>
     <ol>
 
-        the mapblock data as a table or nil if none available
+        <a href="../modules/data.html#DataStorage">DataStorage</a> the storage object
     </ol>
 
 
@@ -118,20 +126,17 @@
 
 </dd>
     <dt>
-    <a name = "mapblock_lib.set_mapblock_data"></a>
-    <strong>mapblock_lib.set_mapblock_data (mapblock_pos, data)</strong>
+    <a name = "DataStorage:get"></a>
+    <strong>DataStorage:get (pos)</strong>
     </dt>
     <dd>
-    set the mapblock data
+    Returns the data at given position
 
 
     <h3>Parameters:</h3>
     <ul>
-        <li><span class="parameter">mapblock_pos</span>
-         the mapblock position
-        </li>
-        <li><span class="parameter">data</span>
-         the table to set for that mapblock
+        <li><span class="parameter">pos</span>
+         <a href="../modules/util.html#node_pos">util.node_pos</a> the position of the data
         </li>
     </ul>
 
@@ -141,20 +146,43 @@
 
 </dd>
     <dt>
-    <a name = "mapblock_lib.merge_mapblock_data"></a>
-    <strong>mapblock_lib.merge_mapblock_data (mapblock_pos, data)</strong>
+    <a name = "DataStorage:set"></a>
+    <strong>DataStorage:set (pos, data)</strong>
     </dt>
     <dd>
-    merge data with existing mapblock data
+    Sets the data at given position
 
 
     <h3>Parameters:</h3>
     <ul>
-        <li><span class="parameter">mapblock_pos</span>
-         the mapblock position
+        <li><span class="parameter">pos</span>
+         <a href="../modules/util.html#node_pos">util.node_pos</a> the position of the data
         </li>
         <li><span class="parameter">data</span>
-         the table to set for that mapblock (keys are merged to existing data)
+         the data to save at the position or nil to clear
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "DataStorage:merge"></a>
+    <strong>DataStorage:merge (pos, data)</strong>
+    </dt>
+    <dd>
+    Merges the data at given position with the existing data
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pos</span>
+         <a href="../modules/util.html#node_pos">util.node_pos</a> the position of the data
+        </li>
+        <li><span class="parameter">data</span>
+         the data to merge at the position, only top-level fields will be merged together
         </li>
     </ul>
 
@@ -170,7 +198,7 @@
 </div> <!-- id="main" -->
 <div id="about">
 <i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
-<i style="float:right;">Last updated 2022-07-29 06:30:53 </i>
+<i style="float:right;">Last updated 2022-07-29 08:05:36 </i>
 </div> <!-- id="about" -->
 </div> <!-- id="container" -->
 </body>
