@@ -16,7 +16,7 @@ Features:
 * Serializes param1/param2/nodetimers and metadata
 * Transforms mapblock data on the fly (rotation, orientation, replacements)
 * Supports caching of the loaded mapblocks for fast in-world placement (mapgen)
-* Adds a per-mapblock data-storage (`get_mapblock_data` / `set_mapblock_data`) with caching
+* Adds position dependent data-storage (`mapblock_lib.create_data_storage(mod_storage)`) with caching
 
 Use-cases:
 
