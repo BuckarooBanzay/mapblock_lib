@@ -49,26 +49,32 @@ function mapblock_lib.localize_nodeids(node_mapping, node_ids)
 end
 
 function mapblock_lib.deserialize_part(pos1, pos2, data, metadata, options)
-	local manip = minetest.get_voxel_manip()
-	local e1, e2 = manip:read_from_map(pos1, pos2)
-	local area = VoxelArea:new({MinEdge=e1, MaxEdge=e2})
-
-	local node_data = manip:get_data()
-	local param1 = manip:get_light_data()
-	local param2 = manip:get_param2_data()
-
 	-- check if we have the same region (mapblock-aligned)
-	local same_region = vector.equals(e1, pos1) and vector.equals(e2, pos2)
+	local same_region = mapblock_lib.is_mapblock_aligned(pos1, pos2)
+	local manip = minetest.get_voxel_manip(pos1, pos2)
+	local e1, e2, node_data
 
 	-- overwrite flag
 	local replace = options.mode ~= "add"
 	if replace and same_region then
 		-- replace node data 1:1
+		manip:set_data(data.node_ids)
+		manip:set_light_data(data.param1)
+		manip:set_param2_data(data.param2)
+		-- set edges
+		e1 = pos1
+		e2 = pos2
+		-- set content-ids for later
 		node_data = data.node_ids
-		param1 = data.param1
-		param2 = data.param2
 	else
 		-- overwrite with air check one by one
+		e1, e2 = manip:read_from_map(pos1, pos2)
+		local area = VoxelArea:new({MinEdge=e1, MaxEdge=e2})
+
+		node_data = manip:get_data()
+		local param1 = manip:get_light_data()
+		local param2 = manip:get_param2_data()
+
 		local j = 1
 		for z=pos1.z,pos2.z do
 			for y=pos1.y,pos2.y do
@@ -83,15 +89,17 @@ function mapblock_lib.deserialize_part(pos1, pos2, data, metadata, options)
 				end
 			end
 		end
+
+		manip:set_data(node_data)
+		manip:set_light_data(param1)
+		manip:set_param2_data(param2)
 	end
 
-	manip:set_data(node_data)
-	manip:set_light_data(param1)
-	manip:set_param2_data(param2)
 	manip:write_to_map()
 
 	-- deserialize metadata
 	if metadata and metadata.meta then
+		local area = VoxelArea:new({MinEdge=e1, MaxEdge=e2})
 		for pos_str, md in pairs(metadata.meta) do
 			local relative_pos = minetest.string_to_pos(pos_str)
 			local absolute_pos = vector.add(pos1, relative_pos)
