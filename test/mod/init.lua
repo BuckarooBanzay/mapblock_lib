@@ -7,11 +7,51 @@ local mb_pos1 = { x=0, y=0, z=0 }
 local mb_pos2 = { x=1, y=1, z=1 }
 
 local filename = minetest.get_worldpath() .. "/mapblocks/test.zip"
+local storage = minetest.get_mod_storage()
 
 -- defer emerging until stuff is settled
 table.insert(tests, function(callback)
 	print("+ defer test-start")
 	minetest.after(1, callback)
+end)
+
+table.insert(tests, function(callback)
+	print("+ data storage")
+	local store = mapblock_lib.create_data_storage(storage)
+	assert(store)
+
+	-- create
+	store:set(pos1, {x=1})
+
+	-- read
+	local data = store:get(pos1)
+	assert(data)
+	assert(data.x == 1)
+
+	-- read non-existing
+	data = store:get(pos2)
+	assert(data == nil)
+
+	-- merge
+	store:merge(pos1, {y=2})
+	data = store:get(pos1)
+	assert(data)
+	assert(data.x == 1)
+	assert(data.y == 2)
+
+	-- merge into non-existing
+	store:merge(pos2, {z=3})
+	data = store:get(pos2)
+	assert(data)
+	assert(data.x == nil)
+	assert(data.y == nil)
+	assert(data.z == 3)
+
+	-- remove
+	store:set(pos1, nil)
+	assert(store:get(pos1) == nil)
+
+	callback()
 end)
 
 -- emerge area
