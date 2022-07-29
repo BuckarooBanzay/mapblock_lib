@@ -30,6 +30,21 @@ function mapblock_lib.get_mapblock(pos)
 	return vector.floor( vector.divide(pos, 16))
 end
 
+--- returns true if the two positions align to a single mapblock's edges
+-- @param pos1 @{node_pos} the first node-position
+-- @param pos2 @{node_pos} the second node-position
+function mapblock_lib.is_mapblock_aligned(pos1, pos2)
+	pos1, pos2 = mapblock_lib.sort_pos(pos1, pos2)
+	local mapblock_pos1 = mapblock_lib.get_mapblock(pos1)
+	local mapblock_pos2 = mapblock_lib.get_mapblock(pos2)
+	if not vector.equals(mapblock_pos1, mapblock_pos2) then
+		-- not even in the same mapblock
+		return false
+	end
+	local min, max = mapblock_lib.get_mapblock_bounds_from_mapblock(mapblock_pos1)
+	return vector.equals(min, pos1) and vector.equals(max, pos2)
+end
+
 --- returns the max/min bounds for the mapblock-position
 -- @param block_pos @{mapblock_pos} the mapblock-position
 -- @return @{node_pos} the min-node-position
