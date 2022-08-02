@@ -1,5 +1,4 @@
 
-local tests = {}
 local pos1 = { x=-32, y=-32, z=-32 }
 local pos2 = { x=64, y=32, z=64 }
 
@@ -9,14 +8,7 @@ local mb_pos2 = { x=1, y=1, z=1 }
 local filename = minetest.get_worldpath() .. "/mapblocks/test.zip"
 local storage = minetest.get_mod_storage()
 
--- defer emerging until stuff is settled
-table.insert(tests, function(callback)
-	print("+ defer test-start")
-	minetest.after(1, callback)
-end)
-
-table.insert(tests, function(callback)
-	print("+ data storage")
+mtt.register("data storage", function(callback)
 	local store = mapblock_lib.create_data_storage(storage)
 	assert(store)
 
@@ -55,28 +47,19 @@ table.insert(tests, function(callback)
 end)
 
 -- emerge area
-table.insert(tests, function(callback)
-	print("+ emerging area")
-	minetest.emerge_area(pos1, pos2, function(_, _, calls_remaining)
-		if calls_remaining == 0 then
-			callback()
-		end
-	end)
-end)
+mtt.emerge_area(pos1, pos2)
 
 -- catalog
-table.insert(tests, function(callback)
-	print("+ creating catalog")
+mtt.register("creating catalog", function(callback)
 	mapblock_lib.create_catalog(filename, mb_pos1, mb_pos2, {
-		callback = callback,
+		callback = function() callback() end,
 		progress_callback = function(p)
 			print("progress: " .. p)
 		end
 	})
 end)
 
-table.insert(tests, function(callback)
-	print("+ reading catalog")
+mtt.register("reading catalog", function(callback)
 	local c, err = mapblock_lib.get_catalog(filename)
 	assert(err == nil, "err is nil")
 	local size = c:get_size()
@@ -86,16 +69,14 @@ table.insert(tests, function(callback)
 	callback()
 end)
 
-table.insert(tests, function(callback)
-	print("reading non-existent catalog")
+mtt.register("reading non-existent catalog", function(callback)
 	local c, err = mapblock_lib.get_catalog(filename .. "blah")
 	assert(c == nil, "catalog is nil")
 	assert(err, "err is not nil")
 	callback()
 end)
 
-table.insert(tests, function(callback)
-	print("+ deserializing one mapblock from the catalog")
+mtt.register("deserializing one mapblock from the catalog", function(callback)
 	local c, err = mapblock_lib.get_catalog(filename)
 	assert(err == nil, "err is nil")
 
@@ -112,13 +93,12 @@ table.insert(tests, function(callback)
 	callback()
 end)
 
-table.insert(tests, function(callback)
-	print("+ deserializing all mapblocks from the catalog")
+mtt.register("deserializing all mapblocks from the catalog", function(callback)
 	local c, err = mapblock_lib.get_catalog(filename)
 	assert(err == nil, "err is nil")
 
 	c:deserialize_all({x=0,y=1,z=2}, {
-		callback = callback,
+		callback = function() callback() end,
 		progress_callback = function(p)
 			print("progress: " .. p)
 		end,
@@ -126,8 +106,7 @@ table.insert(tests, function(callback)
 	})
 end)
 
-table.insert(tests, function(callback)
-	print("comparing all mapblocks from the catalog")
+mtt.register("comparing all mapblocks from the catalog", function(callback)
 	for x=mb_pos1.x,mb_pos2.x do
 		for y=mb_pos1.y,mb_pos2.y do
 			for z=mb_pos1.z,mb_pos2.z do
@@ -147,9 +126,7 @@ table.insert(tests, function(callback)
 	callback()
 end)
 
-table.insert(tests, function(callback)
-	print("+ util::is_mapblock_aligned")
-
+mtt.register("util::is_mapblock_aligned", function(callback)
 	local p1 = {x=0,y=0,z=0}
 	local p2 = {x=15,y=15,z=15}
 	local p3 = {x=1,y=1,z=1}
@@ -159,8 +136,7 @@ table.insert(tests, function(callback)
 	callback()
 end)
 
-table.insert(tests, function(callback)
-	print("+ prepare and deserialize a mapblock")
+mtt.register("prepare and deserialize a mapblock", function(callback)
 	local c, err = mapblock_lib.get_catalog(filename)
 	assert(err == nil, "err is nil")
 
@@ -178,23 +154,4 @@ table.insert(tests, function(callback)
 	end
 	assert(equal, "deserialized mapblock is equal to the serialized")
 	callback()
-end)
-
--- job queue
-minetest.log("warning", "[TEST] integration-test enabled!")
-minetest.register_on_mods_loaded(function()
-	local i = 0
-	local function worker()
-		i = i + 1
-		local fn = tests[i]
-		if fn then
-			fn(worker)
-		else
-			-- exit gracefully
-			print("all tests done")
-			minetest.request_shutdown("success")
-		end
-	end
-
-	worker()
 end)

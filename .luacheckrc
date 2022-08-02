@@ -23,5 +23,6 @@ read_globals = {
 	"sourcefile",
 	"describe",
 	"it",
-	"assert"
+	"assert",
+	"mtt"
 }

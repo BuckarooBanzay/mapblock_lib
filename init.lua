@@ -35,3 +35,7 @@ dofile(MP .. "/chatcommands/single.lua")
 dofile(MP .. "/chatcommands/multi.lua")
 
 dofile(MP .. "/mapgens/singleblock.lua")
+
+if minetest.get_modpath("mtt") then
+	dofile(MP .. "/mtt.lua")
+end
