@@ -153,3 +153,10 @@ minetest.register_chatcommand("mapblock_load_plain", {
 		return success, err or "Loaded mapblock from '" .. prefix .. "'"
 	end
 })
+
+-- register aliases
+minetest.register_chatcommand("mb_pos1", minetest.registered_chatcommands["mapblock_pos1"])
+minetest.register_chatcommand("mb_pos2", minetest.registered_chatcommands["mapblock_pos2"])
+minetest.register_chatcommand("mb_load", minetest.registered_chatcommands["mapblock_load"])
+minetest.register_chatcommand("mb_save", minetest.registered_chatcommands["mapblock_save"])
+minetest.register_chatcommand("mb_alloc", minetest.registered_chatcommands["mapblock_allocate"])

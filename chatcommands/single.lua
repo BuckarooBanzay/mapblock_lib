@@ -109,4 +109,7 @@ if minetest.get_modpath("worldedit") then
 			return true, "selected mapblock " .. minetest.pos_to_string(mapblock_pos)
 		end
 	})
+
+	-- register alias
+	minetest.register_chatcommand("mb_mark", minetest.registered_chatcommands["mapblock_mark"])
 end

@@ -33,15 +33,15 @@ Demo:
 
 * `/mapblock_show` marks the current mapblock with a grid
 * `/mapblock_rotate_y [90,180,270]` rotates the current mapblock around the y axis
-* `/mapblock_mark` (only available if the `worldedit` mod is present) marks the current mapblock with worledit
+* `/mapblock_mark`,`/mb_mark` (only available if the `worldedit` mod is present) marks the current mapblock with worledit
 
 ### Multi-mapblock operations
 
-* `/mapblock_pos1` marks the pos1 for a multi-mapblock ex-/import
-* `/mapblock_pos2` marks the pos2 for a multi-mapblock ex-/import
-* `/mapblock_save [name]` saves the mapblock region in `<world_path/mapblocks/<name>`
-* `/mapblock_load [name]` loads a saved mapblock region
-* `/mapblock_allocate [name]` allocates and displays the affected region
+* `/mapblock_pos1`,`/mb_pos1` marks the pos1 for a multi-mapblock ex-/import
+* `/mapblock_pos2`,`/mb_pos2` marks the pos2 for a multi-mapblock ex-/import
+* `/mapblock_save [name]`,`/mb_save [name]` saves the mapblock region in `<world_path/mapblocks/<name>`
+* `/mapblock_load [name]`,`/mb_load [name]` loads a saved mapblock region
+* `/mapblock_allocate [name]`,`mb_alloc [name]` allocates and displays the affected region
 
 ## Api
 
