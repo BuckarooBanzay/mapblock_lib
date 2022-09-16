@@ -26,6 +26,7 @@ Use-cases:
 Demo:
 
 * [City mapgen](https://github.com/BuckarooBanzay/citygen)
+* [Mapblock tileset](https://github.com/buckarooBanzay/mapblock_tileset)
 
 ## Chatcommands
 
