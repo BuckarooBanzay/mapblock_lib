@@ -16,24 +16,24 @@ local cache_miss_callback = function() end
 -- @param storage the mod_storage object from "minetest.get_mod_storage()"
 -- @return @{DataStorage} the storage object
 function mapblock_lib.create_data_storage(storage)
-	local self = {
-		-- mod_storage ref
-		storage = storage,
-		-- group_index -> data
-		cache = {},
-		-- group_index -> bool
-		stale_data = {}
-	}
-	local ref = setmetatable(self, DataStorage_mt)
+    local self = {
+        -- mod_storage ref
+        storage = storage,
+        -- group_index -> data
+        cache = {},
+        -- group_index -> bool
+        stale_data = {}
+    }
+    local ref = setmetatable(self, DataStorage_mt)
 
-	-- start initial save_worker run
-	self:save_worker()
-	-- start periodic data purge worker
-	self:purge_worker()
-	-- save stale data on shutdown
-	minetest.register_on_shutdown(function() self:save_stale_data() end)
+    -- start initial save_worker run
+    self:save_worker()
+    -- start periodic data purge worker
+    self:purge_worker()
+    -- save stale data on shutdown
+    minetest.register_on_shutdown(function() self:save_stale_data() end)
 
-	return ref
+    return ref
 end
 
 -- "group" is a bundle of mapblock-positions
@@ -53,9 +53,9 @@ function DataStorage:get_group_data(pos)
             -- deserialize data
             self.cache[index] = minetest.deserialize(serialized_data)
         end
-		cache_miss_callback()
-	else
-		cache_hit_callback()
+        cache_miss_callback()
+    else
+        cache_hit_callback()
     end
     return self.cache[index]
 end
@@ -84,14 +84,14 @@ function DataStorage:save_worker()
 end
 
 function DataStorage:purge()
-	self:save_stale_data()
-	self.cache = {}
+    self:save_stale_data()
+    self.cache = {}
 end
 
 -- periodic data purge
 function DataStorage:purge_worker()
-	self:purge()
-	minetest.after(600, function() self:purge_worker() end)
+    self:purge()
+    minetest.after(600, function() self:purge_worker() end)
 end
 
 -- exposed functions below here
@@ -127,11 +127,11 @@ end
 
 -- monitoring stuff
 if minetest.get_modpath("monitoring") then
-	-- cache hit stats
-	local cache_hits = monitoring.counter("mapblock_lib_data_cache_hits", "number of cache hits")
-	cache_hit_callback = cache_hits.inc
+    -- cache hit stats
+    local cache_hits = monitoring.counter("mapblock_lib_data_cache_hits", "number of cache hits")
+    cache_hit_callback = cache_hits.inc
 
-	local cache_miss = monitoring.counter("mapblock_lib_data_cache_miss", "number of cache misses")
-	cache_miss_callback = cache_miss.inc
+    local cache_miss = monitoring.counter("mapblock_lib_data_cache_miss", "number of cache misses")
+    cache_miss_callback = cache_miss.inc
 
 end
