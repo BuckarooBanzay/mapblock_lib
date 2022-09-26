@@ -1,4 +1,4 @@
-ARG ENGINE_VERSION=5.5.0
+ARG ENGINE_VERSION=5.6.1
 FROM registry.gitlab.com/minetest/minetest/server:${ENGINE_VERSION}
 
 USER root
