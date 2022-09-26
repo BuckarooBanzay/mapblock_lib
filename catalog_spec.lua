@@ -6,45 +6,7 @@ local mb_pos1 = { x=0, y=0, z=0 }
 local mb_pos2 = { x=1, y=1, z=1 }
 
 local filename = minetest.get_worldpath() .. "/mapblocks/test.zip"
-local storage = minetest.get_mod_storage()
 
-mtt.register("data storage", function(callback)
-	local store = mapblock_lib.create_data_storage(storage)
-	assert(store)
-
-	-- create
-	store:set(pos1, {x=1})
-
-	-- read
-	local data = store:get(pos1)
-	assert(data)
-	assert(data.x == 1)
-
-	-- read non-existing
-	data = store:get(pos2)
-	assert(data == nil)
-
-	-- merge
-	store:merge(pos1, {y=2})
-	data = store:get(pos1)
-	assert(data)
-	assert(data.x == 1)
-	assert(data.y == 2)
-
-	-- merge into non-existing
-	store:merge(pos2, {z=3})
-	data = store:get(pos2)
-	assert(data)
-	assert(data.x == nil)
-	assert(data.y == nil)
-	assert(data.z == 3)
-
-	-- remove
-	store:set(pos1, nil)
-	assert(store:get(pos1) == nil)
-
-	callback()
-end)
 
 -- emerge area
 mtt.emerge_area(pos1, pos2)
@@ -123,35 +85,5 @@ mtt.register("comparing all mapblocks from the catalog", function(callback)
 			end
 		end
 	end
-	callback()
-end)
-
-mtt.register("util::is_mapblock_aligned", function(callback)
-	local p1 = {x=0,y=0,z=0}
-	local p2 = {x=15,y=15,z=15}
-	local p3 = {x=1,y=1,z=1}
-
-	assert(mapblock_lib.is_mapblock_aligned(p1, p2))
-	assert(not mapblock_lib.is_mapblock_aligned(p1, p3))
-	callback()
-end)
-
-mtt.register("prepare and deserialize a mapblock", function(callback)
-	local c, err = mapblock_lib.get_catalog(filename)
-	assert(err == nil, "err is nil")
-
-	local target_pos = {x=5,y=5,z=5}
-	local catalog_pos = {x=0,y=0,z=0}
-	local fn = c:prepare(catalog_pos)
-	fn(target_pos)
-
-	local mb1 = mapblock_lib.serialize_mapblock(catalog_pos)
-	local mb2 = mapblock_lib.serialize_mapblock(target_pos)
-	local equal
-	equal, err = mapblock_lib.compare_mapblock(mb1, mb2)
-	if err then
-		error(err)
-	end
-	assert(equal, "deserialized mapblock is equal to the serialized")
 	callback()
 end)
