@@ -64,6 +64,11 @@ minetest.register_entity("mapblock_lib:display", {
 	end
 })
 
+function mapblock_lib.display_mapblock_at_mapblock_pos(mapblock_pos, text, timeout)
+	local pos = vector.multiply(mapblock_pos, 16)
+	return mapblock_lib.display_mapblock_at_pos(pos, text, timeout)
+end
+
 function mapblock_lib.display_mapblock_at_pos(pos, text, timeout)
 	local mapblock_center = mapblock_lib.get_mapblock_center(pos)
 	local data = {

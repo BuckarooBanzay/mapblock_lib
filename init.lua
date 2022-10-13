@@ -11,6 +11,7 @@ minetest.mkdir(mapblock_lib.schema_path)
 
 dofile(MP .. "/privs.lua")
 dofile(MP .. "/util.lua")
+dofile(MP .. "/pointed.lua")
 dofile(MP .. "/pos.lua")
 dofile(MP .. "/data.lua")
 
