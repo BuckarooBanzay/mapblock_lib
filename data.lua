@@ -57,12 +57,15 @@ end
 -- @param pos the first position to resolve
 -- @param max_recursions[opt] maximum recursion count before aborting (defaults to 10)
 -- @return the resolved data object or nil if none found
+-- @return the target position of the link
 function mapblock_lib.resolve_data_link(storage, pos, max_recursions)
     local recursions = 0
     local data = storage:get(pos)
+    local target_pos = pos
 
     while true do
         if mapblock_lib.is_data_link(data) then
+            target_pos = data._link
             data = storage:get(data._link)
         else
             break
@@ -70,11 +73,11 @@ function mapblock_lib.resolve_data_link(storage, pos, max_recursions)
 
         recursions = recursions + 1
         if recursions > (max_recursions or 10) then
-            return nil, "too many recursions"
+            return
         end
     end
 
-    return data
+    return data, target_pos
 end
 
 -- "group" is a bundle of mapblock-positions

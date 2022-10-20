@@ -65,18 +65,39 @@ mtt.register("data storage links", function(callback)
 	assert(mapblock_lib.is_data_link(store:get({x=30,y=0,z=0})))
 
 	-- simple link
-	local data = mapblock_lib.resolve_data_link(store, {x=20,y=0,z=0})
+	local data, target_pos = mapblock_lib.resolve_data_link(store, {x=20,y=0,z=0})
 	assert(data)
 	assert(data.mydata)
+	assert(target_pos)
+	assert(target_pos.x == 10)
+	assert(target_pos.y == 0)
+	assert(target_pos.z == 0)
 
 	-- nested link
-	data = mapblock_lib.resolve_data_link(store, {x=30,y=0,z=0})
+	data, target_pos = mapblock_lib.resolve_data_link(store, {x=30,y=0,z=0})
 	assert(data)
 	assert(data.mydata)
+	assert(target_pos)
+	assert(target_pos.x == 10)
+	assert(target_pos.y == 0)
+	assert(target_pos.z == 0)
 
-	-- not a link
+	-- not a link (data)
+	data, target_pos = mapblock_lib.resolve_data_link(store, {x=10,y=0,z=0})
+	assert(data)
+	assert(data.mydata)
+	assert(target_pos)
+	assert(target_pos.x == 10)
+	assert(target_pos.y == 0)
+	assert(target_pos.z == 0)
+
+	-- not a link (nil)
 	data = mapblock_lib.resolve_data_link(store, {x=999,y=0,z=0})
 	assert(not data)
+	assert(target_pos)
+	assert(target_pos.x == 10)
+	assert(target_pos.y == 0)
+	assert(target_pos.z == 0)
 
 	callback()
 end)
