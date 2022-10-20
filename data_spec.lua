@@ -8,6 +8,9 @@ mtt.register("data storage", function(callback)
 	local store = mapblock_lib.create_data_storage(storage)
 	assert(store)
 
+	-- clear
+	store:clear()
+
 	-- create
 	store:set(pos1, {x=1})
 
@@ -38,6 +41,42 @@ mtt.register("data storage", function(callback)
 	-- remove
 	store:set(pos1, nil)
 	assert(store:get(pos1) == nil)
+
+	callback()
+end)
+
+mtt.register("data storage links", function(callback)
+	local store = mapblock_lib.create_data_storage(storage)
+	assert(store)
+	store:clear()
+
+	-- original data
+	store:set({x=10,y=0,z=0}, {mydata=true})
+
+	-- link to original
+	store:set({x=20,y=0,z=0}, mapblock_lib.create_data_link({x=10,y=0,z=0}))
+
+	-- link to link
+	store:set({x=30,y=0,z=0}, mapblock_lib.create_data_link({x=20,y=0,z=0}))
+
+	-- ensure that links exist
+	assert(not mapblock_lib.is_data_link(store:get({x=10,y=0,z=0})))
+	assert(mapblock_lib.is_data_link(store:get({x=20,y=0,z=0})))
+	assert(mapblock_lib.is_data_link(store:get({x=30,y=0,z=0})))
+
+	-- simple link
+	local data = mapblock_lib.resolve_data_link(store, {x=20,y=0,z=0})
+	assert(data)
+	assert(data.mydata)
+
+	-- nested link
+	data = mapblock_lib.resolve_data_link(store, {x=30,y=0,z=0})
+	assert(data)
+	assert(data.mydata)
+
+	-- not a link
+	data = mapblock_lib.resolve_data_link(store, {x=999,y=0,z=0})
+	assert(not data)
 
 	callback()
 end)

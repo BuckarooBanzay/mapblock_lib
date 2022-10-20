@@ -36,6 +36,47 @@ function mapblock_lib.create_data_storage(storage)
     return ref
 end
 
+--- Creates a data link to the target position
+-- @param target_pos the position to link to
+-- @return the link object
+function mapblock_lib.create_data_link(target_pos)
+    return {
+        _link = target_pos
+    }
+end
+
+--- Checks if the data is a link
+-- @param the data object
+-- @return true if the data object is a link
+function mapblock_lib.is_data_link(data)
+    return data and data._link
+end
+
+--- Resolves a data link from the storage
+-- @param storage the @{DataStorage} object
+-- @param pos the first position to resolve
+-- @param max_recursions[opt] maximum recursion count before aborting (defaults to 10)
+-- @return the resolved data object or nil if none found
+function mapblock_lib.resolve_data_link(storage, pos, max_recursions)
+    local recursions = 0
+    local data = storage:get(pos)
+
+    while true do
+        if mapblock_lib.is_data_link(data) then
+            data = storage:get(data._link)
+        else
+            break
+        end
+
+        recursions = recursions + 1
+        if recursions > (max_recursions or 10) then
+            return nil, "too many recursions"
+        end
+    end
+
+    return data
+end
+
 -- "group" is a bundle of mapblock-positions
 local function get_group_pos(pos)
     -- 10^3 pos-datasets are in a group for better lookup, indexing and caching
@@ -123,6 +164,11 @@ function DataStorage:merge(pos, merge_data)
         data[k] = v
     end
     self:set(pos, data)
+end
+
+--- Clears all data from the storage
+function DataStorage:clear()
+    self.storage:from_table()
 end
 
 -- monitoring stuff
