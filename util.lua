@@ -157,6 +157,26 @@ function mapblock_lib.transpose_pos(rel_pos, axis1, axis2)
 	rel_pos[axis1], rel_pos[axis2] = rel_pos[axis2], rel_pos[axis1]
 end
 
+--- rotate a position around the y axis
+-- @param @{node_pos} rel_pos the relative position to rotate
+-- @param @{node_pos} max the maximum position to rotate in
+-- @param rotation_y the clock-wise rotation, either 0,90,180 or 270
+-- @return @{node_pos} the rotated position
+function mapblock_lib.rotate_pos(rel_pos, max_pos, rotation_y)
+	local new_pos = {x=rel_pos.x, y=rel_pos.y, z=rel_pos.z}
+	if rotation_y == 90 then
+		mapblock_lib.flip_pos(new_pos, max_pos, "x")
+		mapblock_lib.transpose_pos(new_pos, "x", "z")
+	elseif rotation_y == 180 then
+		mapblock_lib.flip_pos(new_pos, max_pos, "x")
+		mapblock_lib.flip_pos(new_pos, max_pos, "z")
+	elseif rotation_y == 270 then
+		mapblock_lib.flip_pos(new_pos, max_pos, "z")
+		mapblock_lib.transpose_pos(new_pos, "x", "z")
+	end
+	return new_pos
+end
+
 function mapblock_lib.compare_mapblock(mb1, mb2, strict)
 	for i=1,4096 do
 		if mb1.node_ids[i] ~= mb2.node_ids[i] then

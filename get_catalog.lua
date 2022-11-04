@@ -108,23 +108,11 @@ function Catalog:deserialize_all(target_mapblock_pos, options)
 
 	options = options or {}
 	options.delay = options.delay or 0.2
+	options.rotate_y = options.rotate_y or 0
 	options.callback = options.callback or function() end
 	options.progress_callback = options.progress_callback or function() end
 	options.error_callback = options.error_callback or function() end
 	options.mapblock_options = options.mapblock_options or function() end
-
-	local function rotate_pos(rel_pos)
-		if options.rotate_y == 90 then
-			mapblock_lib.flip_pos(rel_pos, self.manifest.range, "z")
-			mapblock_lib.transpose_pos(rel_pos, "x", "z")
-		elseif options.rotate_y == 180 then
-			mapblock_lib.flip_pos(rel_pos, self.manifest.range, "x")
-			mapblock_lib.flip_pos(rel_pos, self.manifest.range, "z")
-		elseif options.rotate_y == 270 then
-			mapblock_lib.flip_pos(rel_pos, self.manifest.range, "x")
-			mapblock_lib.transpose_pos(rel_pos, "x", "z")
-		end
-	end
 
 	local start = minetest.get_us_time()
 
@@ -133,7 +121,7 @@ function Catalog:deserialize_all(target_mapblock_pos, options)
 		mapblock_pos = iterator()
 		if mapblock_pos then
 			local rel_pos = vector.subtract(mapblock_pos, pos1)
-			rotate_pos(rel_pos)
+			rel_pos = mapblock_lib.rotate_pos(rel_pos, self.manifest.range, options.rotate_y)
 			local mapblock_entry_name = "mapblock_" .. minetest.pos_to_string(rel_pos) .. ".bin"
 			local manifest_entry_name = "mapblock_" .. minetest.pos_to_string(rel_pos) .. ".meta.json"
 
