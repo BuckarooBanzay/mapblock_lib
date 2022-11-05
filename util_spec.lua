@@ -11,6 +11,7 @@ end)
 
 mtt.register("mapblock_lib.rotate_pos", function(callback)
 
+	-- rotate a square
 	local rel_pos = {x=0,y=0,z=0}
 	local max_pos = {x=3,y=3,z=3}
 
@@ -31,6 +32,17 @@ mtt.register("mapblock_lib.rotate_pos", function(callback)
 	rotated_pos = mapblock_lib.rotate_pos(rel_pos, max_pos, 270)
 	assert(vector.equals(rotated_pos, {x=3,y=0,z=0}))
 
+	-- rotate a non-square rectangle
+	--		xxxx
+	-- /\	xxxx
+	-- z	xxxx
+	-- x ->
+	max_pos = {x=3,y=3,z=2} -- size == 4,4,3
+
+	-- 90 deg cw
+	assert(vector.equals(mapblock_lib.rotate_pos({x=0,y=0,z=0}, max_pos, 90), {x=0,y=0,z=3}))
+	assert(vector.equals(mapblock_lib.rotate_pos({x=3,y=0,z=0}, max_pos, 90), {x=0,y=0,z=0}))
+	assert(vector.equals(mapblock_lib.rotate_pos({x=0,y=0,z=2}, max_pos, 90), {x=2,y=0,z=3}))
 
 	callback()
 end)
