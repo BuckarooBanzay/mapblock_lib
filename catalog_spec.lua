@@ -11,6 +11,18 @@ local filename = minetest.get_worldpath() .. "/mapblocks/test.zip"
 -- emerge area
 mtt.emerge_area(pos1, pos2)
 
+mtt.register("read existing catalog", function(callback)
+	local c, err = mapblock_lib.get_catalog(minetest.get_modpath("mapblock_lib") .. "/test/street_straight.zip")
+	assert(err == nil, "err is nil")
+	local size = c:get_size()
+	assert(size.x == 1, "x-size match")
+	assert(size.y == 1, "y-size match")
+	assert(size.z == 1, "z-size match")
+	assert(c:has_mapblock({x=0,y=0,z=0}), "mapblock exists")
+	assert(not c:has_mapblock({x=0,y=0,z=1}), "mapblock does not exist")
+	callback()
+end)
+
 -- catalog
 mtt.register("creating catalog", function(callback)
 	mapblock_lib.create_catalog(filename, mb_pos1, mb_pos2, {

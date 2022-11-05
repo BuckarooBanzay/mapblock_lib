@@ -13,6 +13,16 @@ function Catalog:get_size()
 	return vector.add(self.manifest.range, 1)
 end
 
+local function get_meta_filename(mapblock_pos)
+	local pos_str = minetest.pos_to_string(mapblock_pos)
+	return "mapblock_" .. pos_str .. ".meta.json"
+end
+
+local function get_mapblock_bin_filename(mapblock_pos)
+	local pos_str = minetest.pos_to_string(mapblock_pos)
+	return "mapblock_" .. pos_str .. ".bin"
+end
+
 local function read_manifest_mapblock(filename, catalog_mapblock_pos)
 	local f = io.open(filename)
 	local z, err = mtzip.unzip(f)
@@ -21,9 +31,8 @@ local function read_manifest_mapblock(filename, catalog_mapblock_pos)
 		return nil, nil, err
 	end
 
-	local pos_str = minetest.pos_to_string(catalog_mapblock_pos)
-	local meta_name = "mapblock_" .. pos_str .. ".meta.json"
-	local bin_name = "mapblock_" .. pos_str .. ".bin"
+	local meta_name = get_meta_filename(catalog_mapblock_pos)
+	local bin_name = get_mapblock_bin_filename(catalog_mapblock_pos)
 	local mapblock_data = z:get(bin_name)
 	local manifest_data = z:get(meta_name)
 	local mapblock = mapblock_lib.read_mapblock(mapblock_data)
@@ -34,6 +43,14 @@ local function read_manifest_mapblock(filename, catalog_mapblock_pos)
 	f:close()
 
 	return manifest, mapblock
+end
+
+--- Check for the existence of a mapblock in the catalog
+-- @param catalog_mapblock_pos @{util.mapblock_pos} the mapblock position in the catalog
+-- @return the zip-manifest entry of the meta-file or nil if not found
+function Catalog:has_mapblock(catalog_mapblock_pos)
+	local meta_name = get_meta_filename(catalog_mapblock_pos)
+	return self.zip:get_entry(meta_name)
 end
 
 --- Deserialize a single mapblock from the catalog
@@ -182,7 +199,9 @@ function mapblock_lib.get_catalog(filename)
 
 	local self = {
 		filename = filename,
-		manifest = manifest
+		manifest = manifest,
+		-- for lookups only
+		zip = z
 	}
 	return setmetatable(self, Catalog_mt)
 end
