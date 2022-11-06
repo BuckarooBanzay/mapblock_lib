@@ -38,6 +38,7 @@ dofile(MP .. "/chatcommands/multi.lua")
 dofile(MP .. "/mapgens/singleblock.lua")
 
 if minetest.get_modpath("mtt") then
+	dofile(MP .. "/deserialize_mapblock.spec.lua")
 	dofile(MP .. "/util_spec.lua")
 	dofile(MP .. "/catalog_spec.lua")
 	dofile(MP .. "/data_spec.lua")
