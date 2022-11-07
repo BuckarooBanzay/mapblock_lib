@@ -172,6 +172,11 @@ function mapblock_lib.deserialize_mapblock(mapblock_pos, mapblock, manifest, opt
 		return false, "mapblock data not found"
 	end
 
+	if options.transform.replace then
+		-- replace node-ids before localizing them
+		mapblock_lib.replace(options.transform.replace, manifest.node_mapping)
+	end
+
 	-- localize node-ids
 	if not mapblock.node_ids_localized then
 		mapblock_lib.localize_nodeids(manifest.node_mapping, mapblock.node_ids)
@@ -179,10 +184,8 @@ function mapblock_lib.deserialize_mapblock(mapblock_pos, mapblock, manifest, opt
 	end
 
 	-- apply transformation
-	if options.transform then
-		local size = {x=15, y=15, z=15}
-		mapblock_lib.transform(options.transform, size, mapblock, manifest.metadata)
-	end
+	local size = {x=15, y=15, z=15}
+	mapblock_lib.transform(options.transform, size, mapblock, manifest.metadata)
 
 	-- write to map
 	mapblock_lib.deserialize_part(min, max, mapblock, manifest.metadata, options)

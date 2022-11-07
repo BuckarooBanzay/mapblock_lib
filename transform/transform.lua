@@ -12,10 +12,6 @@ end
 
 
 function mapblock_lib.transform(transform, max, mapblock, metadata)
-	if transform.replace then
-		mapblock_lib.replace(transform.replace, mapblock)
-	end
-
 	if transform.set_param2 then
 		mapblock_lib.set_param2(transform.set_param2, mapblock)
 	end

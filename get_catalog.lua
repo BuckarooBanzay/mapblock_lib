@@ -81,6 +81,11 @@ function Catalog:prepare(catalog_mapblock_pos, options)
 		return nil, err
 	end
 
+	if options.transform and options.transform.replace then
+		-- replace node-ids before localizing them
+		mapblock_lib.replace(options.transform.replace, manifest.node_mapping)
+	end
+
 	-- localize node ids
 	mapblock_lib.localize_nodeids(manifest.node_mapping, mapblock.node_ids)
 	-- transform, if needed
