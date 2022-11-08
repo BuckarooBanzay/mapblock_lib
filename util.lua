@@ -119,10 +119,6 @@ function mapblock_lib.pos_iterator(pos1, pos2)
 	end, total_count
 end
 
-function mapblock_lib.format_multi_mapblock(prefix, pos)
-	return prefix .. "_" .. minetest.pos_to_string(pos)
-end
-
 -- pre-generate air-only mapblock
 local air_content_id = minetest.get_content_id("air")
 local air_mapblock_nodeids = {}
