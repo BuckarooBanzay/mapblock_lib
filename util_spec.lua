@@ -71,3 +71,55 @@ mtt.register("mapblock_lib.rotate_size", function(callback)
 
 	callback()
 end)
+
+mtt.register("mapblock_lib.pos_iterator", function(callback)
+	local pos1 = {x=10,y=10,z=10}
+	local pos2 = {x=12,y=13,z=12}
+
+	local it = mapblock_lib.pos_iterator(pos1, pos2)
+	local visited_pos_list = {}
+	local count = 0
+	while true do
+		local pos = it()
+		if not pos then
+			break
+		end
+		local key = minetest.pos_to_string(pos)
+		assert(not visited_pos_list[key])
+		visited_pos_list[key] = true
+		count = count + 1
+		assert(pos.x >= pos1.x)
+		assert(pos.x <= pos2.x)
+		assert(pos.y >= pos1.y)
+		assert(pos.y <= pos2.y)
+		assert(pos.z >= pos1.z)
+		assert(pos.z <= pos2.z)
+	end
+
+	assert(count == 36)
+	callback()
+end)
+
+mtt.register("mapblock_lib.for_each", function(callback)
+	local pos1 = {x=10,y=10,z=10}
+	local pos2 = {x=12,y=13,z=12}
+
+	local visited_pos_list = {}
+	local count = 0
+
+	mapblock_lib.for_each(pos1, pos2, function(pos)
+		local key = minetest.pos_to_string(pos)
+		assert(not visited_pos_list[key])
+		visited_pos_list[key] = true
+		count = count + 1
+		assert(pos.x >= pos1.x)
+		assert(pos.x <= pos2.x)
+		assert(pos.y >= pos1.y)
+		assert(pos.y <= pos2.y)
+		assert(pos.z >= pos1.z)
+		assert(pos.z <= pos2.z)
+	end)
+
+	assert(count == 36)
+	callback()
+end)

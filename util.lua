@@ -119,6 +119,21 @@ function mapblock_lib.pos_iterator(pos1, pos2)
 	end, total_count
 end
 
+--- iterate through the specified region
+-- @param pos1 @{mapblock_pos} the lower position
+-- @param pos2 @{mapblock_pos} the upper position
+-- @param fn the position callback
+function mapblock_lib.for_each(pos1, pos2, fn)
+	local it = mapblock_lib.pos_iterator(pos1, pos2)
+	while true do
+		local pos = it()
+		if not pos then
+			break
+		end
+		fn(pos)
+	end
+end
+
 -- pre-generate air-only mapblock
 local air_content_id = minetest.get_content_id("air")
 local air_mapblock_nodeids = {}
