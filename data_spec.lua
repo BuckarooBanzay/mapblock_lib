@@ -4,8 +4,7 @@ local pos2 = { x=64, y=32, z=64 }
 
 local storage = minetest.get_mod_storage()
 
-mtt.register("data storage", function(callback)
-	local store = mapblock_lib.create_data_storage(storage)
+local function check_store(store)
 	assert(store)
 
 	-- clear
@@ -41,12 +40,22 @@ mtt.register("data storage", function(callback)
 	-- remove
 	store:set(pos1, nil)
 	assert(store:get(pos1) == nil)
+end
 
+mtt.register("data storage (default serialization)", function(callback)
+	check_store(mapblock_lib.create_data_storage(storage))
 	callback()
 end)
 
-mtt.register("data storage links", function(callback)
-	local store = mapblock_lib.create_data_storage(storage)
+mtt.register("data storage (json serialization)", function(callback)
+	check_store(mapblock_lib.create_data_storage(storage, {
+		serialize = minetest.write_json,
+		deserialize = minetest.parse_json
+	}))
+	callback()
+end)
+
+local function check_storage_links(store)
 	assert(store)
 	store:clear()
 
@@ -98,6 +107,17 @@ mtt.register("data storage links", function(callback)
 	assert(target_pos.x == 10)
 	assert(target_pos.y == 0)
 	assert(target_pos.z == 0)
+end
 
+mtt.register("data storage links (default serialization)", function(callback)
+	check_storage_links(mapblock_lib.create_data_storage(storage))
+	callback()
+end)
+
+mtt.register("data storage links (json serialization)", function(callback)
+	check_storage_links(mapblock_lib.create_data_storage(storage, {
+		serialize = minetest.write_json,
+		deserialize = minetest.parse_json
+	}))
 	callback()
 end)

@@ -15,14 +15,19 @@ local cache_miss_callback = function() end
 --- create a new world data storage object
 -- @param storage the mod_storage object from "minetest.get_mod_storage()"
 -- @return @{DataStorage} the storage object
-function mapblock_lib.create_data_storage(storage)
+function mapblock_lib.create_data_storage(storage, opts)
+    opts = opts or {}
+
     local self = {
         -- mod_storage ref
         storage = storage,
         -- group_index -> data
         cache = {},
         -- group_index -> bool
-        stale_data = {}
+        stale_data = {},
+
+        serialize = opts.serialize or minetest.serialize,
+        deserialize = opts.deserialize or minetest.deserialize
     }
     local ref = setmetatable(self, DataStorage_mt)
 
@@ -95,7 +100,7 @@ function DataStorage:get_group_data(pos)
             self.cache[index] = {}
         else
             -- deserialize data
-            self.cache[index] = minetest.deserialize(serialized_data)
+            self.cache[index] = self.deserialize(serialized_data)
         end
         cache_miss_callback()
     else
@@ -115,7 +120,7 @@ end
 function DataStorage:save_stale_data()
     for index in pairs(self.stale_data) do
         local data = self.cache[index]
-        local serialized_data = minetest.serialize(data)
+        local serialized_data = self.serialize(data)
         self.storage:set_string(index, serialized_data)
         self.stale_data[index] = nil
     end
