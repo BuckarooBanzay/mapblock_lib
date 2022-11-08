@@ -100,7 +100,7 @@ function DataStorage:get_group_data(pos)
             self.cache[index] = {}
         else
             -- deserialize data
-            self.cache[index] = self.deserialize(serialized_data)
+            self.cache[index] = self.deserialize(serialized_data) or {}
         end
         cache_miss_callback()
     else

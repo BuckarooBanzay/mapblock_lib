@@ -40,6 +40,18 @@ local function check_store(store)
 	-- remove
 	store:set(pos1, nil)
 	assert(store:get(pos1) == nil)
+
+	-- save and purge store
+	store:save_stale_data()
+	store:purge()
+
+	-- validate persisted data
+	data = store:get(pos2)
+	assert(data)
+	assert(data.z == 3)
+
+	data = store:get(pos1)
+	assert(data == nil)
 end
 
 mtt.register("data storage (default serialization)", function(callback)
