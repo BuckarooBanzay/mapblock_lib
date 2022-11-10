@@ -14,17 +14,37 @@ local facedir = {
 	7,  4,  5,  6, 11,  8,  9, 10, 21, 22, 23, 20}
 }
 
-local registered_nodes = minetest.registered_nodes
+--- Applies a rotation around the y-axis to the given param2 value
+-- @param node_name the node-name
+-- @param param2 the existing param2
+-- @param angle the angle, can be 0,90,180 or 270
+-- @return the rotated param2 value
+function mapblock_lib.rotate_param2(node_name, param2, angle)
+	local def = minetest.registered_nodes[node_name]
+
+	if def then
+		local wallmounted_substitution = wallmounted[angle]
+		local facedir_substitution = facedir[angle]
+
+		local paramtype2 = def.paramtype2
+		if paramtype2 == "wallmounted" or paramtype2 == "colorwallmounted" then
+			local orient = param2 % 8
+			return param2 - orient + wallmounted_substitution[orient + 1]
+
+		elseif paramtype2 == "facedir" or paramtype2 == "colorfacedir" then
+			local orient = param2 % 32
+			return param2 - orient + facedir_substitution[orient + 1]
+
+		end
+	end
+
+end
+
+local min = { x=0, y=0, z=0 }
 
 function mapblock_lib.orient(angle, max, mapblock, disable_orientation)
 	-- https://github.com/Uberi/Minetest-WorldEdit/blob/master/worldedit/manipulations.lua#L555
-	local min = { x=0, y=0, z=0 }
-
 	local area = VoxelArea:new({MinEdge=min, MaxEdge=max})
-
-
-	local wallmounted_substitution = wallmounted[angle]
-	local facedir_substitution = facedir[angle]
 
 	local pos = {x=0, y=0, z=0}
 	while pos.x <= max.x do
@@ -45,21 +65,8 @@ function mapblock_lib.orient(angle, max, mapblock, disable_orientation)
 
 				if not disable_orientation[node_name] then
 					-- rotate only the non-disabled nodes
-					local def = registered_nodes[node_name]
-					if def then
-						local paramtype2 = def.paramtype2
-						if paramtype2 == "wallmounted" or paramtype2 == "colorwallmounted" then
-							local orient = param2 % 8
-							param2 = param2 - orient + wallmounted_substitution[orient + 1]
-							mapblock.param2[index] = param2
-
-						elseif paramtype2 == "facedir" or paramtype2 == "colorfacedir" then
-							local orient = param2 % 32
-							param2 = param2 - orient + facedir_substitution[orient + 1]
-							mapblock.param2[index] = param2
-
-						end
-					end
+					param2 = mapblock_lib.rotate_param2(node_name, param2, angle)
+					mapblock.param2[index] = param2
 				end
 				pos.z = pos.z + 1
 			end
