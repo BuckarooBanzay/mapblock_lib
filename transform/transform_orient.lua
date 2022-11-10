@@ -20,6 +20,10 @@ local facedir = {
 -- @param angle the angle, can be 0,90,180 or 270
 -- @return the rotated param2 value
 function mapblock_lib.rotate_param2(node_name, param2, angle)
+	if not angle or angle == 0 then
+		return param2
+	end
+
 	local def = minetest.registered_nodes[node_name]
 
 	if def then
