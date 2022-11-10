@@ -83,7 +83,7 @@ function Catalog:prepare(catalog_mapblock_pos, options)
 
 	if options.transform and options.transform.replace then
 		-- replace node-ids before localizing them
-		mapblock_lib.replace(options.transform.replace, manifest.node_mapping)
+		mapblock_lib.replace(options.transform.replace, manifest.node_mapping, mapblock)
 	end
 
 	-- localize node ids

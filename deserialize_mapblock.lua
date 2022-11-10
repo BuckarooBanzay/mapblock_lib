@@ -174,7 +174,7 @@ function mapblock_lib.deserialize_mapblock(mapblock_pos, mapblock, manifest, opt
 
 	if options.transform.replace then
 		-- replace node-ids before localizing them
-		mapblock_lib.replace(options.transform.replace, manifest.node_mapping)
+		mapblock_lib.replace(options.transform.replace, manifest.node_mapping, mapblock)
 	end
 
 	-- localize node-ids
