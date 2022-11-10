@@ -157,7 +157,15 @@ function mapblock_lib.clear_mapblock(mapblock_pos)
 	manip:set_param2_data(air_mapblock_param2)
 	manip:write_to_map()
 
-	-- TODO: remove residual metadata
+	if minetest.get_objects_in_area then
+		-- remove entities
+		local objects = minetest.get_objects_in_area(min, max)
+		for _, obj in pairs(objects) do
+			if not obj:is_player() then
+				obj:remove()
+			end
+		end
+	end
 end
 
 function mapblock_lib.flip_pos(rel_pos, max, axis)
