@@ -24,7 +24,7 @@ local function get_mapblock_bin_filename(mapblock_pos)
 end
 
 local function read_manifest_mapblock(filename, catalog_mapblock_pos)
-	local f = io.open(filename)
+	local f = io.open(filename, "rb")
 	local z, err = mtzip.unzip(f)
 	if err then
 		f:close()
@@ -116,7 +116,7 @@ end
 -- @param target_mapblock_pos @{util.mapblock_pos} the first mapblock position
 -- @param options[opt] @{deserialize_all_options} deserialization options
 function Catalog:deserialize_all(target_mapblock_pos, options)
-	local f = io.open(self.filename)
+	local f = io.open(self.filename, "rb")
 	local z, err = mtzip.unzip(f)
 	if err then
 		return false, err
@@ -186,7 +186,7 @@ end
 -- @param filename the file to read from
 -- @return @{Catalog} the catalog object
 function mapblock_lib.get_catalog(filename)
-	local f = io.open(filename)
+	local f = io.open(filename, "rb")
 	if not f then
 		return nil, "file is nil: '" .. filename .. "'"
 	end

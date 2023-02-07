@@ -15,7 +15,7 @@
 -- @param pos2 @{util.mapblock_pos} the second (upper) mapblock position
 -- @param options[opt] @{serialize_options} serialization options
 function mapblock_lib.create_catalog(filename, pos1, pos2, options)
-	local f = io.open(filename, "w")
+	local f = io.open(filename, "wb")
 	local z = mtzip.zip(f)
 
 	local iterator, total_count = mapblock_lib.pos_iterator(pos1, pos2)
