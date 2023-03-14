@@ -19,3 +19,44 @@ mtt.register("prepare and deserialize a mapblock", function(callback)
 	assert(equal, "deserialized mapblock is equal to the serialized")
 	callback()
 end)
+
+mtt.benchmark("serialize mapblock", function(callback, iterations)
+	local world_pos = {x=0,y=0,z=0}
+
+	for _=1,iterations do
+		local mb1 = mapblock_lib.serialize_mapblock(world_pos)
+		assert(mb1)
+	end
+
+	callback()
+end)
+
+mtt.benchmark("deserialize mapblock", function(callback, iterations)
+	local c, err = mapblock_lib.get_catalog(filename)
+	assert(not err)
+
+	local world_pos = {x=0,y=0,z=0}
+	local catalog_pos = {x=0,y=0,z=0}
+
+	for _=1,iterations do
+		c:deserialize(catalog_pos, world_pos)
+	end
+
+	callback()
+end)
+
+mtt.benchmark("deserialize prepared mapblock", function(callback, iterations)
+	local c, err = mapblock_lib.get_catalog(filename)
+	assert(not err)
+
+	local world_pos = {x=0,y=0,z=0}
+	local catalog_pos = {x=0,y=0,z=0}
+
+	local mb = c:prepare(catalog_pos)
+
+	for _=1,iterations do
+		mb(world_pos)
+	end
+
+	callback()
+end)
