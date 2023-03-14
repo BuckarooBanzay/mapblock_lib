@@ -176,7 +176,12 @@ end
 
 --- Clears all data from the storage
 function DataStorage:clear()
+    -- remove disk data
     self.storage:from_table()
+    -- remove cache
+    self.cache = {}
+    -- purge stale data
+    self.stale_data = {}
 end
 
 -- monitoring stuff
