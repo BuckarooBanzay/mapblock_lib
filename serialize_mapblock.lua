@@ -77,7 +77,13 @@ function mapblock_lib.serialize_mapblock(mapblock_pos)
 
 				table.insert(data.node_ids, node_id)
 				table.insert(data.param1, param1[i])
-				table.insert(data.param2, param2[i])
+				if node_id == air_content_id then
+					-- fixed param2
+					table.insert(data.param2, 0)
+				else
+					-- copy param2
+					table.insert(data.param2, param2[i])
+				end
 
 				node_id_map[node_id] = true
 			end
@@ -95,28 +101,33 @@ function mapblock_lib.serialize_mapblock(mapblock_pos)
 		local pos_with_meta = minetest.find_nodes_with_meta(pos1, pos2)
 		for _, mpos in ipairs(pos_with_meta) do
 			local relative_pos = vector.subtract(mpos, pos1)
-			local meta = minetest.get_meta(mpos):to_table()
+			local i = area:indexp(relative_pos)
+			local node_id = node_data[i]
+			if node_id ~= air_content_id then
+				-- only serialize metadata if the node isn't air
+				local meta = minetest.get_meta(mpos):to_table()
 
-			-- Convert metadata item stacks to item strings
-			for _, invlist in pairs(meta.inventory) do
-				for index = 1, #invlist do
-					local itemstack = invlist[index]
-					if itemstack.to_string then
-						invlist[index] = itemstack:to_string()
+				-- Convert metadata item stacks to item strings
+				for _, invlist in pairs(meta.inventory) do
+					for index = 1, #invlist do
+						local itemstack = invlist[index]
+						if itemstack.to_string then
+							invlist[index] = itemstack:to_string()
+						end
 					end
 				end
-			end
 
-			-- re-check if metadata actually exists (may happen with minetest.find_nodes_with_meta)
-			if not is_empty(meta.fields) or not is_empty(meta.inventory) then
-				data.metadata = data.metadata or {}
-				data.metadata.meta = data.metadata.meta or {}
-				data.metadata.meta[minetest.pos_to_string(relative_pos)] = meta
-			end
+				-- re-check if metadata actually exists (may happen with minetest.find_nodes_with_meta)
+				if not is_empty(meta.fields) or not is_empty(meta.inventory) then
+					data.metadata = data.metadata or {}
+					data.metadata.meta = data.metadata.meta or {}
+					data.metadata.meta[minetest.pos_to_string(relative_pos)] = meta
+				end
 
-			if not is_empty(timers) then
-				data.metadata = data.metadata or {}
-				data.metadata.timers = timers
+				if not is_empty(timers) then
+					data.metadata = data.metadata or {}
+					data.metadata.timers = timers
+				end
 			end
 		end
 	end
