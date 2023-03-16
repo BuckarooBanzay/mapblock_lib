@@ -3,6 +3,8 @@
 
 local air_content_id = minetest.get_content_id("air")
 
+local has_placeholder_mod = minetest.get_modpath("placeholder")
+
 -- local nodename->id cache
 local local_nodename_to_id_mapping = {} -- name -> id
 
@@ -14,10 +16,17 @@ local function get_nodeid(node_name)
 		if minetest.registered_nodes[node_name] then
 			-- node is locally available
 			local_node_id = minetest.get_content_id(node_name)
+
+		elseif has_placeholder_mod then
+			-- placeholder node
+			local_node_id = minetest.get_content_id("placeholder:placeholder")
+			is_known = false
+
 		else
 			-- node is not available here
 			local_node_id = air_content_id
 			is_known = false
+
 		end
 		local_nodename_to_id_mapping[node_name] = local_node_id
 	end
