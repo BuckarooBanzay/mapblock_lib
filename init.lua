@@ -43,4 +43,5 @@ if minetest.get_modpath("mtt") then
 	dofile(MP .. "/data.spec.lua")
 	dofile(MP .. "/catalog.spec.lua")
 	dofile(MP .. "/serialize.spec.lua")
+	dofile(MP .. "/chatcommands/multi.spec.lua")
 end

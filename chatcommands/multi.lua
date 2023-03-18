@@ -1,4 +1,11 @@
 
+-- resolves a user-provided schema path to a filename
+-- examples:
+-- "mything" -> mapblock_lib.schema_path .. "/mything.zip"
+-- TBD: "mymod:mypath/mything" -> minetest.get_modpath("mymod") .. "mypath/mything.zip"
+function mapblock_lib.resolve_schema_path(name)
+	return mapblock_lib.schema_path .. "/" .. name .. ".zip"
+end
 
 minetest.register_chatcommand("mapblock_pos1", {
 	privs = { mapblock_lib = true },
@@ -52,7 +59,7 @@ minetest.register_chatcommand("mapblock_save", {
 		end
 
 		pos1, pos2 = mapblock_lib.sort_pos(pos1, pos2)
-		local filename = mapblock_lib.schema_path .. "/" .. params .. ".zip"
+		local filename = mapblock_lib.resolve_schema_path(params)
 
 		mapblock_lib.create_catalog(filename, pos1, pos2, {
 			callback = function(total_count, micros)
@@ -83,7 +90,7 @@ minetest.register_chatcommand("mapblock_load", {
 			return false, "specify a name for the schema"
 		end
 
-		local filename = mapblock_lib.schema_path .. "/" .. params .. ".zip"
+		local filename = mapblock_lib.resolve_schema_path(params)
 
 		local catalog, err = mapblock_lib.get_catalog(filename)
 		if err then
@@ -118,7 +125,7 @@ minetest.register_chatcommand("mapblock_allocate", {
 			return false, "specify a name for the schema"
 		end
 
-		local filename = mapblock_lib.schema_path .. "/" .. params .. ".zip"
+		local filename = mapblock_lib.resolve_schema_path(params)
 		local catalog, err = mapblock_lib.get_catalog(filename)
 		if err then
 			return false, "Error: " .. err
