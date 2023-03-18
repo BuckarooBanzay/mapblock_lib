@@ -65,6 +65,7 @@ function mapblock_lib.localize_nodeids(node_mapping, node_ids)
 		node_ids[i], is_known = get_nodeid(node_name)
 		if not is_known then
 			all_nodes_known = false
+			node_mapping[node_name] = node_ids[i]
 			table.insert(unknown_nodes, node_name)
 		end
 	end
@@ -72,13 +73,13 @@ function mapblock_lib.localize_nodeids(node_mapping, node_ids)
 	return all_nodes_known, unknown_nodes
 end
 
-function mapblock_lib.place_placeholders(mapblock, unknown_nodes)
+function mapblock_lib.place_placeholders(mapblock, manifest, unknown_nodes)
 	-- lookup table
 	-- id -> name
 	local unknown_node_ids = {}
 	for _, unknown_node_name in ipairs(unknown_nodes) do
-		local unknown_node_id = unknown_node_ids[unknown_node_name]
-		unknown_node_ids[unknown_node_id] = true
+		local unknown_node_id = manifest.node_mapping[unknown_node_name]
+		unknown_node_ids[unknown_node_id] = unknown_node_name
 	end
 
 	for i, node_id in ipairs(mapblock.node_ids) do
@@ -86,7 +87,7 @@ function mapblock_lib.place_placeholders(mapblock, unknown_nodes)
 			-- set placeholder
 			-- node-def
 			local node = {
-				name = local_nodename_to_id_mapping[node_id],
+				name = unknown_node_ids[node_id],
 				param1 = mapblock.param1[i],
 				param2 = mapblock.param2[i]
 			}
@@ -94,13 +95,16 @@ function mapblock_lib.place_placeholders(mapblock, unknown_nodes)
 			-- get metadata if available
 			local rel_pos = mapblock_area:position(i)
 			local rel_pos_str = minetest.pos_to_string(rel_pos)
-			local metadata = mapblock.metadata[rel_pos_str]
+			local metadata = manifest.metadata and manifest.metadata.meta and manifest.metadata.meta[rel_pos_str] or {
+				fields = {},
+				inventory = {}
+			}
 
 			local _, placeholder_metadata = placeholder.create(node, metadata)
 
 			-- replace in-memory
 			mapblock.node_ids[i] = placeholder_content_id
-			mapblock.metadata[rel_pos_str] = placeholder_metadata
+			manifest.metadata.meta[rel_pos_str] = placeholder_metadata
 		end
 	end
 end
@@ -240,7 +244,7 @@ function mapblock_lib.deserialize_mapblock(mapblock_pos, mapblock, manifest, opt
 
 		if has_placeholder_mod and not all_nodes_known then
 			-- set placeholders
-			mapblock_lib.place_placeholders(mapblock, unknown_nodes)
+			mapblock_lib.place_placeholders(mapblock, manifest, unknown_nodes)
 		end
 
 		mapblock.node_ids_localized = true
