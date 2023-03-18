@@ -6,6 +6,15 @@ mapblock_lib = {
 	version = 2
 }
 
+-- secure/insecure environment
+local global_env = _G
+local ie = minetest.request_insecure_environment and minetest.request_insecure_environment()
+if ie then
+	minetest.log("action", "[mapsync] using insecure environment")
+	-- register insecure environment
+	global_env = ie
+end
+
 -- create global schema_path
 minetest.mkdir(mapblock_lib.schema_path)
 
@@ -29,7 +38,7 @@ dofile(MP .. "/deserialize_mapblock.lua")
 dofile(MP .. "/deserialize.lua")
 
 dofile(MP .. "/get_catalog.lua")
-dofile(MP .. "/create_catalog.lua")
+loadfile(MP.."/create_catalog.lua")(global_env)
 
 dofile(MP .. "/display.lua")
 dofile(MP .. "/chatcommands/single.lua")
@@ -38,10 +47,10 @@ dofile(MP .. "/chatcommands/multi.lua")
 dofile(MP .. "/mapgens/singleblock.lua")
 
 if minetest.get_modpath("mtt") then
+	dofile(MP .. "/chatcommands/multi.spec.lua")
 	dofile(MP .. "/deserialize_mapblock.spec.lua")
 	dofile(MP .. "/util.spec.lua")
 	dofile(MP .. "/data.spec.lua")
 	dofile(MP .. "/catalog.spec.lua")
 	dofile(MP .. "/serialize.spec.lua")
-	dofile(MP .. "/chatcommands/multi.spec.lua")
 end

@@ -4,7 +4,23 @@
 -- "mything" -> mapblock_lib.schema_path .. "/mything.zip"
 -- TBD: "mymod:mypath/mything" -> minetest.get_modpath("mymod") .. "mypath/mything.zip"
 function mapblock_lib.resolve_schema_path(name)
-	return mapblock_lib.schema_path .. "/" .. name .. ".zip"
+	local parts = {}
+	for str in string.gmatch(name, "([^:]+)") do
+		table.insert(parts, str)
+	end
+
+	if #parts == 2 then
+		-- mod:path
+		local mp = minetest.get_modpath(parts[1])
+		if not mp then
+			return nil, "mod not found: '" .. parts[1] .. "'"
+		end
+		return mp .. "/" .. parts[2] .. ".zip"
+	else
+		-- worldpath prefix
+		return mapblock_lib.schema_path .. "/" .. parts[1] .. ".zip"
+	end
+
 end
 
 minetest.register_chatcommand("mapblock_pos1", {
@@ -59,7 +75,10 @@ minetest.register_chatcommand("mapblock_save", {
 		end
 
 		pos1, pos2 = mapblock_lib.sort_pos(pos1, pos2)
-		local filename = mapblock_lib.resolve_schema_path(params)
+		local filename, err = mapblock_lib.resolve_schema_path(params)
+		if err then
+			return false, err
+		end
 
 		mapblock_lib.create_catalog(filename, pos1, pos2, {
 			callback = function(total_count, micros)
@@ -90,9 +109,13 @@ minetest.register_chatcommand("mapblock_load", {
 			return false, "specify a name for the schema"
 		end
 
-		local filename = mapblock_lib.resolve_schema_path(params)
+		local filename, err = mapblock_lib.resolve_schema_path(params)
+		if err then
+			return false, err
+		end
 
-		local catalog, err = mapblock_lib.get_catalog(filename)
+		local catalog
+		catalog, err = mapblock_lib.get_catalog(filename)
 		if err then
 			return false, err
 		end
@@ -125,8 +148,13 @@ minetest.register_chatcommand("mapblock_allocate", {
 			return false, "specify a name for the schema"
 		end
 
-		local filename = mapblock_lib.resolve_schema_path(params)
-		local catalog, err = mapblock_lib.get_catalog(filename)
+		local filename, err = mapblock_lib.resolve_schema_path(params)
+		if err then
+			return false, err
+		end
+
+		local catalog
+		catalog, err = mapblock_lib.get_catalog(filename)
 		if err then
 			return false, "Error: " .. err
 		end
