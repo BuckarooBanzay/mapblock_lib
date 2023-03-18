@@ -1,6 +1,8 @@
 ---------
 -- Catalog functions
 
+local has_placeholder_mod = minetest.get_modpath("placeholder")
+
 ------
 -- Catalog object
 -- @type Catalog
@@ -86,8 +88,13 @@ function Catalog:prepare(catalog_mapblock_pos, options)
 		mapblock_lib.replace(options.transform.replace, manifest.node_mapping, mapblock)
 	end
 
-	-- localize node ids
-	mapblock_lib.localize_nodeids(manifest.node_mapping, mapblock.node_ids)
+	-- localize node ids and ignore unknown nodes
+	local all_nodes_known, unknown_nodes = mapblock_lib.localize_nodeids(manifest.node_mapping, mapblock.node_ids)
+	if has_placeholder_mod and not all_nodes_known then
+		-- set placeholders
+		mapblock_lib.place_placeholders(mapblock, unknown_nodes)
+	end
+
 	-- transform, if needed
 	if options.transform then
 		local size = {x=15, y=15, z=15}
