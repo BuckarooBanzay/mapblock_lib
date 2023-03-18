@@ -3,6 +3,12 @@
 
 local air_content_id = minetest.get_content_id("air")
 local ignore_content_id = minetest.get_content_id("ignore")
+local placeholder_content_id = nil
+
+local has_placeholder_mod = minetest.get_modpath("placeholder")
+if has_placeholder_mod then
+	placeholder_content_id = minetest.get_content_id("placeholder:placeholder")
+end
 
 -- collect node ids with on_timer attributes
 local node_ids_with_timer = {}
@@ -33,6 +39,12 @@ function mapblock_lib.serialize_mapblock(mapblock_pos)
 
 	local node_id_map = {}
 
+	-- id -> name
+	local unknown_node_names = {}
+	-- name -> id
+	local unknown_node_ids = {}
+	local next_unknown_nodeid = -1
+
 	-- prepare data structure
 	local data = {
 		air_only = true,
@@ -50,6 +62,7 @@ function mapblock_lib.serialize_mapblock(mapblock_pos)
 		for y=pos1.y,pos2.y do
 			for x=pos1.x,pos2.x do
 				local i = area:index(x,y,z)
+				local pos = {x=x, y=y, z=z}
 
 				local node_id = node_data[i]
 				if node_id == ignore_content_id then
@@ -64,7 +77,6 @@ function mapblock_lib.serialize_mapblock(mapblock_pos)
 
 				if node_ids_with_timer[node_id] then
 					-- node has a node-timer
-					local pos = {x=x, y=y, z=z}
 					local timer = minetest.get_node_timer(pos)
 					local relative_pos = vector.subtract(pos, pos1)
 					if timer:is_started() then
@@ -72,6 +84,23 @@ function mapblock_lib.serialize_mapblock(mapblock_pos)
 							timeout = timer:get_timeout(),
 							elapsed = math.floor(timer:get_elapsed()) -- truncate decimals
 						}
+					end
+				end
+
+				if has_placeholder_mod and node_id == placeholder_content_id then
+					-- parse placeholder and set original node-data in serialized mapblock
+					local meta = minetest.get_meta(pos)
+
+					local original_node = placeholder.unwrap(meta)
+
+					-- assign artifical node-id
+					node_id = unknown_node_names[original_node.name]
+					if not node_id then
+						-- next unknown node-id
+						node_id = next_unknown_nodeid
+						next_unknown_nodeid = next_unknown_nodeid - 1
+						unknown_node_names[original_node.name] = node_id
+						unknown_node_ids[node_id] = original_node.name
 					end
 				end
 
@@ -92,7 +121,7 @@ function mapblock_lib.serialize_mapblock(mapblock_pos)
 
 	-- gather node id mapping
 	for node_id in pairs(node_id_map) do
-		local node_name = minetest.get_name_from_content_id(node_id)
+		local node_name = unknown_node_ids[node_id] or minetest.get_name_from_content_id(node_id)
 		data.node_mapping[node_name] = node_id
 	end
 
@@ -101,9 +130,21 @@ function mapblock_lib.serialize_mapblock(mapblock_pos)
 		local pos_with_meta = minetest.find_nodes_with_meta(pos1, pos2)
 		for _, mpos in ipairs(pos_with_meta) do
 			local relative_pos = vector.subtract(mpos, pos1)
-			local i = area:indexp(relative_pos)
+			local i = area:indexp(mpos)
 			local node_id = node_data[i]
-			if node_id ~= air_content_id then
+
+			if has_placeholder_mod and node_id == placeholder_content_id then
+				-- placeholder
+				local meta = minetest.get_meta(mpos)
+				local _, metadata = placeholder.unwrap(meta)
+
+				if not is_empty(metadata.fields) or not is_empty(metadata.inventory) then
+					data.metadata = data.metadata or {}
+					data.metadata.meta = data.metadata.meta or {}
+					data.metadata.meta[minetest.pos_to_string(relative_pos)] = metadata
+				end
+
+			elseif node_id ~= air_content_id then
 				-- only serialize metadata if the node isn't air
 				local meta = minetest.get_meta(mpos):to_table()
 

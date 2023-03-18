@@ -15,8 +15,7 @@ mtt.register("mapblock_lib.localize_nodeids (all known)", function(callback)
     callback()
 end)
 
-
-mtt.register("mapblock_lib.localize_nodeids (with unknown nodes)", function(callback)
+mtt.register("mapblock_lib.localize_nodeids (with unknown nodes assigned)", function(callback)
     local node_mapping = {
         ["air"] = 0,
         ["default:node_not_found"] = 1
@@ -27,7 +26,7 @@ mtt.register("mapblock_lib.localize_nodeids (with unknown nodes)", function(call
     assert(not all_nodes_known)
     assert(unknown_nodes[1] == "default:node_not_found")
     assert(node_ids[1] == minetest.get_content_id("air"))
-    assert(node_ids[2] == minetest.get_content_id("air"))
+    assert(node_ids[2] < 0)
 
     callback()
 end)
