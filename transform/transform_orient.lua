@@ -1,4 +1,5 @@
 local node_id_to_name_cache = {}
+local node_ids_rotateable = {}
 
 local wallmounted = {
 	[90]  = {0, 1, 5, 4, 2, 3, 0, 0},
@@ -46,6 +47,13 @@ end
 
 local min = { x=0, y=0, z=0 }
 
+local rotate_param2types = {
+	["wallmounted"] = true,
+	["colorwallmounted"] = true,
+	["facedir"] = true,
+	["colorfacedir"] = true
+}
+
 function mapblock_lib.orient(angle, max, mapblock, disable_orientation)
 	-- https://github.com/Uberi/Minetest-WorldEdit/blob/master/worldedit/manipulations.lua#L555
 	local area = VoxelArea:new({MinEdge=min, MaxEdge=max})
@@ -65,10 +73,13 @@ function mapblock_lib.orient(angle, max, mapblock, disable_orientation)
 					-- cache association
 					node_name = minetest.get_name_from_content_id(node_id)
 					node_id_to_name_cache[node_id] = node_name
+					-- check if param2 is facedir
+					local def = minetest.registered_nodes[node_name]
+					node_ids_rotateable[node_id] = rotate_param2types[def.paramtype2]
 				end
 
-				if not disable_orientation[node_name] then
-					-- rotate only the non-disabled nodes
+				if node_ids_rotateable[node_id] and not disable_orientation[node_name] then
+					-- rotate only the non-disabled and supported nodes
 					param2 = mapblock_lib.rotate_param2(node_name, param2, angle)
 					mapblock.param2[index] = param2
 				end
