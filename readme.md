@@ -5,6 +5,7 @@
 ![](https://github.com/BuckarooBanzay/mapblock_lib/workflows/luacheck/badge.svg)
 ![](https://github.com/BuckarooBanzay/mapblock_lib/workflows/ldoc/badge.svg)
 ![](https://github.com/BuckarooBanzay/mapblock_lib/workflows/test/badge.svg)
+[![Coverage Status](https://coveralls.io/repos/github/BuckarooBanzay/mapblock_lib/badge.svg?branch=main)](https://coveralls.io/github/BuckarooBanzay/mapblock_lib?branch=main)
 
 Mapblock-granular world operations, transformations and utilities
 
