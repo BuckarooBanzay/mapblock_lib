@@ -52,10 +52,6 @@ For example:
 * `/mb_load xy` loads the schematic from `<world_path>/mapblocks/xy.zip`
 * `/mb_load mymod:schematics/abc` loads the schematic `schematics/abc.zip` from the `mymod` mod-path (`mapblock_lib` has to be a trusted mod)
 
-## Api
-
-See: https://buckaroobanzay.github.io/mapblock_lib/
-
 # License
 
 * Code: MIT
