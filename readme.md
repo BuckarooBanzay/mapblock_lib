@@ -171,6 +171,14 @@ local success, err = catalog:deserialize_all({x=1,y=1,z=1}, {
 	end
 })
 
+-- load and prepare a mapblock for faster access (mapgen)
+local deserFn, err = catalog:prepare({x=0,y=0,z=0}, options)
+if err then
+	error(err)
+end
+-- apply to the given position
+deserFn({x=1,y=1,z=1})
+
 ```
 
 # License
