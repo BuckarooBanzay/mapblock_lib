@@ -23,6 +23,7 @@ dofile(MP .. "/util.lua")
 dofile(MP .. "/pointed.lua")
 dofile(MP .. "/pos.lua")
 dofile(MP .. "/data.lua")
+dofile(MP .. "/metadata.lua")
 
 dofile(MP .. "/mapblock.lua")
 
