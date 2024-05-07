@@ -80,14 +80,14 @@ mapblock_lib.create_catalog(filename, mb_pos1, mb_pos2, options)
 
 ## `get_catalog(filename)`
 
-Parses a previously create mapblock catalog
+Parses a previously created mapblock catalog
 
 ```lua
 local filename = minetest.get_worldpath() .. "/my-mapblocks.zip"
 
 local catalog, err = mapblock_lib.get_catalog(filename)
 if err then
-    -- sometehing went wrong
+    -- something went wrong
     error(err)
 end
 
@@ -145,7 +145,7 @@ local options = {
 
 local success, err = catalog:deserialize(catalog_mapblock_pos, world_mapblock_pos, options)
 if err then
-    -- sometehing went wrong
+    -- something went wrong
     error(err)
 end
 
