@@ -136,7 +136,7 @@ function Catalog:deserialize_all(target_mapblock_pos, options)
 	local count = 0
 
 	options = options or {}
-	options.delay = options.delay or 0.2
+	options.delay = options.delay or 0.1
 	options.rotate_y = options.rotate_y or 0
 	options.callback = options.callback or function() end
 	options.progress_callback = options.progress_callback or function() end

@@ -64,7 +64,7 @@ local mb_pos1 = { x=0, y=0, z=0 }
 local mb_pos2 = { x=1, y=1, z=1 }
 local options = {
     -- optional: delay between operations
-    delay = 0.2,
+    delay = 0.1,
     -- optional: called when done
     callback = function()
         print("done!")

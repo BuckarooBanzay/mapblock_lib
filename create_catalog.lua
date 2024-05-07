@@ -25,7 +25,7 @@ function mapblock_lib.create_catalog(filename, pos1, pos2, options)
 
 	-- default to async serialization
 	options = options or {}
-	options.delay = options.delay or 0.2
+	options.delay = options.delay or 0.1
 	options.callback = options.callback or function() end
 	options.progress_callback = options.progress_callback or function() end
 
