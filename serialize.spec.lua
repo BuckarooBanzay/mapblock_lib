@@ -6,7 +6,9 @@ mtt.register("prepare and deserialize a mapblock", function(callback)
 
 	local target_pos = {x=5,y=5,z=5}
 	local catalog_pos = {x=0,y=0,z=0}
-	local fn = c:prepare(catalog_pos)
+	local fn
+	fn, err = c:prepare(catalog_pos)
+	assert(fn, err)
 	fn(target_pos)
 
 	local mb1 = mapblock_lib.serialize_mapblock(catalog_pos)
