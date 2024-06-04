@@ -20,6 +20,20 @@ mtt.register("read existing catalog", function(callback)
 	assert(size.z == 1, "z-size match")
 	assert(c:has_mapblock({x=0,y=0,z=0}), "mapblock exists")
 	assert(not c:has_mapblock({x=0,y=0,z=1}), "mapblock does not exist")
+
+	-- test get_node() accessor
+	local node = c:get_node({x=0,y=0,z=0})
+	assert(node.name == "default:stone")
+	assert(node.param1 == 15)
+	assert(node.param2 == 0)
+
+	node = c:get_node({x=15,y=15,z=15})
+	assert(node.name == "air")
+	assert(node.param1 == 15)
+	assert(node.param2 == 0)
+
+	assert(not c:get_node({x=0,y=16,z=0}))
+
 	callback()
 end)
 

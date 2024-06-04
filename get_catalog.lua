@@ -108,6 +108,52 @@ function Catalog:prepare(catalog_mapblock_pos, options)
 	end
 end
 
+-- mapblock area for index -> pos calculations
+local mapblock_area = VoxelArea:new({MinEdge={x=0,y=0,z=0}, MaxEdge={x=15,y=15,z=15}})
+
+function Catalog:get_node(pos)
+	local mb_pos = mapblock_lib.get_mapblock(pos)
+	if not self:has_mapblock(mb_pos) then
+		-- return fast
+		return
+	end
+
+	local cache_key = minetest.pos_to_string(mb_pos)
+	local cache_entry = self.cache[cache_key]
+	if not cache_entry then
+		-- load and parse
+		local manifest, mapblock, err = read_manifest_mapblock(self.filename, mb_pos)
+		if err then
+			return nil, err
+		end
+
+		local nodeid_name_mapping = {}
+		for name, id in pairs(manifest.node_mapping) do
+			nodeid_name_mapping[id] = name
+		end
+
+		cache_entry = {
+			nodeid_name_mapping = nodeid_name_mapping,
+			manifest = manifest,
+			mapblock = mapblock
+		}
+		self.cache[cache_key] = cache_entry
+	end
+
+	-- fetch relative node data
+	local mb_min_pos = mapblock_lib.get_mapblock_bounds_from_mapblock(mb_pos)
+	local rel_pos = vector.subtract(pos, mb_min_pos)
+	local index = mapblock_area:indexp(rel_pos)
+
+	local nodeid = cache_entry.mapblock.node_ids[index]
+
+	return {
+		param1 = cache_entry.mapblock.param1[index],
+		param2 = cache_entry.mapblock.param2[index],
+		name = cache_entry.nodeid_name_mapping[nodeid]
+	}
+end
+
 ------
 -- Deserialize options
 -- @number delay for async mode: delay between deserialization-calls
@@ -213,7 +259,9 @@ function mapblock_lib.get_catalog(filename)
 		filename = filename,
 		manifest = manifest,
 		-- for lookups only
-		zip = z
+		zip = z,
+		-- cached mapblocks for get_node()
+		cache = {}
 	}
 	return setmetatable(self, Catalog_mt)
 end
