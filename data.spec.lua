@@ -59,6 +59,20 @@ mtt.register("data storage (default serialization)", function(callback)
 	callback()
 end)
 
+mtt.register("data storage (granularity = 50)", function(callback)
+	check_store(mapblock_lib.create_data_storage(storage, {
+		granularity = 50
+	}))
+	callback()
+end)
+
+mtt.register("data storage (prefix = test_)", function(callback)
+	check_store(mapblock_lib.create_data_storage(storage, {
+		prefix = "test_"
+	}))
+	callback()
+end)
+
 mtt.register("data storage (json serialization)", function(callback)
 	check_store(mapblock_lib.create_data_storage(storage, {
 		serialize = minetest.write_json,
@@ -130,6 +144,20 @@ mtt.register("data storage links (json serialization)", function(callback)
 	check_storage_links(mapblock_lib.create_data_storage(storage, {
 		serialize = minetest.write_json,
 		deserialize = minetest.parse_json
+	}))
+	callback()
+end)
+
+mtt.register("data storage links (granularity = 50)", function(callback)
+	check_storage_links(mapblock_lib.create_data_storage(storage, {
+		granularity = 50
+	}))
+	callback()
+end)
+
+mtt.register("data storage links (prefix = test)", function(callback)
+	check_storage_links(mapblock_lib.create_data_storage(storage, {
+		prefix = "test_"
 	}))
 	callback()
 end)

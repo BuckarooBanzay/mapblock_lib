@@ -26,6 +26,12 @@ function mapblock_lib.create_data_storage(storage, opts)
         -- group_index -> bool
         stale_data = {},
 
+        -- prefix for modstorage
+        prefix = opts.prefix or "",
+
+        -- default to 10^3 mapblocks
+        granularity = opts.granularity or 10,
+
         serialize = opts.serialize or minetest.serialize,
         deserialize = opts.deserialize or minetest.deserialize
     }
@@ -86,13 +92,13 @@ function mapblock_lib.resolve_data_link(storage, pos, max_recursions)
 end
 
 -- "group" is a bundle of mapblock-positions
-local function get_group_pos(pos)
-    -- 10^3 pos-datasets are in a group for better lookup, indexing and caching
-    return vector.floor(vector.divide(pos, 10))
+function DataStorage:get_group_pos(pos)
+    -- granularity^3 pos-datasets are in a group for better lookup, indexing and caching
+    return vector.floor(vector.divide(pos, self.granularity))
 end
 
 function DataStorage:get_group_data(pos)
-    local index = minetest.pos_to_string(get_group_pos(pos))
+    local index = self.prefix .. minetest.pos_to_string(self:get_group_pos(pos))
     if not self.cache[index] then
         local serialized_data = self.storage:get_string(index)
         if serialized_data == "" then
@@ -111,7 +117,7 @@ end
 
 -- store grouped data for async save
 function DataStorage:set_group_data(pos, data)
-    local index = minetest.pos_to_string(get_group_pos(pos))
+    local index = self.prefix .. minetest.pos_to_string(self:get_group_pos(pos))
     self.cache[index] = data
     self.stale_data[index] = true
 end
