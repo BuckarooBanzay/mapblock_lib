@@ -2,6 +2,8 @@
 -- Create catalog function
 local global_env = ...
 
+local has_isogen = minetest.get_modpath("isogen")
+
 ------
 -- Serialize options
 -- @number delay for async mode: delay between serialization-calls
@@ -28,6 +30,7 @@ function mapblock_lib.create_catalog(filename, pos1, pos2, options)
 	options.delay = options.delay or 0.1
 	options.callback = options.callback or function() end
 	options.progress_callback = options.progress_callback or function() end
+	options.iso_cube_len = 8
 
 	pos1, pos2 = mapblock_lib.sort_pos(pos1, pos2)
 	local start = minetest.get_us_time()
@@ -49,7 +52,25 @@ function mapblock_lib.create_catalog(filename, pos1, pos2, options)
 			options.progress_callback(count / total_count)
 			minetest.after(options.delay, worker)
 		else
-			-- done, write global manifest
+			-- done, generate preview and write global manifest
+
+			if has_isogen then
+				-- isogen in modpath, generate isometric preview and metadata
+				local min = mapblock_lib.get_mapblock_bounds_from_mapblock(pos1)
+				local _, max = mapblock_lib.get_mapblock_bounds_from_mapblock(pos2)
+
+				local png = isogen.draw(min, max, { cube_len = options.iso_cube_len })
+				z:add("preview.png", png)
+
+				local size = vector.add(vector.subtract(max, min), 1)
+				local width, height = isogen.calculate_image_size(size, options.iso_cube_len)
+				local preview_metadata = {
+					width = width,
+					height = height
+				}
+				z:add("preview.json", minetest.write_json(preview_metadata))
+			end
+
 			local manifest = {
 				range = vector.subtract(pos2, pos1),
 				version = mapblock_lib.version

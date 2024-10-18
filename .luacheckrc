@@ -16,7 +16,10 @@ read_globals = {
 	"VoxelArea",
 
 	-- mods
-	"monitoring", "mtzip", "placeholder",
+	"monitoring",
+	"mtzip",
+	"placeholder",
+	"isogen",
 
 	-- testing
 	"mineunit",
