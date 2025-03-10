@@ -40,11 +40,13 @@ end)
 -- catalog
 mtt.register("creating catalog", function(callback)
 	mapblock_lib.create_catalog(filename, mb_pos1, mb_pos2, {
-		callback = function() callback() end,
 		progress_callback = function(p)
 			print("progress: " .. p)
 		end
-	})
+	}):next(function(count)
+		assert(count > 0)
+		callback()
+	end)
 end)
 
 mtt.register("reading catalog", function(callback)
@@ -86,12 +88,13 @@ mtt.register("deserializing all mapblocks from the catalog", function(callback)
 	assert(err == nil, "err is nil")
 
 	c:deserialize_all({x=0,y=1,z=2}, {
-		callback = function() callback() end,
 		progress_callback = function(p)
 			print("progress: " .. p)
 		end,
-		error_callback = error
-	})
+	}):next(function(count)
+		assert(count > 0)
+		callback()
+	end)
 end)
 
 mtt.register("comparing all mapblocks from the catalog", function(callback)

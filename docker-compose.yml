@@ -11,4 +11,6 @@ services:
      INPUT_GIT_GAME_REPO: "https://github.com/minetest/minetest_game"
      INPUT_GIT_DEPENDENCIES: |
       https://github.com/BuckarooBanzay/mtzip
+      https://github.com/BuckarooBanzay/isogen
       https://github.com/BuckarooBanzay/placeholder
+      https://github.com/mt-mods/promise

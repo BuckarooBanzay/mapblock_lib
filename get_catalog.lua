@@ -158,9 +158,7 @@ end
 -- Deserialize options
 -- @number delay for async mode: delay between deserialization-calls
 -- @number rotate_y the y rotation, can be 0,90,180 or 270 degrees
--- @field callback function to call when the blocks are deserialized
 -- @field progress_callback function to call when the progress is update
--- @field error_callback function to call on errors
 -- @field mapblock_options function that returns the deserialization options when called with a mapblock_pos as param
 -- @table deserialize_all_options
 
@@ -168,6 +166,7 @@ end
 -- @see deserialize_options.lua
 -- @param target_mapblock_pos @{util.mapblock_pos} the first mapblock position
 -- @param options[opt] @{deserialize_all_options} deserialization options
+-- @return a promise that resolves with the total mapblock count
 function Catalog:deserialize_all(target_mapblock_pos, options)
 	local f = io.open(self.filename, "rb")
 	local z, err = mtzip.unzip(f)
@@ -177,24 +176,17 @@ function Catalog:deserialize_all(target_mapblock_pos, options)
 
 	local pos1 = target_mapblock_pos
 	local pos2 = vector.add(pos1, self.manifest.range)
-	local iterator, total_count = mapblock_lib.pos_iterator(pos1, pos2)
-	local mapblock_pos
+	local total_count = mapblock_lib.count_mapblocks(pos1, pos2)
 	local count = 0
 
 	options = options or {}
 	options.delay = options.delay or 0.1
 	options.rotate_y = options.rotate_y or 0
-	options.callback = options.callback or function() end
 	options.progress_callback = options.progress_callback or function() end
-	options.error_callback = options.error_callback or function() end
 	options.mapblock_options = options.mapblock_options or function() end
 
-	local start = minetest.get_us_time()
-
-	local worker
-	worker = function()
-		mapblock_pos = iterator()
-		if mapblock_pos then
+	return Promise.async(function(await)
+		for mapblock_pos in mapblock_lib.pos_iterator(pos1, pos2) do
 			local rel_pos = vector.subtract(mapblock_pos, pos1)
 			rel_pos = mapblock_lib.rotate_pos(rel_pos, self.manifest.range, options.rotate_y)
 			local mapblock_entry_name = "mapblock_" .. minetest.pos_to_string(rel_pos) .. ".bin"
@@ -215,24 +207,19 @@ function Catalog:deserialize_all(target_mapblock_pos, options)
 				end
 				local _, deser_err = mapblock_lib.deserialize_mapblock(mapblock_pos, mapblock, manifest, mapblock_options)
 				if deser_err then
-					options.error_callback(deser_err)
+					error(deser_err, 0)
 					return
 				end
 			end
 
 			count = count + 1
 			options.progress_callback(count / total_count)
-			minetest.after(options.delay, worker)
-		else
-			-- done
-			f:close()
-			local micros = minetest.get_us_time() - start
-			options.callback(count, micros)
+			await(Promise.after(options.delay))
 		end
-	end
 
-	-- initial call
-	worker()
+		f:close()
+		return count
+	end)
 end
 
 --- create a new catalog wrapper for the given filename

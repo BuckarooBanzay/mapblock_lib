@@ -9,15 +9,16 @@ local filename = minetest.get_worldpath() .. "/mycatalog.zip"
 mapblock_lib.create_catalog(filename, pos1, pos2)
 
 -- create a catalog with some additional options and callbacks
-mapblock_lib.create_catalog(filename, pos1, pos2, {
+local p = mapblock_lib.create_catalog(filename, pos1, pos2, {
     -- delay between mapblock exports in seconds (default is 0.2)
     delay = 1,
-    callback = function(count, micros)
-        -- called after the export is done
-        print("Exported " .. count .. " mapblocks in " .. micros .. " us")
-    end,
     progress_callback = function(f)
         -- progress is a fractional number from 0 to 1
         print("Progress: " .. (f*100) .. "%")
     end
 })
+
+-- subscribe to promise resolve event
+p:next(function(count)
+    print("Exported " .. count .. " mapblocks")
+end)

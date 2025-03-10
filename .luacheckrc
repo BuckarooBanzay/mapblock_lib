@@ -1,3 +1,5 @@
+std = "minetest+min"
+
 globals = {
 	"mapblock_lib",
 	-- optional deps
@@ -5,21 +7,12 @@ globals = {
 }
 
 read_globals = {
-	-- Stdlib
-	string = {fields = {"split", "trim"}},
-	table = {fields = {"copy", "getn"}},
-
-	-- Minetest
-	"minetest",
-	"vector", "ItemStack",
-	"dump", "dump2",
-	"VoxelArea",
-
 	-- mods
 	"monitoring",
 	"mtzip",
 	"placeholder",
 	"isogen",
+	"Promise",
 
 	-- testing
 	"mineunit",

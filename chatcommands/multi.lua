@@ -80,15 +80,17 @@ minetest.register_chatcommand("mapblock_save", {
 			return false, err
 		end
 
+		local start = minetest.get_us_time()
+
 		mapblock_lib.create_catalog(filename, pos1, pos2, {
-			callback = function(total_count, micros)
-				minetest.chat_send_player(name, "[mapblock_lib] saved " .. total_count ..
-					" mapblocks to '" .. filename .. "' in " .. micros/1000 .. " ms")
-			end,
 			progress_callback = function(p)
 				minetest.chat_send_player(name, "[mapblock_lib] save-progress: " .. math.floor(p*1000)/10 .. " %")
 			end
-		})
+		}):next(function(total_count)
+			local micros = minetest.get_us_time() - start
+			minetest.chat_send_player(name, "[mapblock_lib] saved " .. total_count ..
+					" mapblocks to '" .. filename .. "' in " .. micros/1000 .. " ms")
+		end)
 
 		return true, "Started saving to '" .. filename .. "'"
 	end
@@ -119,15 +121,18 @@ minetest.register_chatcommand("mapblock_load", {
 		if err then
 			return false, err
 		end
+
+		local start = minetest.get_us_time()
+
 		catalog:deserialize_all(pos1, {
-			callback = function(total_count, micros)
-				minetest.chat_send_player(name, "[mapblock_lib] loaded " .. total_count ..
-					" mapblocks to '" .. filename .. "' in " .. micros/1000 .. " ms")
-			end,
 			progress_callback = function(p)
 				minetest.chat_send_player(name, "[mapblock_lib] load-progress: " .. math.floor(p*1000)/10 .. " %")
 			end
-		})
+		}):next(function(total_count)
+			local micros = minetest.get_us_time() - start
+			minetest.chat_send_player(name, "[mapblock_lib] loaded " .. total_count ..
+				" mapblocks to '" .. filename .. "' in " .. micros/1000 .. " ms")
+		end)
 
 		return true, "Started loading from '" .. filename .. "'"
 	end

@@ -65,17 +65,16 @@ local mb_pos2 = { x=1, y=1, z=1 }
 local options = {
     -- optional: delay between operations
     delay = 0.1,
-    -- optional: called when done
-    callback = function()
-        print("done!")
-    end,
     -- optional: called with current progress
     progress_callback = function(p)
         print("progress: " .. p) -- 0 ... 1
     end
 }
 
-mapblock_lib.create_catalog(filename, mb_pos1, mb_pos2, options)
+local p = mapblock_lib.create_catalog(filename, mb_pos1, mb_pos2, options)
+p:next(function(mapblock_count)
+	print("serialized " .. mapblock_count .. " mapblocks")
+end)
 ```
 
 ## `get_catalog(filename)`
@@ -151,25 +150,23 @@ end
 
 
 -- deserialize all mapblocks to position 1,1,1 without any callback
-local success, err = catalog:deserialize_all({x=1,y=1,z=1})
+catalog:deserialize_all({x=1,y=1,z=1})
 
 -- deserialize all mapblocks to position 1,1,1 with options
-local success, err = catalog:deserialize_all({x=1,y=1,z=1}, {
+local p = catalog:deserialize_all({x=1,y=1,z=1}, {
 	-- delay between mapblock exports in seconds (default is 0.2)
 	delay = 1,
-	callback = function(count, micros)
-		-- called after the export is done
-		print("Imported " .. count .. " mapblocks in " .. micros .. " us")
-	end,
 	progress_callback = function(f)
 		-- progress is a fractional number from 0 to 1
 		print("Progress: " .. (f*100) .. "%")
-	end,
-	error_callback = function(import_err)
-		-- handle errors
-		error(import_err)
 	end
 })
+p:next(function(count)
+	-- all ok
+end)
+p:catch(function(err)
+	-- an error happened
+end)
 
 -- load and prepare a mapblock for faster access (mapgen)
 local deserFn, err = catalog:prepare({x=0,y=0,z=0}, options)

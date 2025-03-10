@@ -84,13 +84,20 @@ function mapblock_lib.sort_pos(pos1, pos2)
 	return pos1, pos2
 end
 
+--- returns the total mapblock count in the given range
+-- @param pos1 @{mapblock_pos} the lower position
+-- @param pos2 @{mapblock_pos} the upper position
+-- @return the mapblock count
+function mapblock_lib.count_mapblocks(pos1, pos2)
+	return ((pos2.x - pos1.x) + 1) * ((pos2.y - pos1.y) + 1) * ((pos2.z - pos1.z) + 1)
+end
+
 --- returns an iterator function for the mapblock coordinate range
 -- @param pos1 @{mapblock_pos} the lower position
 -- @param pos2 @{mapblock_pos} the upper position
 -- @return a position iterator
 -- @return the total node/mapblock count
 function mapblock_lib.pos_iterator(pos1, pos2)
-	local total_count = ((pos2.x - pos1.x) + 1) * ((pos2.y - pos1.y) + 1) * ((pos2.z - pos1.z) + 1)
 	local pos
 	return function()
 		if not pos then
@@ -116,21 +123,6 @@ function mapblock_lib.pos_iterator(pos1, pos2)
 		end
 
 		return pos
-	end, total_count
-end
-
---- iterate through the specified region
--- @param pos1 @{mapblock_pos} the lower position
--- @param pos2 @{mapblock_pos} the upper position
--- @param fn the position callback
-function mapblock_lib.for_each(pos1, pos2, fn)
-	local it = mapblock_lib.pos_iterator(pos1, pos2)
-	while true do
-		local pos = it()
-		if not pos then
-			break
-		end
-		fn(pos)
 	end
 end
 

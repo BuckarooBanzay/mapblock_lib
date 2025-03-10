@@ -12,5 +12,7 @@ jobs:
         enable_coverage: true
         git_dependencies: |
           https://github.com/BuckarooBanzay/mtzip
+          https://github.com/BuckarooBanzay/isogen
           https://github.com/BuckarooBanzay/placeholder
+          https://github.com/mt-mods/promise
     - uses: coverallsapp/github-action@v1
